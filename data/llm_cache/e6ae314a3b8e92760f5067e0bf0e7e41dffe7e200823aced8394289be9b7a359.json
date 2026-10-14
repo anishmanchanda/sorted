@@ -1,0 +1,20 @@
+{
+ "data": {
+  "type": "subscription_receipt",
+  "provider": "Spotify",
+  "amount": 119.0,
+  "currency": "INR",
+  "due_date": "2026-06-19",
+  "service": "Spotify",
+  "old_price": null,
+  "new_price": null,
+  "event_time": null,
+  "person": null,
+  "document_type": null
+ },
+ "tokens": 925,
+ "cost": 0.00041735000000000003,
+ "model": "gpt-oss-120b",
+ "date_offset": 14,
+ "key": "extract:m2_spotify_receipt"
+}

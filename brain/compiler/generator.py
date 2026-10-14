@@ -127,7 +127,8 @@ def test_case(case):
 
 def export(ability: db.Ability, cases: list[dict]) -> None:
     """Write the ability, its cases and a standalone pytest file to abilities/<name>/v<n>/ for humans."""
-    d = Path(config.env("BRAIN_ABILITIES_DIR", str(config.ROOT / "abilities"))) / ability.name / f"v{ability.version}"
+    root = Path(config.env("BRAIN_ABILITIES_DIR", str(config.ROOT / "data" / "abilities")))
+    d = root / ability.name / f"v{ability.version}"
     d.mkdir(parents=True, exist_ok=True)
     (d / "ability.py").write_text(ability.code)
     (d / "cases.json").write_text(json.dumps(
@@ -147,11 +148,12 @@ def compile_ability(s, ability: db.Ability, llm: LLM) -> dict:
     base_prompt = _prompt(ability, fields, visible)
     run_id, tokens, cost, feedback, prev, held_rate = uuid.uuid4().hex[:12], 0, 0.0, "", "", 0.0
 
-    for _attempt in range(2):
+    for attempt in range(2):
         prompt = base_prompt + (f"\n\nYOUR PREVIOUS CODE:\n{prev}\n\nPROBLEMS:\n{feedback}\n"
                                 "Return the full corrected code." if feedback else "")
         try:
-            res = llm.json("strong", COMPILER_SYSTEM, prompt, CodeGen, run_id)
+            res = llm.json("strong", COMPILER_SYSTEM, prompt, CodeGen, run_id,
+                           cache_key=f"compile:{ability.name}:v{ability.version}:n{len(items)}:attempt{attempt}")
         except (BudgetExceeded, LLMUnavailable, openai.APIError) as e:
             feedback = f"compiler LLM unavailable: {e}"
             break

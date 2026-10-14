@@ -21,7 +21,7 @@ OWNER_FILE = config.ROOT / "data" / "telegram_owner"
 PLAN_HINT = re.compile(r"\b(remind|track|tablet|medicine|pill|daily|every (day|morning|night|week|month))\b", re.I)
 HELP = """Sorted keeps your bills, renewals, subscriptions and medicines.
 /due — what's due in the next 7 days (no AI)
-/score — privacy score: how much runs as local code
+/score — your privacy score: how much runs as local code (/score demo: the simulation)
 /abilities — compiled abilities and their health
 /approve <name> — move a tested ability into shadow mode
 /audit — the last things I did
@@ -45,8 +45,14 @@ def due_text(days: int = 7) -> str:
     return (f"Due in the next {days} days:\n" + "\n".join(lines)) if lines else f"Nothing due in the next {days} days."
 
 
-def score_text() -> str:
-    return "Privacy score (share of messages handled by local code):\n" + score.summary()
+def score_text(arg: str = "") -> str:
+    """Live usage by default; `/score demo` shows the synthetic simulation from `make demo`."""
+    if arg.strip().lower() == "demo":
+        if not (config.ROOT / "data" / "demo.db").exists():
+            return "No simulation yet. Run `make demo` on the server first."
+        return ("Simulation (make demo): 6 simulated months of synthetic bills, no real data.\n"
+                + score.summary(config.DEMO_DB_URL))
+    return "Your privacy score (share of your messages handled by local code):\n" + score.summary()
 
 
 def abilities_text() -> str:
@@ -214,7 +220,7 @@ def main() -> None:
     app = Application.builder().token(token).post_init(post_init).build()
     app.add_handler(CommandHandler(["start", "help"], start))
     app.add_handler(CommandHandler("due", command(due_text)))
-    app.add_handler(CommandHandler("score", command(score_text, pre=True)))
+    app.add_handler(CommandHandler("score", command(score_text, pre=True, with_args=True)))
     app.add_handler(CommandHandler("abilities", command(abilities_text)))
     app.add_handler(CommandHandler("approve", command(approve_text, with_args=True)))
     app.add_handler(CommandHandler("audit", command(audit_text)))

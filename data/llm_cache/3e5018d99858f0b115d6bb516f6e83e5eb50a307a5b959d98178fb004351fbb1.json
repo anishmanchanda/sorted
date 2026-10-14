@@ -1,0 +1,11 @@
+{
+ "data": {
+  "code": "import re\nfrom datetime import datetime\n\n\ndef extract(text: str) -> dict:\n    subject_match = re.search(r'^Subject:\\s*(.+)$', text, re.MULTILINE)\n    if not subject_match:\n        raise ValueError('Missing Subject header')\n\n    amount_match = re.search(r'Renewal\\s+premium\\s*:\\s*\u20b9\\s*([0-9][0-9,]*\\.?[0-9]*)', text, re.IGNORECASE)\n    if not amount_match:\n        raise ValueError('Missing Renewal premium label')\n\n    due_match = re.search(r'expires\\s+on\\s+([0-9]{1,2}\\s+[A-Za-z]{3}\\s+[0-9]{4})', text, re.IGNORECASE)\n    if not due_match:\n        raise ValueError('Missing expires on label')\n\n    amount = float(amount_match.group(1).replace(',', ''))\n    due_date = datetime.strptime(due_match.group(1), '%d %b %Y').strftime('%Y-%m-%d')\n\n    return {\n        'type': 'insurance_renewal',\n        'provider': 'ICICI Lombard',\n        'amount': amount,\n        'currency': 'INR',\n        'due_date': due_date,\n    }\n",
+  "notes": "Parses ICICI Lombard car insurance renewal emails by anchoring on the premium and expiry labels."
+ },
+ "tokens": 1091,
+ "cost": 0.006965,
+ "model": "gpt-5.4",
+ "date_offset": 14,
+ "key": "compile:icicilombard_com_insurance_renewal:v1:n3:attempt0"
+}

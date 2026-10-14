@@ -1,0 +1,11 @@
+{
+ "data": {
+  "code": "import re\nfrom datetime import datetime\n\n\ndef extract(text: str) -> dict:\n    due_match = re.search(r'Payment\\s+Due\\s+Date\\s+([0-3]?\\d/[01]?\\d/\\d{4})', text, re.IGNORECASE)\n    if not due_match:\n        raise ValueError('Missing Payment Due Date label')\n\n    amount_match = re.search(r'Total\\s+Amount\\s+Due\\s+Rs\\.\\s*([\\d,]+(?:\\.\\d{2})?)', text, re.IGNORECASE)\n    if not amount_match:\n        raise ValueError('Missing Total Amount Due label')\n\n    due_date_raw = due_match.group(1).strip()\n    amount_raw = amount_match.group(1).replace(',', '').strip()\n\n    try:\n        due_date = datetime.strptime(due_date_raw, '%d/%m/%Y').strftime('%Y-%m-%d')\n    except Exception:\n        raise ValueError('Invalid due date format')\n\n    try:\n        amount = float(amount_raw)\n    except Exception:\n        raise ValueError('Invalid amount format')\n\n    return {\n        'type': 'bill_due',\n        'provider': 'HDFC Bank',\n        'amount': amount,\n        'currency': 'INR',\n        'due_date': due_date,\n    }\n",
+  "notes": "Anchored extraction on the statement labels for payment due date and total amount due, with Indian-number formatting support."
+ },
+ "tokens": 1167,
+ "cost": 0.007355,
+ "model": "gpt-5.4",
+ "date_offset": 14,
+ "key": "compile:hdfcbank_net_bill_due:v1:n3:attempt0"
+}

@@ -1,34 +1,34 @@
 [
  {
-  "input": "From: LIC of India <noreply@licindia.in>\nSubject: Premium Due Notice - Policy No. XXXXX5678 - Apr 2026\nDate: 2026-04-10 06:15\n\nDear Rohan Sharma,\n\nPREMIUM DUE NOTICE\n\nPolicy No      : XXXXX5678\nPlan           : Jeevan Anand (Table 915)\nMode           : Monthly (ECS)\nPremium Amount : Rs. 4,215.00\nDue Date       : 28/04/2026\n\nKindly ensure sufficient balance in your bank account for ECS debit on or before the due date.\nYou can also pay online at licindia.in or through the LIC Pay Direct app.\n\nThis is a system generated notice. Life Insurance Corporation of India.\n",
+  "input": "From: LIC of India <noreply@licindia.in>\nSubject: Premium Due Notice - Policy No. XXXXX5678 - May 2026\nDate: 2026-04-24 06:15\n\nDear Rohan Sharma,\n\nPREMIUM DUE NOTICE\n\nPolicy No      : XXXXX5678\nPlan           : Jeevan Anand (Table 915)\nMode           : Monthly (ECS)\nPremium Amount : Rs. 4,215.00\nDue Date       : 12/05/2026\n\nKindly ensure sufficient balance in your bank account for ECS debit on or before the due date.\nYou can also pay online at licindia.in or through the LIC Pay Direct app.\n\nThis is a system generated notice. Life Insurance Corporation of India.\n",
   "expected": {
    "type": "premium_due",
    "provider": "LIC",
    "amount": 4215.0,
    "currency": "INR",
-   "due_date": "2026-04-28"
+   "due_date": "2026-05-12"
   },
   "held_out": false
  },
  {
-  "input": "From: LIC of India <noreply@licindia.in>\nSubject: Premium Due Notice - Policy No. XXXXX5678 - May 2026\nDate: 2026-05-10 06:15\n\nDear Rohan Sharma,\n\nPREMIUM DUE NOTICE\n\nPolicy No      : XXXXX5678\nPlan           : Jeevan Anand (Table 915)\nMode           : Monthly (ECS)\nPremium Amount : Rs. 4,215.00\nDue Date       : 28/05/2026\n\nKindly ensure sufficient balance in your bank account for ECS debit on or before the due date.\nYou can also pay online at licindia.in or through the LIC Pay Direct app.\n\nThis is a system generated notice. Life Insurance Corporation of India.\n",
+  "input": "From: LIC of India <noreply@licindia.in>\nSubject: Premium Due Notice - Policy No. XXXXX5678 - Jun 2026\nDate: 2026-05-24 06:15\n\nDear Rohan Sharma,\n\nPREMIUM DUE NOTICE\n\nPolicy No      : XXXXX5678\nPlan           : Jeevan Anand (Table 915)\nMode           : Monthly (ECS)\nPremium Amount : Rs. 4,215.00\nDue Date       : 11/06/2026\n\nKindly ensure sufficient balance in your bank account for ECS debit on or before the due date.\nYou can also pay online at licindia.in or through the LIC Pay Direct app.\n\nThis is a system generated notice. Life Insurance Corporation of India.\n",
   "expected": {
    "type": "premium_due",
    "provider": "LIC",
    "amount": 4215.0,
    "currency": "INR",
-   "due_date": "2026-05-28"
+   "due_date": "2026-06-11"
   },
   "held_out": false
  },
  {
-  "input": "From: LIC of India <noreply@licindia.in>\nSubject: Premium Due Notice - Policy No. XXXXX5678 - Jun 2026\nDate: 2026-06-10 06:15\n\nDear Rohan Sharma,\n\nPREMIUM DUE NOTICE\n\nPolicy No      : XXXXX5678\nPlan           : Jeevan Anand (Table 915)\nMode           : Monthly (ECS)\nPremium Amount : Rs. 4,215.00\nDue Date       : 28/06/2026\n\nKindly ensure sufficient balance in your bank account for ECS debit on or before the due date.\nYou can also pay online at licindia.in or through the LIC Pay Direct app.\n\nThis is a system generated notice. Life Insurance Corporation of India.\n",
+  "input": "From: LIC of India <noreply@licindia.in>\nSubject: Premium Due Notice - Policy No. XXXXX5678 - Jul 2026\nDate: 2026-06-24 06:15\n\nDear Rohan Sharma,\n\nPREMIUM DUE NOTICE\n\nPolicy No      : XXXXX5678\nPlan           : Jeevan Anand (Table 915)\nMode           : Monthly (ECS)\nPremium Amount : Rs. 4,215.00\nDue Date       : 12/07/2026\n\nKindly ensure sufficient balance in your bank account for ECS debit on or before the due date.\nYou can also pay online at licindia.in or through the LIC Pay Direct app.\n\nThis is a system generated notice. Life Insurance Corporation of India.\n",
   "expected": {
    "type": "premium_due",
    "provider": "LIC",
    "amount": 4215.0,
    "currency": "INR",
-   "due_date": "2026-06-28"
+   "due_date": "2026-07-12"
   },
   "held_out": true
  }

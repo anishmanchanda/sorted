@@ -8,6 +8,7 @@ OUTPUT_FIELDS = ['type', 'provider', 'amount', 'currency', 'due_date']
 
 import re
 from datetime import datetime
+from dateutil import parser as date_parser
 
 
 def extract(text: str) -> dict:
@@ -17,57 +18,32 @@ def extract(text: str) -> dict:
 
     def parse_date(value: str) -> str:
         value = value.strip()
-        for fmt in ('%d/%m/%Y', '%d %b %Y', '%d %B %Y'):
+        for fmt in ('%d/%m/%Y', '%d-%b-%Y', '%d %b %Y'):
             try:
                 return datetime.strptime(value, fmt).strftime('%Y-%m-%d')
             except ValueError:
                 pass
-        raise ValueError('Unable to parse date')
+        try:
+            return date_parser.parse(value, dayfirst=True).date().isoformat()
+        except Exception:
+            raise ValueError('Unable to parse date')
 
-    amount_match = re.search(
-        r'(?im)^\s*Total\s+Amount\s+Due\s+Rs\.\s*([\d,]+(?:\.\d{2})?)\s*$',
-        text,
-    )
-    due_match = re.search(
-        r'(?im)^\s*Payment\s+Due\s+Date\s+(\d{2}/\d{2}/\d{4})\s*$',
-        text,
-    )
+    amount_match = re.search(r'(?im)^\s*Total\s+Amount\s+Due\s+Rs\.\s*([0-9][0-9,]*\.\d{2})\s*$', text)
+    if not amount_match:
+        amount_match = re.search(r'(?im)^\s*Amount\s+payable\s+INR\s*([0-9][0-9,]*\.\d{2})\s*$', text)
+    if not amount_match:
+        raise ValueError('Missing amount label')
 
-    if amount_match and due_match:
-        amount = parse_amount(amount_match.group(1))
-        due_date = parse_date(due_match.group(1))
-        return {
-            'type': 'bill_due',
-            'provider': 'HDFC Bank',
-            'amount': amount,
-            'currency': 'INR',
-            'due_date': due_date,
-        }
+    due_match = re.search(r'(?im)^\s*Payment\s+Due\s+Date\s+([0-9]{1,2}/[0-9]{1,2}/[0-9]{4})\s*$', text)
+    if not due_match:
+        due_match = re.search(r'(?im)^\s*Pay\s+by\s+([0-9]{1,2}\s+[A-Za-z]{3}\s+[0-9]{4})\s*$', text)
+    if not due_match:
+        raise ValueError('Missing due date label')
 
-    amount_match = re.search(
-        r'(?im)^\s*Amount\s+payable\s+INR\s*([\d,]+(?:\.\d{2})?)\s*$',
-        text,
-    )
-    due_match = re.search(
-        r'(?im)^\s*Pay\s+by\s+([0-9]{1,2}\s+[A-Za-z]{3,9}\s+[0-9]{4})\s*$',
-        text,
-    )
-
-    if amount_match and due_match:
-        amount = parse_amount(amount_match.group(1))
-        due_date = parse_date(due_match.group(1))
-        return {
-            'type': 'bill_due',
-            'provider': 'HDFC Bank',
-            'amount': amount,
-            'currency': 'INR',
-            'due_date': due_date,
-        }
-
-    has_old_layout = re.search(r'(?im)^\s*Total\s+Amount\s+Due\b', text) or re.search(r'(?im)^\s*Payment\s+Due\s+Date\b', text)
-    has_new_layout = re.search(r'(?im)^\s*Amount\s+payable\b', text) or re.search(r'(?im)^\s*Pay\s+by\b', text)
-
-    if has_old_layout or has_new_layout:
-        raise ValueError('Required label missing or malformed')
-
-    raise ValueError('Required labels not found')
+    return {
+        'type': 'bill_due',
+        'provider': 'HDFC Bank',
+        'amount': parse_amount(amount_match.group(1)),
+        'currency': 'INR',
+        'due_date': parse_date(due_match.group(1)),
+    }

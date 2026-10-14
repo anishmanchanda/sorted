@@ -107,11 +107,11 @@ def cmd_abilities(_args) -> None:
                   f"shadow_matches={ab.shadow_matches} {ab.last_error[:80]}")
 
 
-def cmd_score(_args) -> None:
-    from brain import score
+def cmd_score(args) -> None:
+    from brain import config, score
 
     db.init_db()
-    print(score.summary())
+    print(score.summary(config.DEMO_DB_URL if args.demo else None))
 
 
 def cmd_fetch(args) -> None:
@@ -190,7 +190,9 @@ def main(argv: list[str] | None = None) -> None:
     sp.add_argument("name")
     sp.set_defaults(fn=cmd_approve)
     sub.add_parser("abilities", help="list abilities with health stats").set_defaults(fn=cmd_abilities)
-    sub.add_parser("score", help="privacy score and cost per message, per month").set_defaults(fn=cmd_score)
+    sp = sub.add_parser("score", help="privacy score and cost per message (live DB; --demo for the simulation)")
+    sp.add_argument("--demo", action="store_true")
+    sp.set_defaults(fn=cmd_score)
     sp = sub.add_parser("fetch", help="TinyFish Fetch a page into the pipeline")
     sp.add_argument("url")
     sp.add_argument("--expect-price", type=float, help="check that this price appears on the page")

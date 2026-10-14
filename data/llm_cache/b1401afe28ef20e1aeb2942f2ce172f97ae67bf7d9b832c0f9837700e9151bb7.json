@@ -1,0 +1,11 @@
+{
+ "data": {
+  "code": "import re\nfrom datetime import datetime\n\n\ndef _require_match(pattern, text, flags=0):\n    m = re.search(pattern, text, flags)\n    if not m:\n        raise ValueError(\"Required label missing\")\n    return m\n\n\ndef _parse_date(date_str):\n    s = re.sub(r\"^\\s*[A-Za-z]+,\\s*\", \"\", date_str.strip())\n    for fmt in (\"%d %B %Y\", \"%d %b %Y\"):\n        try:\n            return datetime.strptime(s, fmt).strftime(\"%Y-%m-%d\")\n        except ValueError:\n            pass\n    raise ValueError(\"Invalid date format\")\n\n\ndef _parse_time(time_str):\n    s = re.sub(r\"\\s+\", \" \", time_str.strip().upper())\n    try:\n        return datetime.strptime(s, \"%I:%M %p\").strftime(\"%H:%M\")\n    except ValueError:\n        raise ValueError(\"Invalid time format\")\n\n\ndef extract(text: str) -> dict:\n    person_m = _require_match(r\"Appointment\\s+confirmed\\s+for\\s+(.+?)\\s+with\\s+Dr\\.\", text, re.IGNORECASE)\n    date_m = _require_match(r\"^\\s*Date:\\s*([^\\n]+)\", text, re.IGNORECASE | re.MULTILINE)\n    time_m = _require_match(r\"^\\s*Time:\\s*([^\\n]+)\", text, re.IGNORECASE | re.MULTILINE)\n\n    person = person_m.group(1).strip()\n    due_date = _parse_date(date_m.group(1))\n    event_time = _parse_time(time_m.group(1))\n\n    return {\n        \"type\": \"meeting\",\n        \"provider\": \"Apollo Clinic\",\n        \"currency\": \"INR\",\n        \"due_date\": due_date,\n        \"event_time\": event_time,\n        \"person\": person,\n    }\n",
+  "notes": "Parses Apollo Clinic appointment emails by anchored body labels for patient, date, and time."
+ },
+ "tokens": 1453,
+ "cost": 0.0098575,
+ "model": "gpt-5.4",
+ "date_offset": 14,
+ "key": "compile:apolloclinic_com_meeting:v1:n3:attempt0"
+}

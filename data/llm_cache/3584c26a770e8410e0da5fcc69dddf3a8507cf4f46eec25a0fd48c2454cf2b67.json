@@ -1,9 +1,0 @@
-{
- "data": {
-  "code": "import re\nfrom datetime import datetime\n\n\ndef extract(text: str) -> dict:\n    m_amount = re.search(r\"Total\\s+due\\s*:\\s*Rs\\.?\\s*([0-9][0-9,]*\\.?[0-9]{0,2})\", text, re.IGNORECASE)\n    if not m_amount:\n        raise ValueError(\"Missing Total due label\")\n\n    m_due = re.search(r\"Due\\s+date\\s*:\\s*([0-9]{1,2}-[A-Za-z]{3}-[0-9]{2})\", text, re.IGNORECASE)\n    if not m_due:\n        raise ValueError(\"Missing Due date label\")\n\n    amount = float(m_amount.group(1).replace(\",\", \"\"))\n    due_date = datetime.strptime(m_due.group(1), \"%d-%b-%y\").strftime(\"%Y-%m-%d\")\n\n    return {\n        \"type\": \"bill_due\",\n        \"provider\": \"HDFC Bank\",\n        \"amount\": amount,\n        \"currency\": \"INR\",\n        \"due_date\": due_date,\n    }\n",
-  "notes": "Regex anchored on 'Total due' and 'Due date' labels, with Indian-style comma tolerance and strict failure on layout changes."
- },
- "tokens": 900,
- "cost": 0.0060875,
- "model": "gpt-5.4"
-}

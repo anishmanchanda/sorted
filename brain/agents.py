@@ -53,8 +53,8 @@ class InboxAgent:
     def __init__(self, llm: LLM):
         self.llm = llm
 
-    def extract(self, text: str, run_id: str) -> LLMResult:
-        return self.llm.json("small", EXTRACT_SYSTEM, f"EMAIL:\n{text}", Extraction, run_id)
+    def extract(self, text: str, run_id: str, cache_key: str | None = None) -> LLMResult:
+        return self.llm.json("small", EXTRACT_SYSTEM, f"EMAIL:\n{text}", Extraction, run_id, cache_key=cache_key)
 
 
 class DocumentAgent:
@@ -65,8 +65,9 @@ class DocumentAgent:
     def __init__(self, llm: LLM):
         self.llm = llm
 
-    def extract(self, text: str, run_id: str, kind: str = "document") -> LLMResult:
-        return self.llm.json("small", EXTRACT_SYSTEM, f"{kind.upper()}:\n{text}", Extraction, run_id)
+    def extract(self, text: str, run_id: str, cache_key: str | None = None, kind: str = "document") -> LLMResult:
+        return self.llm.json("small", EXTRACT_SYSTEM, f"{kind.upper()}:\n{text}", Extraction, run_id,
+                             cache_key=cache_key)
 
 
 class Answer(BaseModel):

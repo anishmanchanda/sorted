@@ -19,6 +19,7 @@ dependencies = [
     "joblib>=1.6.0",
     "python-telegram-bot>=21",
     "mcp>=2.3.0",
+    "fpdf2>=2.8.9",
 ]
 
 [project.scripts]
@@ -28,7 +29,7 @@ brain = "brain.cli:main"
 dev = [
     "pytest>=8",
     "ruff>=0.6",
-    "fpdf2>=2.7",  # only used by scripts/gen_samples.py to write the sample PDFs
+    # only used by scripts/gen_samples.py to write the sample PDFs
     "httpx>=0.28.1",
 ]
 

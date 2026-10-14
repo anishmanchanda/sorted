@@ -1,9 +1,0 @@
-{
- "data": {
-  "code": "import re\nfrom datetime import datetime\n\n\ndef extract(text: str) -> dict:\n    amount_match = re.search(\n        r\"Spotify\\s+Premium\\s+Individual\\s+[\u2014-]\\s+Rs\\s*([0-9][0-9,]*(?:\\.[0-9]+)?)/month\",\n        text,\n        re.IGNORECASE,\n    )\n    if not amount_match:\n        raise ValueError(\"Missing Spotify Premium amount label\")\n\n    due_match = re.search(\n        r\"Your\\s+next\\s+payment\\s+of\\s+Rs\\s*[0-9][0-9,]*(?:\\.[0-9]+)?\\s+is\\s+on\\s+([0-9]{2}/[0-9]{2}/[0-9]{4})\\.\",\n        text,\n        re.IGNORECASE,\n    )\n    if not due_match:\n        raise ValueError(\"Missing next payment due date label\")\n\n    amount = float(amount_match.group(1).replace(\",\", \"\"))\n    due_date = datetime.strptime(due_match.group(1), \"%d/%m/%Y\").strftime(\"%Y-%m-%d\")\n\n    return {\n        \"type\": \"subscription_receipt\",\n        \"provider\": \"Spotify\",\n        \"amount\": amount,\n        \"currency\": \"INR\",\n        \"due_date\": due_date,\n        \"service\": \"Spotify\",\n    }\n",
-  "notes": "Anchored extraction to the Spotify plan line and the 'Your next payment ... is on' label, with strict failure on layout changes."
- },
- "tokens": 1013,
- "cost": 0.0073075,
- "model": "gpt-5.4"
-}

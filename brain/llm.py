@@ -7,9 +7,10 @@ Every prompt's user content is redacted here, so no caller can forget to.
 
 import hashlib
 import json
+import re
 from collections import Counter, defaultdict
 from dataclasses import dataclass
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from pathlib import Path
 
 from openai import OpenAI
@@ -47,6 +48,27 @@ def parse_prices(spec: str) -> dict[str, tuple[float, float]]:
         i, _, o = pair.partition("/")
         out[name.strip()] = (float(i), float(o))
     return out
+
+
+_ISO = re.compile(r"^(\d{4}-\d{2}-\d{2})(.*)$")
+
+
+def date_offset() -> int:
+    """Days the demo timeline is shifted from its canonical dates (0 outside the demo)."""
+    return int(config.env("BRAIN_DATE_OFFSET", "0") or 0)
+
+
+def shift_dates(obj, days: int):
+    """Move every ISO date (or datetime) string in a JSON-like object by `days`."""
+    if days == 0:
+        return obj
+    if isinstance(obj, dict):
+        return {k: shift_dates(v, days) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [shift_dates(v, days) for v in obj]
+    if isinstance(obj, str) and (m := _ISO.match(obj)) and (not m.group(2) or m.group(2).startswith("T")):
+        return (date.fromisoformat(m.group(1)) + timedelta(days=days)).isoformat() + m.group(2)
+    return obj
 
 
 class LLM:
@@ -99,14 +121,19 @@ class LLM:
         p_in, p_out = self.prices.get(model, (0.0, 0.0))
         return (prompt_tokens * p_in + completion_tokens * p_out) / 1e6
 
-    def json(self, route: str, system: str, user: str, schema: type[BaseModel], run_id: str = "") -> LLMResult:
+    def json(self, route: str, system: str, user: str, schema: type[BaseModel], run_id: str = "",
+             cache_key: str | None = None) -> LLMResult:
+        """`cache_key` names the task (e.g. one demo message) so a replay survives the demo's date shift:
+        the recorded answer's ISO dates move by the difference in offset."""
         user = redact(user)
-        key = hashlib.sha256(json.dumps([route, system, user, schema.__name__]).encode()).hexdigest()
+        parts = [route, system, schema.__name__, cache_key] if cache_key else [route, system, user, schema.__name__]
+        key = hashlib.sha256(json.dumps(parts).encode()).hexdigest()
         cached = self.cache_dir / f"{key}.json" if self.cache_dir else None
         if cached and cached.exists():
             rec = json.loads(cached.read_text())
             self.stats["replayed"] += 1
-            return LLMResult(schema.model_validate(rec["data"]), rec["tokens"], rec["cost"], rec["model"], True)
+            data = shift_dates(rec["data"], date_offset() - rec.get("date_offset", 0)) if cache_key else rec["data"]
+            return LLMResult(schema.model_validate(data), rec["tokens"], rec["cost"], rec["model"], True)
 
         if self.run_tokens[run_id] >= self.run_budget:
             raise BudgetExceeded(f"run {run_id} used {self.run_tokens[run_id]} tokens (budget {self.run_budget})")
@@ -137,5 +164,6 @@ class LLM:
         if cached:
             cached.parent.mkdir(parents=True, exist_ok=True)
             cached.write_text(json.dumps({"data": data.model_dump(mode="json"), "tokens": tokens, "cost": cost,
-                                          "model": model}, indent=1))
+                                          "model": model, "date_offset": date_offset(), "key": cache_key},
+                                         indent=1))
         return LLMResult(data, tokens, cost, model)

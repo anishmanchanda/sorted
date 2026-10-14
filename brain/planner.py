@@ -99,9 +99,9 @@ def plan_obligations(source_id: int) -> list[str]:
         if days is None or ob.due_date is None:
             continue
         amount = f" ₹{float(ob.amount):,.2f}" if ob.amount else ""
-        what = "appointment" if ob.type == "meeting" else ob.type
-        text = (f"{ob.provider} {what}{amount} is due on {ob.due_date:%d %b}. "
-                + ("" if ob.type == "meeting" else "Reply 'paid' when done, or 'snooze 1h'."))
+        text = (f"{ob.provider} appointment on {ob.due_date:%d %b}." if ob.type == "meeting" else
+                f"{ob.provider} {ob.type}{amount} is due on {ob.due_date:%d %b}. "
+                "Reply 'paid' when done, or 'snooze 1h'.")
         if job := scheduler.remind_before(text, ob.due_date, days, key=f"due:{ob.id}", obligation_id=ob.id):
             created.append(job)
     return created

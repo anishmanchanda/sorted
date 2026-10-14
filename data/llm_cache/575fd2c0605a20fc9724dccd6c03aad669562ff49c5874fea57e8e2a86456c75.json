@@ -1,9 +1,0 @@
-{
- "data": {
-  "code": "import re\nfrom datetime import datetime\nfrom dateutil import parser as date_parser\n\n\ndef extract(text: str) -> dict:\n    person_match = re.search(r'Appointment\\s+confirmed\\s+for\\s+(.+?)\\s+with\\s+Dr\\.', text, re.IGNORECASE | re.DOTALL)\n    if not person_match:\n        raise ValueError('Missing appointment person label')\n    person = re.sub(r'\\s+', ' ', person_match.group(1)).strip()\n\n    date_match = re.search(r'\\bDate:\\s*([^\\n\\r]+)', text, re.IGNORECASE)\n    if not date_match:\n        raise ValueError('Missing Date label')\n    date_str = date_match.group(1).strip()\n    try:\n        due_date = date_parser.parse(date_str, dayfirst=True).date().isoformat()\n    except Exception as e:\n        raise ValueError('Invalid appointment date') from e\n\n    time_match = re.search(r'\\bTime:\\s*([^\\n\\r]+)', text, re.IGNORECASE)\n    if not time_match:\n        raise ValueError('Missing Time label')\n    time_str = time_match.group(1).strip()\n    try:\n        event_time = date_parser.parse(time_str).strftime('%H:%M')\n    except Exception as e:\n        raise ValueError('Invalid appointment time') from e\n\n    return {\n        'type': 'meeting',\n        'provider': 'Apollo Clinic',\n        'currency': 'INR',\n        'due_date': due_date,\n        'event_time': event_time,\n        'person': person,\n    }\n",
-  "notes": "Parses Apollo Clinic appointment emails by anchored body labels for patient, date, and time."
- },
- "tokens": 1369,
- "cost": 0.0085975,
- "model": "gpt-5.4"
-}

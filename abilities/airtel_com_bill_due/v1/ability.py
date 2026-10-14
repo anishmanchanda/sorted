@@ -8,18 +8,21 @@ OUTPUT_FIELDS = ['type', 'provider', 'amount', 'currency', 'due_date']
 
 import re
 from datetime import datetime
+from decimal import Decimal
 
 
 def extract(text: str) -> dict:
-    amount_match = re.search(r"Amount\s*due\s*:\s*[₹Rs\.\s]*([0-9][0-9,]*\.\d{2})", text, re.IGNORECASE)
+    if not re.search(r"Airtel\s+Xstream\s+Fiber", text, re.IGNORECASE):
+        raise ValueError("Missing Airtel Xstream Fiber label")
+
+    amount_match = re.search(r"Amount\s*due\s*:\s*[₹Rs\.\s]*([0-9][0-9,]*\.?[0-9]{0,2})", text, re.IGNORECASE)
     if not amount_match:
         raise ValueError("Missing Amount due label")
+    amount = float(Decimal(amount_match.group(1).replace(',', '')))
 
     due_match = re.search(r"Due\s*date\s*:\s*([0-9]{1,2}-[A-Za-z]{3}-[0-9]{4})", text, re.IGNORECASE)
     if not due_match:
         raise ValueError("Missing Due date label")
-
-    amount = float(amount_match.group(1).replace(",", ""))
     due_date = datetime.strptime(due_match.group(1), "%d-%b-%Y").strftime("%Y-%m-%d")
 
     return {

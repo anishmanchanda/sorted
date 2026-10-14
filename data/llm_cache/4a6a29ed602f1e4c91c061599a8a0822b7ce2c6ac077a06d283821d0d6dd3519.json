@@ -1,9 +1,0 @@
-{
- "data": {
-  "code": "import re\nfrom datetime import datetime\n\n\ndef extract(text: str) -> dict:\n    amount_match = re.search(r\"Amount\\s*due\\s*:\\s*[\u20b9Rs\\.\\s]*([0-9][0-9,]*\\.\\d{2})\", text, re.IGNORECASE)\n    if not amount_match:\n        raise ValueError(\"Missing Amount due label\")\n\n    due_match = re.search(r\"Due\\s*date\\s*:\\s*([0-9]{1,2}-[A-Za-z]{3}-[0-9]{4})\", text, re.IGNORECASE)\n    if not due_match:\n        raise ValueError(\"Missing Due date label\")\n\n    amount = float(amount_match.group(1).replace(\",\", \"\"))\n    due_date = datetime.strptime(due_match.group(1), \"%d-%b-%Y\").strftime(\"%Y-%m-%d\")\n\n    return {\n        \"type\": \"bill_due\",\n        \"provider\": \"Airtel Xstream Fiber\",\n        \"amount\": amount,\n        \"currency\": \"INR\",\n        \"due_date\": due_date,\n    }\n",
-  "notes": "Anchored extraction on Amount due and Due date labels, with Indian-formatted amount support and fixed Airtel bill metadata."
- },
- "tokens": 999,
- "cost": 0.0062975,
- "model": "gpt-5.4"
-}

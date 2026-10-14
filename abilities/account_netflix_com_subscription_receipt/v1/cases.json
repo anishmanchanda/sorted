@@ -1,36 +1,36 @@
 [
  {
-  "input": "From: Netflix <info@account.netflix.com>\nSubject: Your Netflix payment receipt\nDate: 2026-04-18 04:12\n\nYour payment was successful\n\nHi Rohan,\n\nThanks for staying with Netflix. Here are your payment details.\n\nPlan Standard\n\nAmount ₹499.00\n\nPayment method UPI AutoPay\n\nDate 18 April 2026\n\nNext billing date 18 May 2026\n\nQuestions? Visit the Help Centre. - The Netflix team\n",
+  "input": "From: Netflix <info@account.netflix.com>\nSubject: Your Netflix payment receipt\nDate: 2026-05-02 04:12\n\nYour payment was successful\n\nHi Rohan,\n\nThanks for staying with Netflix. Here are your payment details.\n\nPlan Standard\n\nAmount ₹499.00\n\nPayment method UPI AutoPay\n\nDate 02 May 2026\n\nNext billing date 01 June 2026\n\nQuestions? Visit the Help Centre. - The Netflix team\n",
   "expected": {
    "type": "subscription_receipt",
    "provider": "Netflix",
    "amount": 499.0,
    "currency": "INR",
-   "due_date": "2026-05-18",
+   "due_date": "2026-06-01",
    "service": "Netflix"
   },
   "held_out": true
  },
  {
-  "input": "From: Netflix <info@account.netflix.com>\nSubject: Your Netflix payment receipt\nDate: 2026-05-18 04:12\n\nYour payment was successful\n\nHi Rohan,\n\nThanks for staying with Netflix. Here are your payment details.\n\nPlan Standard\n\nAmount ₹499.00\n\nPayment method UPI AutoPay\n\nDate 18 May 2026\n\nNext billing date 18 June 2026\n\nQuestions? Visit the Help Centre. - The Netflix team\n",
+  "input": "From: Netflix <info@account.netflix.com>\nSubject: Your Netflix payment receipt\nDate: 2026-06-01 04:12\n\nYour payment was successful\n\nHi Rohan,\n\nThanks for staying with Netflix. Here are your payment details.\n\nPlan Standard\n\nAmount ₹499.00\n\nPayment method UPI AutoPay\n\nDate 01 June 2026\n\nNext billing date 02 July 2026\n\nQuestions? Visit the Help Centre. - The Netflix team\n",
   "expected": {
    "type": "subscription_receipt",
    "provider": "Netflix",
    "amount": 499.0,
    "currency": "INR",
-   "due_date": "2026-06-18",
+   "due_date": "2026-07-02",
    "service": "Netflix"
   },
   "held_out": false
  },
  {
-  "input": "From: Netflix <info@account.netflix.com>\nSubject: Your Netflix payment receipt\nDate: 2026-06-18 04:12\n\nYour payment was successful\n\nHi Rohan,\n\nThanks for staying with Netflix. Here are your payment details.\n\nPlan Standard\n\nAmount ₹499.00\n\nPayment method UPI AutoPay\n\nDate 18 June 2026\n\nNext billing date 18 July 2026\n\nQuestions? Visit the Help Centre. - The Netflix team\n",
+  "input": "From: Netflix <info@account.netflix.com>\nSubject: Your Netflix payment receipt\nDate: 2026-07-02 04:12\n\nYour payment was successful\n\nHi Rohan,\n\nThanks for staying with Netflix. Here are your payment details.\n\nPlan Standard\n\nAmount ₹499.00\n\nPayment method UPI AutoPay\n\nDate 02 July 2026\n\nNext billing date 01 August 2026\n\nQuestions? Visit the Help Centre. - The Netflix team\n",
   "expected": {
    "type": "subscription_receipt",
    "provider": "Netflix",
    "amount": 499.0,
    "currency": "INR",
-   "due_date": "2026-07-18",
+   "due_date": "2026-08-01",
    "service": "Netflix"
   },
   "held_out": false

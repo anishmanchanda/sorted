@@ -1,0 +1,14 @@
+{
+ "data": {
+  "answer": "\u20b913,903.23 for HDFC Bank bill (due 16 Oct) and \u20b9139 for Spotify subscription (due 19 Oct).",
+  "obligation_ids": [
+   41,
+   38
+  ]
+ },
+ "tokens": 889,
+ "cost": 0.00046035000000000005,
+ "model": "gpt-oss-120b",
+ "date_offset": 14,
+ "key": null
+}

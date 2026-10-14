@@ -1,0 +1,31 @@
+From: HDFC Bank Credit Cards <emailstatements.cards@hdfcbank.net>
+To: rohan.sharma.demo@example.in
+Subject: Your HDFC Bank Credit Card Statement for June 2026
+Date: Fri, 12 Jun 2026 07:40:00 +0530
+Message-ID: <m3_hdfc_cc@samples.sorted.local>
+Content-Type: text/html; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+
+<html><body style=3D"font-family:Arial">
+<p>Dear Rohan Sharma,</p>
+<p>Your HDFC Bank MoneyBack+ Credit Card statement for the period 13-May-2026=
+ to
+12-Jun-2026 has been generated. Please find the summary below.</p>
+<table border=3D"1" cellspacing=3D"0">
+<tr><td style=3D"padding:4px 12px;color:#555">Card Number</td><td style=3D"pa=
+dding:4px 12px"><b>XXXX XXXX XXXX 4821</b></td></tr>
+<tr><td style=3D"padding:4px 12px;color:#555">Statement Date</td><td style=3D=
+"padding:4px 12px"><b>12/06/2026</b></td></tr>
+<tr><td style=3D"padding:4px 12px;color:#555">Payment Due Date</td><td style=
+=3D"padding:4px 12px"><b>02/07/2026</b></td></tr>
+<tr><td style=3D"padding:4px 12px;color:#555">Total Amount Due</td><td style=
+=3D"padding:4px 12px"><b>Rs. 27,884.72</b></td></tr>
+<tr><td style=3D"padding:4px 12px;color:#555">Minimum Amount Due</td><td styl=
+e=3D"padding:4px 12px"><b>Rs. 1,394.00</b></td></tr>
+</table>
+<p>To avoid late payment charges, please pay at least the Minimum Amount Due =
+by the Payment Due Date.</p>
+<p>For queries call 1800-000-0000 (toll free, demo). Warm regards,<br>HDFC Ba=
+nk Credit Cards</p>
+</body></html>

@@ -30,4 +30,4 @@ def test_otp_filter(fixtures):
 
 def test_injection_detector(fixtures):
     flagged = [m.raw_path for m in fixtures if looks_like_injection(m.redacted_text())]
-    assert flagged == ["data/samples/email/2026-06_injection.eml"]
+    assert flagged == ["data/samples/email/m3_injection.eml"]

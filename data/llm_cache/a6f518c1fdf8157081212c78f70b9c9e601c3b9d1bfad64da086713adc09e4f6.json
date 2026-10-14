@@ -1,0 +1,20 @@
+{
+ "data": {
+  "type": "premium_due",
+  "provider": "LIC",
+  "amount": 4215.0,
+  "currency": "INR",
+  "due_date": "2026-06-11",
+  "service": null,
+  "old_price": null,
+  "new_price": null,
+  "event_time": null,
+  "person": null,
+  "document_type": null
+ },
+ "tokens": 994,
+ "cost": 0.0004423,
+ "model": "gpt-oss-120b",
+ "date_offset": 14,
+ "key": "extract:m2_lic"
+}

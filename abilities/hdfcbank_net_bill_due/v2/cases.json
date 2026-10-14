@@ -1,56 +1,56 @@
 [
  {
-  "input": "From: HDFC Bank Credit Cards <emailstatements.cards@hdfcbank.net>\nSubject: Your HDFC Bank Credit Card Statement for April 2026\nDate: 2026-04-12 07:40\n\nDear Rohan Sharma,\n\nYour HDFC Bank MoneyBack+ Credit Card statement for the period 13-Mar-2026 to\n12-Apr-2026 has been generated. Please find the summary below.\n\nCard Number XXXX XXXX XXXX 4821\n\nStatement Date 12/04/2026\n\nPayment Due Date 02/05/2026\n\nTotal Amount Due Rs. 25,264.52\n\nMinimum Amount Due Rs. 1,263.00\n\nTo avoid late payment charges, please pay at least the Minimum Amount Due by the Payment Due Date.\n\nFor queries call 1800-000-0000 (toll free, demo). Warm regards,\nHDFC Bank Credit Cards\n",
+  "input": "From: HDFC Bank Credit Cards <emailstatements.cards@hdfcbank.net>\nSubject: Your HDFC Bank Credit Card Statement for April 2026\nDate: 2026-04-26 07:40\n\nDear Rohan Sharma,\n\nYour HDFC Bank MoneyBack+ Credit Card statement for the period 27-Mar-2026 to\n26-Apr-2026 has been generated. Please find the summary below.\n\nCard Number XXXX XXXX XXXX 4821\n\nStatement Date 26/04/2026\n\nPayment Due Date 16/05/2026\n\nTotal Amount Due Rs. 25,264.52\n\nMinimum Amount Due Rs. 1,263.00\n\nTo avoid late payment charges, please pay at least the Minimum Amount Due by the Payment Due Date.\n\nFor queries call 1800-000-0000 (toll free, demo). Warm regards,\nHDFC Bank Credit Cards\n",
   "expected": {
    "type": "bill_due",
    "provider": "HDFC Bank",
    "amount": 25264.52,
    "currency": "INR",
-   "due_date": "2026-05-02"
+   "due_date": "2026-05-16"
   },
   "held_out": true
  },
  {
-  "input": "From: HDFC Bank Credit Cards <emailstatements.cards@hdfcbank.net>\nSubject: Your HDFC Bank Credit Card Statement for May 2026\nDate: 2026-05-12 07:40\n\nDear Rohan Sharma,\n\nYour HDFC Bank MoneyBack+ Credit Card statement for the period 12-Apr-2026 to\n12-May-2026 has been generated. Please find the summary below.\n\nCard Number XXXX XXXX XXXX 4821\n\nStatement Date 12/05/2026\n\nPayment Due Date 01/06/2026\n\nTotal Amount Due Rs. 15,425.79\n\nMinimum Amount Due Rs. 771.00\n\nTo avoid late payment charges, please pay at least the Minimum Amount Due by the Payment Due Date.\n\nFor queries call 1800-000-0000 (toll free, demo). Warm regards,\nHDFC Bank Credit Cards\n",
+  "input": "From: HDFC Bank Credit Cards <emailstatements.cards@hdfcbank.net>\nSubject: Your HDFC Bank Credit Card Statement for May 2026\nDate: 2026-05-26 07:40\n\nDear Rohan Sharma,\n\nYour HDFC Bank MoneyBack+ Credit Card statement for the period 26-Apr-2026 to\n26-May-2026 has been generated. Please find the summary below.\n\nCard Number XXXX XXXX XXXX 4821\n\nStatement Date 26/05/2026\n\nPayment Due Date 15/06/2026\n\nTotal Amount Due Rs. 15,425.79\n\nMinimum Amount Due Rs. 771.00\n\nTo avoid late payment charges, please pay at least the Minimum Amount Due by the Payment Due Date.\n\nFor queries call 1800-000-0000 (toll free, demo). Warm regards,\nHDFC Bank Credit Cards\n",
   "expected": {
    "type": "bill_due",
    "provider": "HDFC Bank",
    "amount": 15425.79,
    "currency": "INR",
-   "due_date": "2026-06-01"
+   "due_date": "2026-06-15"
   },
   "held_out": false
  },
  {
-  "input": "From: HDFC Bank Credit Cards <emailstatements.cards@hdfcbank.net>\nSubject: Your HDFC Bank Credit Card Statement for June 2026\nDate: 2026-06-12 07:40\n\nDear Rohan Sharma,\n\nYour HDFC Bank MoneyBack+ Credit Card statement for the period 13-May-2026 to\n12-Jun-2026 has been generated. Please find the summary below.\n\nCard Number XXXX XXXX XXXX 4821\n\nStatement Date 12/06/2026\n\nPayment Due Date 02/07/2026\n\nTotal Amount Due Rs. 27,884.72\n\nMinimum Amount Due Rs. 1,394.00\n\nTo avoid late payment charges, please pay at least the Minimum Amount Due by the Payment Due Date.\n\nFor queries call 1800-000-0000 (toll free, demo). Warm regards,\nHDFC Bank Credit Cards\n",
+  "input": "From: HDFC Bank Credit Cards <emailstatements.cards@hdfcbank.net>\nSubject: Your HDFC Bank Credit Card Statement for June 2026\nDate: 2026-06-26 07:40\n\nDear Rohan Sharma,\n\nYour HDFC Bank MoneyBack+ Credit Card statement for the period 27-May-2026 to\n26-Jun-2026 has been generated. Please find the summary below.\n\nCard Number XXXX XXXX XXXX 4821\n\nStatement Date 26/06/2026\n\nPayment Due Date 16/07/2026\n\nTotal Amount Due Rs. 27,884.72\n\nMinimum Amount Due Rs. 1,394.00\n\nTo avoid late payment charges, please pay at least the Minimum Amount Due by the Payment Due Date.\n\nFor queries call 1800-000-0000 (toll free, demo). Warm regards,\nHDFC Bank Credit Cards\n",
   "expected": {
    "type": "bill_due",
    "provider": "HDFC Bank",
    "amount": 27884.72,
    "currency": "INR",
-   "due_date": "2026-07-02"
+   "due_date": "2026-07-16"
   },
   "held_out": false
  },
  {
-  "input": "From: HDFC Bank Credit Cards <emailstatements.cards@hdfcbank.net>\nSubject: Your HDFC Bank Credit Card Statement for July 2026\nDate: 2026-07-12 07:40\n\nDear Rohan Sharma,\n\nYour HDFC Bank MoneyBack+ Credit Card statement for the period 12-Jun-2026 to\n12-Jul-2026 has been generated. Please find the summary below.\n\nCard Number XXXX XXXX XXXX 4821\n\nStatement Date 12/07/2026\n\nPayment Due Date 01/08/2026\n\nTotal Amount Due Rs. 32,088.85\n\nMinimum Amount Due Rs. 1,604.00\n\nTo avoid late payment charges, please pay at least the Minimum Amount Due by the Payment Due Date.\n\nFor queries call 1800-000-0000 (toll free, demo). Warm regards,\nHDFC Bank Credit Cards\n",
+  "input": "From: HDFC Bank Credit Cards <emailstatements.cards@hdfcbank.net>\nSubject: Your HDFC Bank Credit Card Statement for July 2026\nDate: 2026-07-26 07:40\n\nDear Rohan Sharma,\n\nYour HDFC Bank MoneyBack+ Credit Card statement for the period 26-Jun-2026 to\n26-Jul-2026 has been generated. Please find the summary below.\n\nCard Number XXXX XXXX XXXX 4821\n\nStatement Date 26/07/2026\n\nPayment Due Date 15/08/2026\n\nTotal Amount Due Rs. 32,088.85\n\nMinimum Amount Due Rs. 1,604.00\n\nTo avoid late payment charges, please pay at least the Minimum Amount Due by the Payment Due Date.\n\nFor queries call 1800-000-0000 (toll free, demo). Warm regards,\nHDFC Bank Credit Cards\n",
   "expected": {
    "type": "bill_due",
    "provider": "HDFC Bank",
    "amount": 32088.85,
    "currency": "INR",
-   "due_date": "2026-08-01"
+   "due_date": "2026-08-15"
   },
   "held_out": true
  },
  {
-  "input": "From: HDFC Bank Credit Cards <emailstatements.cards@hdfcbank.net>\nSubject: HDFC Bank Credit Card e-Statement | Sep 2026 | Card ending 4821\nDate: 2026-09-12 07:40\n\nHi Rohan, your statement is ready\n\nAmount payable INR 13,903.23\n\nPay by 02 Oct 2026\n\nMin. payable INR 695.00\n\nBilling cycle 13 Aug - 12 Sep 2026. Card ending 4821.\nPay via NetBanking, UPI or the HDFC Bank MobileBanking app.\n",
+  "input": "From: HDFC Bank Credit Cards <emailstatements.cards@hdfcbank.net>\nSubject: HDFC Bank Credit Card e-Statement | Sep 2026 | Card ending 4821\nDate: 2026-09-26 07:40\n\nHi Rohan, your statement is ready\n\nAmount payable INR 13,903.23\n\nPay by 16 Oct 2026\n\nMin. payable INR 695.00\n\nBilling cycle 27 Aug - 26 Sep 2026. Card ending 4821.\nPay via NetBanking, UPI or the HDFC Bank MobileBanking app.\n",
   "expected": {
    "type": "bill_due",
    "provider": "HDFC Bank",
    "amount": 13903.23,
    "currency": "INR",
-   "due_date": "2026-10-02"
+   "due_date": "2026-10-16"
   },
   "held_out": false
  }

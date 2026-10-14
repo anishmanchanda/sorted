@@ -11,16 +11,26 @@ from datetime import datetime
 
 
 def extract(text: str) -> dict:
-    due_date_match = re.search(r'(?im)^\s*Payment\s+Due\s+Date\s+([0-9]{2}/[0-9]{2}/[0-9]{4})\s*$', text)
-    if not due_date_match:
-        raise ValueError('Missing Payment Due Date')
+    due_match = re.search(r'Payment\s+Due\s+Date\s+([0-3]?\d/[01]?\d/\d{4})', text, re.IGNORECASE)
+    if not due_match:
+        raise ValueError('Missing Payment Due Date label')
 
-    amount_match = re.search(r'(?im)^\s*Total\s+Amount\s+Due\s+Rs\.\s*([0-9][0-9,]*\.\d{2})\s*$', text)
+    amount_match = re.search(r'Total\s+Amount\s+Due\s+Rs\.\s*([\d,]+(?:\.\d{2})?)', text, re.IGNORECASE)
     if not amount_match:
-        raise ValueError('Missing Total Amount Due')
+        raise ValueError('Missing Total Amount Due label')
 
-    due_date = datetime.strptime(due_date_match.group(1), '%d/%m/%Y').strftime('%Y-%m-%d')
-    amount = float(amount_match.group(1).replace(',', ''))
+    due_date_raw = due_match.group(1).strip()
+    amount_raw = amount_match.group(1).replace(',', '').strip()
+
+    try:
+        due_date = datetime.strptime(due_date_raw, '%d/%m/%Y').strftime('%Y-%m-%d')
+    except Exception:
+        raise ValueError('Invalid due date format')
+
+    try:
+        amount = float(amount_raw)
+    except Exception:
+        raise ValueError('Invalid amount format')
 
     return {
         'type': 'bill_due',

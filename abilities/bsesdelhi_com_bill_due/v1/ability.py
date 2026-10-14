@@ -11,32 +11,21 @@ from datetime import datetime
 
 
 def extract(text: str) -> dict:
-    if not re.search(r"BSES\s+Rajdhani\s+Power\s+Limited\s*-\s*Electricity\s+Bill", text, re.I):
-        raise ValueError("Missing provider header label")
-
-    amount_match = re.search(
-        r"Net\s+Amount\s+Payable\s*\(\s*Rs\.\s*\)\s*([0-9][0-9,]*\.?[0-9]*)",
-        text,
-        re.I,
-    )
+    amount_match = re.search(r'Net\s+Amount\s+Payable\s*\(Rs\.\)\s*([0-9][0-9,]*\.\d{2})', text, re.IGNORECASE)
     if not amount_match:
-        raise ValueError("Missing Net Amount Payable label")
+        raise ValueError('Missing Net Amount Payable label')
 
-    due_match = re.search(
-        r"Due\s+Date\s*([0-9]{1,2}\.[0-9]{1,2}\.[0-9]{4})",
-        text,
-        re.I,
-    )
+    due_match = re.search(r'Due\s+Date\s*([0-9]{2}\.[0-9]{2}\.[0-9]{4})', text, re.IGNORECASE)
     if not due_match:
-        raise ValueError("Missing Due Date label")
+        raise ValueError('Missing Due Date label')
 
-    amount = float(amount_match.group(1).replace(",", ""))
-    due_date = datetime.strptime(due_match.group(1), "%d.%m.%Y").strftime("%Y-%m-%d")
+    amount = float(amount_match.group(1).replace(',', ''))
+    due_date = datetime.strptime(due_match.group(1), '%d.%m.%Y').strftime('%Y-%m-%d')
 
     return {
-        "type": "bill_due",
-        "provider": "BSES Rajdhani",
-        "amount": amount,
-        "currency": "INR",
-        "due_date": due_date,
+        'type': 'bill_due',
+        'provider': 'BSES Rajdhani',
+        'amount': amount,
+        'currency': 'INR',
+        'due_date': due_date,
     }

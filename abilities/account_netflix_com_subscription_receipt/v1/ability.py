@@ -9,24 +9,19 @@ OUTPUT_FIELDS = ['type', 'provider', 'amount', 'currency', 'due_date', 'service'
 import re
 from datetime import datetime
 
-
 def extract(text: str) -> dict:
-    amount_match = re.search(r'(?mi)^\s*Amount\s*₹\s*([0-9][0-9,]*?(?:\.\d{1,2})?)\s*$', text)
+    if not re.search(r'^Subject:\s*Your\s+Netflix\s+payment\s+receipt\s*$', text, re.IGNORECASE | re.MULTILINE):
+        raise ValueError('Missing subject label')
+
+    amount_match = re.search(r'(?mi)^Amount\s+₹\s*([0-9][0-9,]*\.\d{2})\s*$', text)
     if not amount_match:
         raise ValueError('Missing Amount label')
     amount = float(amount_match.group(1).replace(',', ''))
 
-    due_match = re.search(r'(?mi)^\s*Next\s+billing\s+date\s+([0-9]{1,2}\s+[A-Za-z]+\s+[0-9]{4})\s*$', text)
+    due_match = re.search(r'(?mi)^Next\s+billing\s+date\s+([0-9]{1,2}\s+[A-Za-z]+\s+[0-9]{4})\s*$', text)
     if not due_match:
         raise ValueError('Missing Next billing date label')
-    raw_due = due_match.group(1).strip()
-    try:
-        due_date = datetime.strptime(raw_due, '%d %B %Y').strftime('%Y-%m-%d')
-    except ValueError:
-        try:
-            due_date = datetime.strptime(raw_due, '%d %b %Y').strftime('%Y-%m-%d')
-        except ValueError as e:
-            raise ValueError('Invalid Next billing date') from e
+    due_date = datetime.strptime(due_match.group(1).strip(), '%d %B %Y').strftime('%Y-%m-%d')
 
     return {
         'type': 'subscription_receipt',

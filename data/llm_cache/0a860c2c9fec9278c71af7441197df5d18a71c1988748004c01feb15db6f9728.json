@@ -1,0 +1,11 @@
+{
+ "data": {
+  "code": "import re\nfrom datetime import datetime\nfrom dateutil import parser as date_parser\n\n\ndef extract(text: str) -> dict:\n    def parse_amount(value: str) -> float:\n        cleaned = value.replace(',', '').strip()\n        return float(cleaned)\n\n    def parse_date(value: str) -> str:\n        value = value.strip()\n        for fmt in ('%d/%m/%Y', '%d-%b-%Y', '%d %b %Y'):\n            try:\n                return datetime.strptime(value, fmt).strftime('%Y-%m-%d')\n            except ValueError:\n                pass\n        try:\n            return date_parser.parse(value, dayfirst=True).date().isoformat()\n        except Exception:\n            raise ValueError('Unable to parse date')\n\n    amount_match = re.search(r'(?im)^\\s*Total\\s+Amount\\s+Due\\s+Rs\\.\\s*([0-9][0-9,]*\\.\\d{2})\\s*$', text)\n    if not amount_match:\n        amount_match = re.search(r'(?im)^\\s*Amount\\s+payable\\s+INR\\s*([0-9][0-9,]*\\.\\d{2})\\s*$', text)\n    if not amount_match:\n        raise ValueError('Missing amount label')\n\n    due_match = re.search(r'(?im)^\\s*Payment\\s+Due\\s+Date\\s+([0-9]{1,2}/[0-9]{1,2}/[0-9]{4})\\s*$', text)\n    if not due_match:\n        due_match = re.search(r'(?im)^\\s*Pay\\s+by\\s+([0-9]{1,2}\\s+[A-Za-z]{3}\\s+[0-9]{4})\\s*$', text)\n    if not due_match:\n        raise ValueError('Missing due date label')\n\n    return {\n        'type': 'bill_due',\n        'provider': 'HDFC Bank',\n        'amount': parse_amount(amount_match.group(1)),\n        'currency': 'INR',\n        'due_date': parse_date(due_match.group(1)),\n    }\n",
+  "notes": "Parses HDFC Bank credit card statement emails by anchored amount and due-date labels across both observed layouts."
+ },
+ "tokens": 1533,
+ "cost": 0.0106825,
+ "model": "gpt-5.4",
+ "date_offset": 14,
+ "key": "compile:hdfcbank_net_bill_due:v2:n5:attempt0"
+}

@@ -14,6 +14,13 @@ from zoneinfo import ZoneInfo
 from brain.redact import redact
 
 IST = ZoneInfo("Asia/Kolkata")
+_SIM = re.compile(r"(?:^|[/#])((?:sms_)?m(\d+)_[\w-]+?)(?:\.(?:eml|pdf))?$")
+
+
+def sim_sample(raw_path: str) -> tuple[str, int] | None:
+    """(sample id, Sim month) for a synthetic demo/test sample path, else None."""
+    m = _SIM.search(raw_path or "")
+    return (m.group(1), int(m.group(2))) if m else None
 
 
 def to_ist_naive(dt: datetime) -> datetime:

@@ -5,10 +5,10 @@ setup:
 	@test -f .env || (cp .env.example .env && echo "created .env from .env.example; add your API keys")
 	uv run brain init
 
-samples:
-	uv run python scripts/gen_samples.py
+samples:  ## regenerate the committed canonical test fixtures (data/samples)
+	uv run python -m brain.samples
 
-demo:  ## resets data/brain.db; replays recorded LLM calls from data/llm_cache (live call on a cache miss)
+demo:  ## synthetic 6-month simulation in data/demo.db (never the live DB); replays data/llm_cache
 	uv run python -m brain.demo
 
 demo-live:  ## same, but every LLM call goes to the providers
@@ -18,10 +18,11 @@ test:
 	uv run pytest -q
 
 lint:
-	uv run ruff check brain tests scripts
+	uv run ruff check brain tests
 
-eval:
-	uv run python -m brain.eval
+eval:  ## re-score the last `make demo` run
+	@test -f data/demo.db || (echo "run make demo first" && exit 1)
+	BRAIN_DB_URL=sqlite:///data/demo.db BRAIN_LABELS=data/demo/labels.jsonl BRAIN_SAMPLES_DIR=data/demo/samples uv run python -m brain.eval
 
 train:  ## retrain the local classifier on labelled samples + LLM-labelled messages
 	uv run python -m brain.ml.train

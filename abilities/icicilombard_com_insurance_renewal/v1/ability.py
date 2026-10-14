@@ -11,23 +11,25 @@ from datetime import datetime
 
 
 def extract(text: str) -> dict:
-    if not isinstance(text, str):
-        raise ValueError("text must be a string")
+    subject_match = re.search(r'^Subject:\s*(.+)$', text, re.MULTILINE)
+    if not subject_match:
+        raise ValueError('Missing Subject header')
 
-    amount_match = re.search(r"Renewal\s+premium\s*:\s*₹\s*([0-9][0-9,]*\.?[0-9]*)", text, re.IGNORECASE)
+    amount_match = re.search(r'Renewal\s+premium\s*:\s*₹\s*([0-9][0-9,]*\.?[0-9]*)', text, re.IGNORECASE)
     if not amount_match:
-        raise ValueError("Missing Renewal premium label")
-    amount = float(amount_match.group(1).replace(",", ""))
+        raise ValueError('Missing Renewal premium label')
 
-    due_date_match = re.search(r"\bexpires\s+on\s+([0-9]{1,2}\s+[A-Za-z]{3,9}\s+[0-9]{4})\b", text, re.IGNORECASE)
-    if not due_date_match:
-        raise ValueError("Missing expires on label")
-    due_date = datetime.strptime(due_date_match.group(1), "%d %b %Y").strftime("%Y-%m-%d")
+    due_match = re.search(r'expires\s+on\s+([0-9]{1,2}\s+[A-Za-z]{3}\s+[0-9]{4})', text, re.IGNORECASE)
+    if not due_match:
+        raise ValueError('Missing expires on label')
+
+    amount = float(amount_match.group(1).replace(',', ''))
+    due_date = datetime.strptime(due_match.group(1), '%d %b %Y').strftime('%Y-%m-%d')
 
     return {
-        "type": "insurance_renewal",
-        "provider": "ICICI Lombard",
-        "amount": amount,
-        "currency": "INR",
-        "due_date": due_date,
+        'type': 'insurance_renewal',
+        'provider': 'ICICI Lombard',
+        'amount': amount,
+        'currency': 'INR',
+        'due_date': due_date,
     }

@@ -1,0 +1,20 @@
+{
+ "data": {
+  "type": "document_expiry",
+  "provider": "ICICI Lombard",
+  "amount": null,
+  "currency": "INR",
+  "due_date": "2026-11-03",
+  "service": null,
+  "old_price": null,
+  "new_price": null,
+  "event_time": null,
+  "person": null,
+  "document_type": "car_insurance"
+ },
+ "tokens": 1128,
+ "cost": 0.0005388,
+ "model": "gpt-oss-120b",
+ "date_offset": 14,
+ "key": "extract:m3_icici_car_policy"
+}

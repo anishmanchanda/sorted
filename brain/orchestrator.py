@@ -10,7 +10,7 @@ from brain.agents import ChatAgent, DocumentAgent, InboxAgent
 from brain.compiler import registry
 from brain.filters import is_otp, looks_like_injection
 from brain.llm import LLM, BudgetExceeded, LLMUnavailable
-from brain.messages import Message
+from brain.messages import Message, sim_sample
 from brain.redact import redact
 from brain.validate import Extraction, validate
 
@@ -60,7 +60,8 @@ class Orchestrator:
             if local:
                 return local
         agent = self.inbox if src.kind == "email" else self.document
-        res = agent.extract(src.text, run_id)
+        sim = sim_sample(src.raw_path)  # synthetic sample: replayable across the demo's date shift
+        res = agent.extract(src.text, run_id, cache_key=f"extract:{sim[0]}" if sim else None)
         if ability is not None and ability.status == "shadow":
             event = f"{registry.handler(ability)} {registry.shadow(s, ability, src, res.data)}"
         return res.data, "llm", res.tokens, res.cost, event

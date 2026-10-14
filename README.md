@@ -23,37 +23,48 @@ Cursor through an MCP server.
 
 ## Results (real numbers, from `make demo` and `make eval`)
 
-The demo replays six months of a synthetic household inbox: 76 messages (54 emails, 19 SMS, 3 PDFs). Every
-figure below is copied from [`reports/demo_run.md`](reports/demo_run.md) and [`reports/eval.md`](reports/eval.md).
+`make demo` replays 6 simulated months of synthetic bills in seconds to show how the share of local code grows;
+no real user data or history.
 
-| simulated month | messages | handled by local code | LLM calls | tokens | privacy score | cost / message (USD, est.) |
+The simulation is 76 synthetic messages (54 emails, 19 SMS, 3 PDFs) labelled "Sim month 1-6". Its dates are
+generated relative to the run date, so the simulated timeline ends today and every reminder still scheduled
+afterwards is in the future. It runs in its own database (`data/demo.db`), separate from the live bot's
+database, so the bot's `/score` shows only your real usage (`/score demo` shows the simulation). Every figure
+below is copied from [`reports/demo_run.md`](reports/demo_run.md) and [`reports/eval.md`](reports/eval.md).
+
+| period | messages | handled by local code | LLM calls | tokens | privacy score | cost / message (USD, est.) |
 |---|---|---|---|---|---|---|
-| Apr 2026 | 10 | 0 | 10 | 9,962 | 0% | 0.00045 |
-| May 2026 | 12 | 0 | 12 | 12,999 | 0% | 0.00050 |
-| Jun 2026 | 14 | 1 | 22 | 24,552 | 7% | 0.00576 |
-| Jul 2026 | 12 | 0 | 12 | 11,662 | 0% | 0.00044 |
-| Aug 2026 | 12 | 9 | 4 | 3,806 | **75%** | 0.00068 |
-| Sep 2026 | 12 | 8 | 5 | 5,867 | **67%** | 0.00129 |
+| Sim month 1 | 10 | 0 | 10 | 9,643 | 0% | 0.00043 |
+| Sim month 2 | 12 | 0 | 12 | 11,348 | 0% | 0.00042 |
+| Sim month 3 | 14 | 1 | 22 | 25,877 | 7% | 0.00605 |
+| Sim month 4 | 12 | 0 | 13 | 13,730 | 0% | 0.00169 |
+| Sim month 5 | 12 | 8 | 5 | 5,398 | **67%** | 0.00075 |
+| Sim month 6 | 12 | 8 | 5 | 5,685 | **67%** | 0.00105 |
 
-- June: 9 abilities compiled. Its LLM calls include the compiler agent (strong model), so its cost per message
-  is the highest. July is the shadow month: abilities run next to the LLM, and the LLM's answer is still used.
-- Sep: HDFC redesigns its statement email. `hdfcbank_net_bill_due@v1` fails validation ("Missing Payment Due
-  Date"), the message falls back to the LLM and v2 is compiled from the old cases plus the new layout. The v2
-  compile is part of September's cost.
+- Sim month 3: 8 abilities compiled and passed their tests. Its LLM calls include the compiler agent (strong
+  model), so its cost per message is the highest. The Apollo Clinic parser failed its tests (a brittle date
+  parser, even after one retry) and stayed a candidate; it was recompiled with more evidence in Sim month 4 and
+  passed. Sim month 4 is the shadow month: abilities run next to the LLM, and the LLM's answer is still used.
+- Sim month 6: HDFC redesigns its statement email. `hdfcbank_net_bill_due@v1` fails ("Missing Payment Due Date
+  label"), the message falls back to the LLM and v2 is compiled from the old cases plus the new layout.
 - 11 ability versions compiled, each passing all its visible tests and 100% of its held-out cases. The code is in
-  [`abilities/`](abilities). `uv run pytest abilities` runs their 35 generated tests.
-- **Extraction accuracy:** 100% on type, provider, amount and due date for all 72 non-OTP samples, for both the
-  LLM route and the compiled code (17 compiled-code extractions). The data is synthetic and template-generated,
-  so real inboxes will be harder. We will report real-inbox numbers when we have them.
+  [`abilities/`](abilities). `uv run pytest abilities` runs their 36 generated tests.
+- **Extraction accuracy:** compiled code got 100% of fields right (16 extractions). Across all 72 non-OTP
+  samples: type 98.6%, provider 100%, amount 98.4%, due date 100%. The one LLM miss in this recording: the ICICI
+  policy-schedule PDF was labelled a "document expiry" instead of an "insurance renewal". The data is synthetic
+  and template-generated, so real inboxes will be harder. We will report real-inbox numbers when we have them.
 - **Local ML classifier** (TF-IDF + logistic regression, held-out): 90.0% accuracy over 5 stratified 70/30
   splits. 83.6% of predictions clear the 0.7 confidence threshold, and those are 100% correct; everything
-  below the threshold goes to the LLM. In the six-month demo it starts empty and learns only from the LLM's
-  labels, so with so few examples it never clears the threshold (closest: the Amazon promo at 0.49 for
-  `ignore`) and correctly defers to the LLM.
-- **Rules fire with no LLM:** Spotify ₹119→₹139, Netflix ₹499→₹649 and YouTube ₹129→₹149 each produced a chat
-  alert and a reminder 2 days before the new price.
+  below the threshold goes to the LLM. In the simulation it starts empty and learns only from the LLM's labels,
+  so with so few examples it never clears the threshold and correctly defers to the LLM.
+- **Scheduler with no LLM:** a simulated clock fired 32 reminders on time ("HDFC Bank bill ₹13,903.23 is due on
+  16 Oct…", three days before each due date). Price-increase rules sent 3 chat alerts (Spotify ₹119→₹139, Netflix
+  ₹499→₹649, YouTube ₹129→₹149), each with a reminder two days before the new price.
 - **Safety:** the prompt-injection email never reaches an LLM. OTP SMS are dropped before storage.
-- 51 offline tests (`make test`).
+- **Replay:** the demo runs without an API key. Recorded LLM answers in `data/llm_cache/` are keyed per message,
+  and their dates move with the timeline. We checked a key-less replay with the run date 37 days later: same
+  results, 0 live calls. Only the chat answer needs a key on a different date.
+- 54 offline tests (`make test`).
 
 ## Quickstart
 
@@ -62,26 +73,26 @@ Python 3.12 and [uv](https://docs.astral.sh/uv/) required.
 ```bash
 git clone <this repo> && cd sorted
 make setup      # installs deps, creates .env from .env.example, creates the SQLite DB
-make demo       # six simulated months end to end -> reports/demo_run.md (no API key needed)
-make eval       # extraction accuracy per handler + classifier held-out accuracy -> reports/eval.md
-make test       # 51 offline tests (LLM and TinyFish mocked)
+make demo       # 6 simulated months of synthetic bills -> reports/demo_run.md (data/demo.db; no key)
+make eval       # re-score the last demo: accuracy per handler + classifier held-out -> reports/eval.md
+make test       # 54 offline tests (LLM and TinyFish mocked)
 ```
 
-`make demo` replays the LLM responses recorded in [`data/llm_cache/`](data/llm_cache) during our live run.
-The output is identical to the live run and needs no key. To run against live models, put `OPENAI_API_KEY`
+`make demo` replays the LLM responses recorded in [`data/llm_cache/`](data/llm_cache) during our live run,
+so it needs no key. To run against live models, put `OPENAI_API_KEY`
 and/or `CEREBRAS_API_KEY` in `.env` (optionally `TINYFISH_API_KEY`) and run `make demo-live`. Either key alone
 works: each route falls back to the other provider.
 
 Other entry points:
 
 ```bash
-uv run brain ingest data/samples/email/2026-04_bses.eml   # any .eml or .pdf through the pipeline
+uv run brain ingest data/samples/email/m1_bses.eml   # any .eml or .pdf through the pipeline
 uv run brain say "Track Mom's thyroid tablet, 1 every morning, 30 left"
 uv run brain due              # what's due in the next 7 days (no LLM)
 uv run brain ask "When does my car insurance expire?"
 uv run brain abilities        # compiled abilities + health
 uv run brain approve <name>   # human gate: tested -> shadow
-uv run brain score            # privacy score per month
+uv run brain score            # your privacy score (live DB); --demo for the simulation
 uv run brain fetch <url>      # TinyFish Fetch a page into the pipeline
 uv run brain portal <url> "<goal>"   # TinyFish Agent (replays unless TINYFISH_LIVE=1)
 uv run brain imap --since 2026-10-01 # read-only IMAP (Gmail app password)
@@ -203,7 +214,7 @@ make bot   # needs TELEGRAM_BOT_TOKEN (from @BotFather) in .env
 
 The first chat to send `/start` becomes the owner, or set `TELEGRAM_OWNER_ID`. Every other chat is ignored.
 
-- Commands: `/due` (next 7 days, no LLM), `/score`, `/abilities`, `/approve <name>`, `/audit`, `/portal <url>`.
+- Commands: `/due` (next 7 days, no LLM), `/score` (your real usage; `/score demo` for the simulation), `/abilities`, `/approve <name>`, `/audit`, `/portal <url>`.
 - Reply rules, no LLM: `1` / `done` logs a dose and lowers stock (at ≤ 5 left, the `medicine_refill` rule sends
   a refill alert), `snooze 1h`, `paid [provider]`.
 - "Track …" / "Remind me …" goes to the Planner, which makes one LLM call. The jobs it creates fire with fixed
@@ -237,8 +248,9 @@ Claude Desktop → Settings → Developer → Edit Config (`claude_desktop_confi
 }
 ```
 
-If Claude Desktop cannot find `uv`, use its absolute path (`which uv`). Run `make demo` first so there is state to
-query, then ask Claude "What do I need to pay this week?".
+If Claude Desktop cannot find `uv`, use its absolute path (`which uv`). The server reads the live database. To
+explore the simulation instead, run `make demo` and add `"env": {"BRAIN_DB_URL": "sqlite:////absolute/path/to/sorted/data/demo.db"}`
+to the entry, then ask Claude "What do I need to pay this week?".
 
 Remote clients: `make mcp-http` serves Streamable HTTP at `http://127.0.0.1:8765/mcp`. It requires
 `Authorization: Bearer $BRAIN_MCP_TOKEN`, and `BRAIN_MCP_SCOPE=read` disables the write tools.
@@ -272,8 +284,7 @@ dropped server-side before storage.
 | `brain/scheduler.py`, `brain/replies.py`, `brain/notify.py` | Durable reminders, quiet hours, merging, rule-based replies, the user-only outbound channel |
 | `brain/score.py`, `brain/eval.py` | Privacy score + cost per message; extraction accuracy per handler, classifier held-out accuracy |
 | `brain/telegram_bot.py`, `brain/mcp_server.py` | Channels |
-| `brain/demo.py` | The six-month simulation behind `make demo` |
-| `scripts/gen_samples.py` | Generates the synthetic inbox and its labels (`make samples`) |
+| `brain/demo.py`, `brain/samples.py` | The synthetic 6-month simulation behind `make demo` (own DB, dates relative to the run date, simulated clock); the sample generator (`make samples`) |
 
 ## Safety and privacy
 
@@ -301,7 +312,7 @@ dropped server-side before storage.
 | Ability compiler: detector, compiler agent, AST check, subprocess sandbox, held-out tests, approval, shadow, active, degraded → v2 | Built |
 | Rules as YAML (price increase, price update, medicine refill) | Built |
 | Local ML classifier (TF-IDF + LogReg) with confidence threshold | Built |
-| Privacy score and cost per message | Built (`brain score`, `/score`, MCP) |
+| Privacy score and cost per message | Built (`brain score`, `/score`, `/score demo`, MCP) |
 | Scheduler: one-time, cron, relative; quiet hours; merging | Built |
 | Telegram bot, medicine tracker, reply handlers | Built (tested live in Telegram; logic unit-tested) |
 | Brain MCP server (stdio + Streamable HTTP with bearer token and scope) | Built |

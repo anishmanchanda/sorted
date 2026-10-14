@@ -33,7 +33,7 @@ class FakeLLM:
         self.answer = answer
         self.calls: list[str] = []
 
-    def json(self, route, system, user, schema, run_id=""):
+    def json(self, route, system, user, schema, run_id="", cache_key=None):
         self.calls.append(user)
         return LLMResult(schema.model_validate(self.answer(user, schema)), 100, 0.0001, "fake")
 

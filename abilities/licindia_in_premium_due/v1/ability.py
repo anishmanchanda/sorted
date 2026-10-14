@@ -11,15 +11,17 @@ from datetime import datetime
 
 
 def extract(text: str) -> dict:
-    amount_match = re.search(r'(?mi)^\s*Premium\s+Amount\s*:\s*Rs\.\s*([0-9][0-9,]*\.\d{2})\s*$', text)
+    amount_match = re.search(r'^\s*Premium\s+Amount\s*:\s*Rs\.\s*([0-9,]+(?:\.\d{1,2})?)\s*$', text, re.IGNORECASE | re.MULTILINE)
     if not amount_match:
         raise ValueError('Missing Premium Amount label')
 
-    due_date_match = re.search(r'(?mi)^\s*Due\s+Date\s*:\s*(\d{2}/\d{2}/\d{4})\s*$', text)
+    due_date_match = re.search(r'^\s*Due\s+Date\s*:\s*(\d{1,2}/\d{1,2}/\d{4})\s*$', text, re.IGNORECASE | re.MULTILINE)
     if not due_date_match:
         raise ValueError('Missing Due Date label')
 
-    amount = float(amount_match.group(1).replace(',', ''))
+    amount_str = amount_match.group(1).replace(',', '')
+    amount = float(amount_str)
+
     due_date = datetime.strptime(due_date_match.group(1), '%d/%m/%Y').strftime('%Y-%m-%d')
 
     return {
