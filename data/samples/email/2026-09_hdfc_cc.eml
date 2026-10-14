@@ -1,0 +1,20 @@
+From: HDFC Bank Credit Cards <emailstatements.cards@hdfcbank.net>
+To: rohan.sharma.demo@example.in
+Subject: HDFC Bank Credit Card e-Statement | Sep 2026 | Card ending 4821
+Date: Sat, 12 Sep 2026 07:40:00 +0530
+Message-ID: <2026-09_hdfc_cc@samples.sorted.local>
+Content-Type: text/html; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+
+<html><body style=3D"font-family:Helvetica">
+<div class=3D"hero"><h2>Hi Rohan, your statement is ready</h2></div>
+<div class=3D"kpi"><span class=3D"lbl">Amount payable</span><span class=3D"va=
+l">INR 13,903.23</span></div>
+<div class=3D"kpi"><span class=3D"lbl">Pay by</span><span class=3D"val">02 Oc=
+t 2026</span></div>
+<div class=3D"kpi"><span class=3D"lbl">Min. payable</span><span class=3D"val"=
+>INR 695.00</span></div>
+<div class=3D"foot">Billing cycle 13 Aug - 12 Sep 2026. Card ending 4821.
+Pay via NetBanking, UPI or the HDFC Bank MobileBanking app.</div>
+</body></html>
