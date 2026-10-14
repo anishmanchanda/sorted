@@ -224,6 +224,7 @@ def main() -> None:
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, text_message))
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(name)s %(levelname)s %(message)s")
     logging.getLogger("httpx").setLevel(logging.WARNING)  # the request URL contains the bot token
+    logging.getLogger("apscheduler").setLevel(logging.WARNING)  # the 1-minute heartbeat would flood the log
     print("Sorted bot running. Send /start to your bot in Telegram.")
     app.run_polling()
 
