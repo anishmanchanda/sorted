@@ -6,11 +6,15 @@ ponytail: process-level isolation only. A Docker `--network none` container is t
 
 import json
 import os
-import resource
 import subprocess
 import sys
 import tempfile
 from pathlib import Path
+
+try:  # POSIX only; on Windows the timeout is the only limit
+    import resource
+except ImportError:
+    resource = None
 
 RUNNER = r'''
 import io, json, socket, sys
@@ -45,13 +49,16 @@ def _limits():
 def run(code: str, inputs: list[str], timeout: float = 15.0) -> list[dict]:
     """[{ok: True, value: ...} | {ok: False, error: str}] per input."""
     with tempfile.TemporaryDirectory(prefix="sorted-sandbox-") as tmp:
-        Path(tmp, "ability.py").write_text(code)
-        Path(tmp, "runner.py").write_text(RUNNER)
-        env = {"PATH": os.defpath, "PYTHONDONTWRITEBYTECODE": "1", "LANG": "C.UTF-8"}
+        # UTF-8 explicitly: generated parsers often contain "₹", which the Windows default codepage can't write.
+        Path(tmp, "ability.py").write_text(code, encoding="utf-8")
+        Path(tmp, "runner.py").write_text(RUNNER, encoding="utf-8")
+        env = {"PATH": os.defpath, "PYTHONDONTWRITEBYTECODE": "1", "LANG": "C.UTF-8", "PYTHONUTF8": "1"}
+        if os.name == "nt" and os.environ.get("SYSTEMROOT"):
+            env["SYSTEMROOT"] = os.environ["SYSTEMROOT"]  # Python on Windows can't start without it
         try:
             proc = subprocess.run([sys.executable, "-I", str(Path(tmp, "runner.py")), tmp], input=json.dumps(inputs),
                                   capture_output=True, text=True, cwd=tmp, env=env, timeout=timeout,
-                                  preexec_fn=_limits)
+                                  preexec_fn=_limits if resource else None)
         except subprocess.TimeoutExpired:
             return [{"ok": False, "error": f"timeout after {timeout}s"} for _ in inputs]
         if proc.returncode != 0:
