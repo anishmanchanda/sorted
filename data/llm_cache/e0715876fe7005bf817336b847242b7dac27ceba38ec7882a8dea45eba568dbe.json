@@ -1,0 +1,9 @@
+{
+ "data": {
+  "code": "import re\nfrom datetime import datetime\n\n\ndef _parse_amount(value: str) -> float:\n    cleaned = value.strip()\n    cleaned = cleaned.replace('\u20b9', '').replace('Rs.', '').replace('Rs', '')\n    cleaned = cleaned.replace(',', '').strip()\n    return float(cleaned)\n\n\ndef _parse_date(value: str) -> str:\n    return datetime.strptime(value.strip(), '%d-%b-%Y').strftime('%Y-%m-%d')\n\n\ndef extract(text: str) -> dict:\n    amount_match = re.search(r'(?im)^\\s*Amount\\s+due\\s*:\\s*([^\\n\\r]+)', text)\n    if not amount_match:\n        raise ValueError('Missing Amount due label')\n\n    due_date_match = re.search(r'(?im)^\\s*Due\\s+date\\s*:\\s*([^\\n\\r]+)', text)\n    if not due_date_match:\n        raise ValueError('Missing Due date label')\n\n    amount = _parse_amount(amount_match.group(1))\n    due_date = _parse_date(due_date_match.group(1))\n\n    return {\n        'type': 'bill_due',\n        'provider': 'Airtel',\n        'amount': amount,\n        'currency': 'INR',\n        'due_date': due_date,\n    }\n",
+  "notes": "Anchored regex extraction for Airtel Xstream Fiber amount due and due date with strict label checks."
+ },
+ "tokens": 1040,
+ "cost": 0.00695,
+ "model": "gpt-5.4"
+}

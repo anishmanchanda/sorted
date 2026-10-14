@@ -1,0 +1,18 @@
+{
+ "data": {
+  "type": "bill_due",
+  "provider": "Airtel",
+  "amount": 1178.82,
+  "currency": "INR",
+  "due_date": "2026-04-20",
+  "service": null,
+  "old_price": null,
+  "new_price": null,
+  "event_time": null,
+  "person": null,
+  "document_type": null
+ },
+ "tokens": 926,
+ "cost": 0.0004105,
+ "model": "gpt-oss-120b"
+}

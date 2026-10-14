@@ -1,0 +1,18 @@
+{
+ "data": {
+  "type": "document_expiry",
+  "provider": "Transport Department",
+  "amount": null,
+  "currency": "INR",
+  "due_date": "2026-11-10",
+  "service": null,
+  "old_price": null,
+  "new_price": null,
+  "event_time": null,
+  "person": null,
+  "document_type": "puc"
+ },
+ "tokens": 969,
+ "cost": 0.00044154999999999997,
+ "model": "gpt-oss-120b"
+}

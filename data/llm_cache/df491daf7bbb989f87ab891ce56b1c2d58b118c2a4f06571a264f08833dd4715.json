@@ -1,0 +1,18 @@
+{
+ "data": {
+  "type": "subscription_price_change",
+  "provider": "Netflix",
+  "amount": 649.0,
+  "currency": "INR",
+  "due_date": "2026-08-18",
+  "service": "Netflix",
+  "old_price": 499.0,
+  "new_price": 649.0,
+  "event_time": null,
+  "person": null,
+  "document_type": null
+ },
+ "tokens": 983,
+ "cost": 0.00045565,
+ "model": "gpt-oss-120b"
+}

@@ -13,6 +13,8 @@ dependencies = [
     "fastapi>=0.143.0",
     "uvicorn>=0.54.0",
     "pdfplumber>=0.11.10",
+    "pyyaml>=6.0.3",
+    "apscheduler>=3.10,<4",
 ]
 
 [project.scripts]
@@ -43,3 +45,4 @@ ignore = ["B008"]  # FastAPI Depends() in defaults is the idiom
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+addopts = "--import-mode=importlib"

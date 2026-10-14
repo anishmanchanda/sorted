@@ -7,7 +7,7 @@ Every prompt's user content is redacted here, so no caller can forget to.
 
 import hashlib
 import json
-from collections import defaultdict
+from collections import Counter, defaultdict
 from dataclasses import dataclass
 from datetime import date, datetime
 from pathlib import Path
@@ -59,6 +59,7 @@ class LLM:
         self.run_tokens: dict[str, int] = defaultdict(int)
         self._day: tuple[date, int] | None = None
         self._clients: dict[str, OpenAI] = {}
+        self.stats: Counter = Counter()  # live / replayed calls
 
     def route(self, route: str) -> tuple[str, str]:
         """(provider, model) for 'small' or 'strong'. Falls back to the other provider if a key is missing."""
@@ -104,6 +105,7 @@ class LLM:
         cached = self.cache_dir / f"{key}.json" if self.cache_dir else None
         if cached and cached.exists():
             rec = json.loads(cached.read_text())
+            self.stats["replayed"] += 1
             return LLMResult(schema.model_validate(rec["data"]), rec["tokens"], rec["cost"], rec["model"], True)
 
         if self.run_tokens[run_id] >= self.run_budget:
@@ -131,6 +133,7 @@ class LLM:
                 fix = f"That JSON failed validation:\n{e}\nReturn corrected JSON only."
                 messages += [{"role": "assistant", "content": content}, {"role": "user", "content": fix}]
         self._spend(run_id, tokens)
+        self.stats["live"] += 1
         if cached:
             cached.parent.mkdir(parents=True, exist_ok=True)
             cached.write_text(json.dumps({"data": data.model_dump(mode="json"), "tokens": tokens, "cost": cost,

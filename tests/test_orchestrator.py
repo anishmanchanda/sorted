@@ -21,7 +21,8 @@ def test_full_fixture_run_with_perfect_extractor(fixtures, label_llm):
     flagged = [o for o in obs if o.status == "flagged"]
     assert {o.provider for o in flagged} == {"ICICI Lombard"}  # policy schedule premium != renewal quote
     assert all(o.source_id for o in obs)
-    assert {s.service: float(s.price) for s in _rows(db.Subscription)} == {"Netflix": 649.0, "Spotify": 139.0}
+    assert {s.service: float(s.price) for s in _rows(db.Subscription)} == {"Netflix": 649.0, "Spotify": 139.0,
+                                                                       "YouTube": 149.0}  # via rule
     assert [d.type for d in _rows(db.Document)] == ["puc"]
     traces = _rows(db.Trace)
     assert len(traces) == len(fixtures) - 4 and all(t.task_kind == "extract" for t in traces)

@@ -1,0 +1,9 @@
+{
+ "data": {
+  "code": "import re\nfrom datetime import datetime\n\n\ndef extract(text: str) -> dict:\n    amount_match = re.search(r\"Net\\s+Amount\\s+Payable\\s*\\(\\s*Rs\\.\\s*\\)\\s*([0-9][0-9,]*\\.\\d{2})\", text, re.IGNORECASE)\n    if not amount_match:\n        raise ValueError(\"Missing Net Amount Payable label\")\n\n    due_date_match = re.search(r\"Due\\s+Date\\s*([0-9]{1,2}\\.[0-9]{1,2}\\.[0-9]{4})\", text, re.IGNORECASE)\n    if not due_date_match:\n        raise ValueError(\"Missing Due Date label\")\n\n    amount = float(amount_match.group(1).replace(',', ''))\n    due_date = datetime.strptime(due_date_match.group(1), \"%d.%m.%Y\").strftime(\"%Y-%m-%d\")\n\n    return {\n        \"type\": \"bill_due\",\n        \"provider\": \"BSES Rajdhani\",\n        \"amount\": amount,\n        \"currency\": \"INR\",\n        \"due_date\": due_date,\n    }\n",
+  "notes": "Anchored extraction on 'Net Amount Payable (Rs.)' and 'Due Date' with Indian-number formatting support."
+ },
+ "tokens": 1092,
+ "cost": 0.0066675,
+ "model": "gpt-5.4"
+}

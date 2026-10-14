@@ -1,0 +1,16 @@
+# Rules are data: readable, editable, and run with no LLM. Actions come from a fixed set (brain/rules/__init__.py).
+rule: subscription_price_increase
+description: Tell me whenever any subscription gets more expensive, and remind me before the new price hits.
+when:
+  type: subscription_price_change
+  condition: new_price > stored_price
+then:
+  - update_subscription: {}
+  - reminder:
+      date_field: effective_date
+      days_before: 2
+      at: "09:00"
+      text: "{service} price rises to ₹{new_price} on {effective_date}. Keep it or cancel before then."
+  - send_message:
+      template: "{service} is raising your price from ₹{stored_price} to ₹{new_price} on {effective_date}. Reply KEEP or CANCEL-HELP."
+permissions: [state.write, reminder.create, chat.send_self]

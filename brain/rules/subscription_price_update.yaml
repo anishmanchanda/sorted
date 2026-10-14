@@ -1,0 +1,9 @@
+# A price change that is not an increase only updates state (no alert, no reminder).
+rule: subscription_price_update
+description: Keep the stored subscription price current when a price drops or stays the same.
+when:
+  type: subscription_price_change
+  condition: new_price <= stored_price
+then:
+  - update_subscription: {}
+permissions: [state.write]

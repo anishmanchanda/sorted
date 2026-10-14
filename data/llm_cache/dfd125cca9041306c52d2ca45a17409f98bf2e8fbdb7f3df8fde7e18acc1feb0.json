@@ -1,0 +1,18 @@
+{
+ "data": {
+  "type": "premium_due",
+  "provider": "LIC",
+  "amount": 4215.0,
+  "currency": "INR",
+  "due_date": "2026-04-28",
+  "service": null,
+  "old_price": null,
+  "new_price": null,
+  "event_time": null,
+  "person": null,
+  "document_type": null
+ },
+ "tokens": 931,
+ "cost": 0.00040185,
+ "model": "gpt-oss-120b"
+}

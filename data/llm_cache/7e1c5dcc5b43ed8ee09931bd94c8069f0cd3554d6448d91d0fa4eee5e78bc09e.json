@@ -1,0 +1,9 @@
+{
+ "data": {
+  "code": "import re\nfrom datetime import datetime\n\n\ndef extract(text: str) -> dict:\n    if not re.search(r'^\\s*PREMIUM\\s+DUE\\s+NOTICE\\s*$', text, re.IGNORECASE | re.MULTILINE):\n        raise ValueError('Missing PREMIUM DUE NOTICE label')\n\n    amount_match = re.search(\n        r'^\\s*Premium\\s+Amount\\s*:\\s*Rs\\.\\s*([0-9][0-9,]*\\.\\d{2})\\s*$',\n        text,\n        re.IGNORECASE | re.MULTILINE,\n    )\n    if not amount_match:\n        raise ValueError('Missing Premium Amount label')\n\n    due_date_match = re.search(\n        r'^\\s*Due\\s+Date\\s*:\\s*(\\d{1,2}/\\d{1,2}/\\d{4})\\s*$',\n        text,\n        re.IGNORECASE | re.MULTILINE,\n    )\n    if not due_date_match:\n        raise ValueError('Missing Due Date label')\n\n    amount = float(amount_match.group(1).replace(',', ''))\n    due_date = datetime.strptime(due_date_match.group(1), '%d/%m/%Y').strftime('%Y-%m-%d')\n\n    provider = 'LIC of India'\n\n    return {\n        'type': 'premium_due',\n        'provider': provider,\n        'amount': amount,\n        'currency': 'INR',\n        'due_date': due_date,\n    }\n",
+  "notes": "Parses LIC premium due notices by anchored Premium Amount and Due Date labels and normalizes INR amount/date."
+ },
+ "tokens": 1153,
+ "cost": 0.0078825,
+ "model": "gpt-5.4"
+}

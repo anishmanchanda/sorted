@@ -1,4 +1,4 @@
-.PHONY: setup samples demo test eval lint bot mcp
+.PHONY: setup samples demo demo-live test eval lint bot mcp
 
 setup:
 	uv sync
@@ -8,9 +8,11 @@ setup:
 samples:
 	uv run python scripts/gen_samples.py
 
-demo:
-	@echo "end-to-end demo lands in M8; current state:"
-	uv run brain stats
+demo:  ## resets data/brain.db; replays recorded LLM calls from data/llm_cache (live call on a cache miss)
+	uv run python -m brain.demo
+
+demo-live:  ## same, but every LLM call goes to the providers
+	uv run python -m brain.demo --live
 
 test:
 	uv run pytest -q

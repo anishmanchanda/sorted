@@ -1,0 +1,35 @@
+[
+ {
+  "input": "From: AX-AIRTEL\nSubject: \nDate: 2026-04-01 10:30\n\nDear Customer, your Airtel Xstream bill of Rs 1178.82 for a/c XXXXXX3456 is due on 20-Apr-2026. Pay now via Airtel Thanks app.\n",
+  "expected": {
+   "type": "bill_due",
+   "provider": "Airtel",
+   "amount": 1178.82,
+   "currency": "INR",
+   "due_date": "2026-04-20"
+  },
+  "held_out": true
+ },
+ {
+  "input": "From: AX-AIRTEL\nSubject: \nDate: 2026-05-01 10:30\n\nDear Customer, your Airtel Xstream bill of Rs 1178.82 for a/c XXXXXX3456 is due on 20-May-2026. Pay now via Airtel Thanks app.\n",
+  "expected": {
+   "type": "bill_due",
+   "provider": "Airtel",
+   "amount": 1178.82,
+   "currency": "INR",
+   "due_date": "2026-05-20"
+  },
+  "held_out": false
+ },
+ {
+  "input": "From: AX-AIRTEL\nSubject: \nDate: 2026-06-01 10:30\n\nDear Customer, your Airtel Xstream bill of Rs 1178.82 for a/c XXXXXX3456 is due on 20-Jun-2026. Pay now via Airtel Thanks app.\n",
+  "expected": {
+   "type": "bill_due",
+   "provider": "Airtel",
+   "amount": 1178.82,
+   "currency": "INR",
+   "due_date": "2026-06-20"
+  },
+  "held_out": false
+ }
+]

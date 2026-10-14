@@ -1,0 +1,18 @@
+{
+ "data": {
+  "type": "subscription_receipt",
+  "provider": "Netflix",
+  "amount": 499.0,
+  "currency": "INR",
+  "due_date": "2026-08-18",
+  "service": "Netflix",
+  "old_price": null,
+  "new_price": null,
+  "event_time": null,
+  "person": null,
+  "document_type": null
+ },
+ "tokens": 899,
+ "cost": 0.00040104999999999996,
+ "model": "gpt-oss-120b"
+}

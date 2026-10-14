@@ -1,0 +1,35 @@
+[
+ {
+  "input": "From: BSES Rajdhani Power Ltd <ebill@bsesdelhi.com>\nSubject: BSES Rajdhani electricity bill for CA No XXXXX4567 - Apr 2026\nDate: 2026-04-05 11:15\n\nBSES Rajdhani Power Limited - Electricity Bill\n\nDear Consumer Rohan Sharma,\n\nYour electricity bill for CA No. XXXXX4567 for the month of Apr-2026 is generated.\n\nBill Date 05.04.2026\n\nUnits Consumed (kWh) 126\n\nNet Amount Payable (Rs.) 959.00\n\nDue Date 20.04.2026\n\nRegistered mobile: [phone]. Pay online at bsesdelhi.com or via any UPI app.\nBill paid after due date attracts a Late Payment Surcharge.\n",
+  "expected": {
+   "type": "bill_due",
+   "provider": "BSES Rajdhani",
+   "amount": 959.0,
+   "currency": "INR",
+   "due_date": "2026-04-20"
+  },
+  "held_out": false
+ },
+ {
+  "input": "From: BSES Rajdhani Power Ltd <ebill@bsesdelhi.com>\nSubject: BSES Rajdhani electricity bill for CA No XXXXX4567 - May 2026\nDate: 2026-05-05 11:15\n\nBSES Rajdhani Power Limited - Electricity Bill\n\nDear Consumer Rohan Sharma,\n\nYour electricity bill for CA No. XXXXX4567 for the month of May-2026 is generated.\n\nBill Date 05.05.2026\n\nUnits Consumed (kWh) 294\n\nNet Amount Payable (Rs.) 2,051.00\n\nDue Date 20.05.2026\n\nRegistered mobile: [phone]. Pay online at bsesdelhi.com or via any UPI app.\nBill paid after due date attracts a Late Payment Surcharge.\n",
+  "expected": {
+   "type": "bill_due",
+   "provider": "BSES Rajdhani",
+   "amount": 2051.0,
+   "currency": "INR",
+   "due_date": "2026-05-20"
+  },
+  "held_out": false
+ },
+ {
+  "input": "From: BSES Rajdhani Power Ltd <ebill@bsesdelhi.com>\nSubject: BSES Rajdhani electricity bill for CA No XXXXX4567 - Jun 2026\nDate: 2026-06-05 11:15\n\nBSES Rajdhani Power Limited - Electricity Bill\n\nDear Consumer Rohan Sharma,\n\nYour electricity bill for CA No. XXXXX4567 for the month of Jun-2026 is generated.\n\nBill Date 05.06.2026\n\nUnits Consumed (kWh) 526\n\nNet Amount Payable (Rs.) 3,559.00\n\nDue Date 20.06.2026\n\nRegistered mobile: [phone]. Pay online at bsesdelhi.com or via any UPI app.\nBill paid after due date attracts a Late Payment Surcharge.\n",
+  "expected": {
+   "type": "bill_due",
+   "provider": "BSES Rajdhani",
+   "amount": 3559.0,
+   "currency": "INR",
+   "due_date": "2026-06-20"
+  },
+  "held_out": true
+ }
+]

@@ -3,6 +3,7 @@ import os
 # Tests never touch the real DB file, never hit a live LLM, and never use a replay cache.
 os.environ["BRAIN_DB_URL"] = "sqlite://"
 os.environ["BRAIN_LLM_CACHE"] = ""
+os.environ["BRAIN_ABILITIES_DIR"] = __import__("tempfile").mkdtemp(prefix="sorted-abilities-")
 
 import pytest  # noqa: E402
 

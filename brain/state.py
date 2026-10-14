@@ -12,7 +12,8 @@ OBLIGATION_TYPE = {
     "bill_due": "bill", "premium_due": "premium", "insurance_renewal": "renewal",
     "subscription_receipt": "subscription", "meeting": "meeting",
 }
-_STOP = {"bank", "ltd", "limited", "india", "of", "the", "co", "company", "insurance", "power", "govt"}
+_STOP = {"bank", "ltd", "limited", "india", "of", "the", "co", "company", "insurance", "power", "govt",
+         "premium", "plan", "standard", "individual", "subscription", "membership", "service", "services"}
 
 
 def _tokens(s: str) -> set[str]:
@@ -37,7 +38,7 @@ def apply(s, src: db.SourceRecord, ext: Extraction, problems: list[str]) -> str:
         s.add(db.Document(type=ext.document_type or "document", expiry=ext.due_date, source_id=src.id))
         return "document"
     if ext.type == "subscription_receipt" and not problems:
-        service = ext.service or ext.provider
+        service = ext.provider or ext.service  # the brand; LLMs sometimes put the plan name in `service`
         sub = s.scalar(select(db.Subscription).where(db.Subscription.service == service))
         if sub is None:
             s.add(db.Subscription(service=service, price=ext.amount, source_id=src.id))

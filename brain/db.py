@@ -124,6 +124,7 @@ class Ability(Base):
     runs: Mapped[int] = mapped_column(Integer, default=0)
     failures: Mapped[int] = mapped_column(Integer, default=0)
     shadow_matches: Mapped[int] = mapped_column(Integer, default=0)
+    repair_from_source: Mapped[int | None] = mapped_column(Integer)  # first source the old version failed on
     last_error: Mapped[str] = mapped_column(Text, default="")
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
 

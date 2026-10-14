@@ -1,0 +1,35 @@
+[
+ {
+  "input": "From: ICICI Lombard <renewals@icicilombard.com>\nSubject: Your car insurance policy expires on 20 Sep 2026 - renew now\nDate: 2026-06-20 12:15\n\nDear Rohan Sharma,\n\nYour Private Car Package Policy No. 3001/CAR/12345678/00/000 for vehicle DL 3C AB 1234\n(Hyundai i20) expires on 20 Sep 2026 — that's 92 days from today.\n\nRenewal premium: ₹14,860.00 (incl. GST, with 25% No Claim Bonus).\n\nRenew before expiry to keep your NCB and avoid a vehicle inspection. Renew at icicilombard.com.\n",
+  "expected": {
+   "type": "insurance_renewal",
+   "provider": "ICICI Lombard",
+   "amount": 14860.0,
+   "currency": "INR",
+   "due_date": "2026-09-20"
+  },
+  "held_out": true
+ },
+ {
+  "input": "From: ICICI Lombard <renewals@icicilombard.com>\nSubject: Your car insurance policy expires on 20 Sep 2026 - renew now\nDate: 2026-07-21 12:15\n\nDear Rohan Sharma,\n\nYour Private Car Package Policy No. 3001/CAR/12345678/00/000 for vehicle DL 3C AB 1234\n(Hyundai i20) expires on 20 Sep 2026 — that's 61 days from today.\n\nRenewal premium: ₹14,860.00 (incl. GST, with 25% No Claim Bonus).\n\nRenew before expiry to keep your NCB and avoid a vehicle inspection. Renew at icicilombard.com.\n",
+  "expected": {
+   "type": "insurance_renewal",
+   "provider": "ICICI Lombard",
+   "amount": 14860.0,
+   "currency": "INR",
+   "due_date": "2026-09-20"
+  },
+  "held_out": false
+ },
+ {
+  "input": "From: ICICI Lombard <renewals@icicilombard.com>\nSubject: Your car insurance policy expires on 20 Sep 2026 - renew now\nDate: 2026-08-21 12:15\n\nDear Rohan Sharma,\n\nYour Private Car Package Policy No. 3001/CAR/12345678/00/000 for vehicle DL 3C AB 1234\n(Hyundai i20) expires on 20 Sep 2026 — that's 30 days from today.\n\nRenewal premium: ₹14,860.00 (incl. GST, with 25% No Claim Bonus).\n\nRenew before expiry to keep your NCB and avoid a vehicle inspection. Renew at icicilombard.com.\n",
+  "expected": {
+   "type": "insurance_renewal",
+   "provider": "ICICI Lombard",
+   "amount": 14860.0,
+   "currency": "INR",
+   "due_date": "2026-09-20"
+  },
+  "held_out": false
+ }
+]

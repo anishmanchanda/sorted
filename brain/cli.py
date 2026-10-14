@@ -72,6 +72,48 @@ def cmd_ask(args) -> None:
     print(_orch().ask(" ".join(args.question)))
 
 
+def cmd_compile(_args) -> None:
+    from brain.compiler.generator import compile_pending
+    from brain.llm import LLM
+
+    db.init_db()
+    with db.Session() as s:
+        results = compile_pending(s, LLM())
+        s.commit()
+    for r in results:
+        print(f"{r['ability']} v{r['version']}: {r['status']} (visible {r['visible']}, held-out {r['held_out']}, "
+              f"held-out pass {100 * r['held_out_pass_rate']:.0f}%){'  ' + r['error'][:200] if r['error'] else ''}")
+    if not results:
+        print("nothing to compile")
+
+
+def cmd_approve(args) -> None:
+    from brain.compiler import registry
+
+    db.init_db()
+    with db.Session() as s:
+        ab = registry.approve(s, args.name, actor="cli")
+        s.commit()
+    print(f"{ab.name} v{ab.version} -> shadow" if ab else f"no tested ability named {args.name!r}")
+
+
+def cmd_abilities(_args) -> None:
+    from brain.compiler import registry
+
+    db.init_db()
+    with db.Session() as s:
+        for ab in registry.listing(s):
+            print(f"{ab.name:40} v{ab.version} {ab.status:9} runs={ab.runs} failures={ab.failures} "
+                  f"shadow_matches={ab.shadow_matches} {ab.last_error[:80]}")
+
+
+def cmd_score(_args) -> None:
+    from brain import score
+
+    db.init_db()
+    print(score.summary())
+
+
 def cmd_serve_sms(args) -> None:
     import uvicorn
 
@@ -96,6 +138,12 @@ def main(argv: list[str] | None = None) -> None:
     sp = sub.add_parser("ask", help="ask the chat agent (answers from state only)")
     sp.add_argument("question", nargs="+")
     sp.set_defaults(fn=cmd_ask)
+    sub.add_parser("compile", help="detect repeated patterns and compile abilities").set_defaults(fn=cmd_compile)
+    sp = sub.add_parser("approve", help="approve a tested ability for shadow mode")
+    sp.add_argument("name")
+    sp.set_defaults(fn=cmd_approve)
+    sub.add_parser("abilities", help="list abilities with health stats").set_defaults(fn=cmd_abilities)
+    sub.add_parser("score", help="privacy score and cost per message, per month").set_defaults(fn=cmd_score)
     sp = sub.add_parser("serve-sms", help="run the POST /ingest/sms webhook")
     sp.add_argument("--host", default="127.0.0.1")
     sp.add_argument("--port", type=int, default=8787)

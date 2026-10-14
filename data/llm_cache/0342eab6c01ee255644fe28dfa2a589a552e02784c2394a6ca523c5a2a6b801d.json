@@ -1,0 +1,9 @@
+{
+ "data": {
+  "code": "import re\nfrom datetime import datetime\n\n\ndef extract(text: str) -> dict:\n    amount_match = re.search(r'(?mi)^\\s*Amount\\s*\u20b9\\s*([0-9][0-9,]*\\.\\d{2})\\s*$', text)\n    if not amount_match:\n        raise ValueError('Missing Amount label')\n    amount = float(amount_match.group(1).replace(',', ''))\n\n    due_match = re.search(r'(?mi)^\\s*Next\\s+billing\\s+date\\s+([0-9]{1,2}\\s+[A-Za-z]+\\s+[0-9]{4})\\s*$', text)\n    if not due_match:\n        raise ValueError('Missing Next billing date label')\n    due_raw = due_match.group(1).strip()\n    try:\n        due_date = datetime.strptime(due_raw, '%d %B %Y').strftime('%Y-%m-%d')\n    except ValueError:\n        raise ValueError('Invalid Next billing date format')\n\n    return {\n        'type': 'subscription_receipt',\n        'provider': 'Netflix',\n        'amount': amount,\n        'currency': 'INR',\n        'due_date': due_date,\n        'service': 'Netflix',\n    }\n",
+  "notes": "Anchored regex extraction for Netflix receipt amount and next billing date, with strict label checks."
+ },
+ "tokens": 985,
+ "cost": 0.0066375,
+ "model": "gpt-5.4"
+}

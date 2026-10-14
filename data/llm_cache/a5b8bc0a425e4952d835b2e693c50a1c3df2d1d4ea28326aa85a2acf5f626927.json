@@ -1,0 +1,18 @@
+{
+ "data": {
+  "type": "subscription_receipt",
+  "provider": "Spotify",
+  "amount": 139.0,
+  "currency": "INR",
+  "due_date": "2026-08-05",
+  "service": "Spotify",
+  "old_price": null,
+  "new_price": null,
+  "event_time": null,
+  "person": null,
+  "document_type": null
+ },
+ "tokens": 955,
+ "cost": 0.00044665,
+ "model": "gpt-oss-120b"
+}

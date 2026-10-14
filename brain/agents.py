@@ -28,9 +28,11 @@ Meaning per type:
 - premium_due: insurance premium due notice (e.g. LIC). amount = premium, due_date = premium due date.
 - insurance_renewal: policy expiry / renewal reminder / policy schedule. amount = renewal premium (or total
   premium on a schedule), due_date = policy expiry date.
-- subscription_receipt: payment receipt for a subscription. service, amount = amount charged,
+- subscription_receipt: payment receipt for a subscription. service = the brand (e.g. "Netflix"), never the
+  plan name. amount = amount charged,
   due_date = next billing date.
-- subscription_price_change: price change notice. service, old_price, new_price, amount = new_price,
+- subscription_price_change: price change notice. service = the brand (never the plan name), old_price,
+  new_price, amount = new_price,
   due_date = date the new price takes effect.
 - meeting: appointment or meeting invite. provider = organiser (clinic, company), due_date = event date,
   event_time = start time (24h), person = who it is for.
