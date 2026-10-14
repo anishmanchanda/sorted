@@ -88,12 +88,16 @@ ACTIONS = {"update_subscription": _update_subscription, "reminder": _reminder, "
 
 
 def apply(s, src: db.SourceRecord, ext: Extraction) -> tuple[list[str], list[Callable[[], None]]]:
-    """Run every matching rule. Returns (fired rule names, side effects to run after commit)."""
+    """Run every rule matching this extraction's type."""
+    return run(s, src, ext.type, context(s, ext))  # context = state as it was before any rule ran
+
+
+def run(s, src: db.SourceRecord | None, event: str, ctx: dict) -> tuple[list[str], list[Callable[[], None]]]:
+    """Run every rule whose `when.type` is `event`. Returns (fired rule names, side effects for after commit)."""
     fired, after_commit = [], []
-    ctx = context(s, ext)  # state as it was before any rule ran
     for rule in load_rules():
         when = rule["when"]
-        if when.get("type") != ext.type:
+        if when.get("type") != event:
             continue
         if "condition" in when and not holds(when["condition"], ctx):
             continue
@@ -105,6 +109,7 @@ def apply(s, src: db.SourceRecord, ext: Extraction) -> tuple[list[str], list[Cal
             effect = ACTIONS[name](s, src, ctx, spec or {})
             if effect:
                 after_commit.append(effect)
-        db.audit(s, "rule", rule["rule"], source=src.id, service=ctx.get("service"), new_price=ctx.get("new_price"))
+        db.audit(s, "rule", rule["rule"], source=src.id if src else None,
+                 **{k: v for k, v in ctx.items() if k in ("service", "new_price", "name", "stock")})
         fired.append(rule["rule"])
     return fired, after_commit

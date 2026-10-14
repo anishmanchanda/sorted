@@ -17,6 +17,7 @@ dependencies = [
     "apscheduler>=3.10,<4",
     "scikit-learn>=1.9.1",
     "joblib>=1.6.0",
+    "python-telegram-bot>=21",
 ]
 
 [project.scripts]

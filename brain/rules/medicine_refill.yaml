@@ -1,0 +1,10 @@
+# Fires after a dose is logged (reply "1"). No LLM.
+rule: medicine_refill
+description: When a tracked medicine runs low, remind me to refill it.
+when:
+  type: medication_stock
+  condition: stock <= 5
+then:
+  - send_message:
+      template: "Only {stock} left of {whose} {name}. Time to order a refill."
+permissions: [chat.send_self]

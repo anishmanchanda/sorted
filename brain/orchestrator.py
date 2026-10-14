@@ -5,7 +5,7 @@ import uuid
 import openai
 from sqlalchemy import select
 
-from brain import db, rules, state
+from brain import db, planner, rules, state
 from brain.agents import ChatAgent, DocumentAgent, InboxAgent
 from brain.compiler import registry
 from brain.filters import is_otp, looks_like_injection
@@ -88,6 +88,8 @@ class Orchestrator:
         problems = validate(ext, src.received_at)
         outcome = state.apply(s, src, ext, problems)
         fired, after_commit = rules.apply(s, src, ext) if not problems else ([], [])
+        if outcome == "open":  # relative reminders ("3 days before due"), no LLM
+            after_commit.append(lambda: planner.plan_obligations(src.id))
         s.add(db.Trace(run_id=run_id, task_kind="extract", input_ref=src.id, handler=handler, tokens=tokens,
                        cost=cost, output_json=ext.model_dump(mode="json", exclude_none=True), accepted=not problems))
         src.status = "done"

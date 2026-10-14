@@ -4,6 +4,7 @@
 *.db-journal
 data/raw/
 data/models/
+data/telegram_owner
 .claude/settings.local.json
 
 # python

@@ -26,8 +26,8 @@ eval:
 train:  ## retrain the local classifier on labelled samples + LLM-labelled messages
 	uv run python -m brain.ml.train
 
-bot:
-	@echo "Telegram bot lands in M5" && exit 1
+bot:  ## Telegram bot + scheduler (needs TELEGRAM_BOT_TOKEN)
+	uv run python -m brain.telegram_bot
 
 mcp:
 	@echo "MCP server lands in M6" && exit 1

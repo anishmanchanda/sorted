@@ -144,6 +144,23 @@ def cmd_portal(args) -> None:
         print(out["usage"])
 
 
+def cmd_due(_args) -> None:
+    from brain.telegram_bot import due_text
+
+    db.init_db()
+    print(due_text())
+
+
+def cmd_say(args) -> None:
+    """What the Telegram bot does with a free-text message: reply rules, planner, then chat."""
+    from brain.planner import PlannerAgent
+    from brain.telegram_bot import respond
+
+    db.init_db()
+    orch = _orch()
+    print(respond(" ".join(args.text), orch, PlannerAgent(orch.llm)))
+
+
 def cmd_serve_sms(args) -> None:
     import uvicorn
 
@@ -184,6 +201,10 @@ def main(argv: list[str] | None = None) -> None:
     sp.add_argument("--price", action="store_true", help="use the price schema instead of the bill schema")
     sp.add_argument("--record", action="store_true", help="save the live response to tests/fixtures/tinyfish")
     sp.set_defaults(fn=cmd_portal)
+    sub.add_parser("due", help="what is due in the next 7 days (no LLM)").set_defaults(fn=cmd_due)
+    sp = sub.add_parser("say", help="send a chat message as if on Telegram (replies, planner, chat)")
+    sp.add_argument("text", nargs="+")
+    sp.set_defaults(fn=cmd_say)
     sp = sub.add_parser("serve-sms", help="run the POST /ingest/sms webhook")
     sp.add_argument("--host", default="127.0.0.1")
     sp.add_argument("--port", type=int, default=8787)
