@@ -1,0 +1,18 @@
+{
+ "data": {
+  "type": "meeting",
+  "provider": "Apollo Clinic",
+  "amount": null,
+  "currency": "INR",
+  "due_date": "2026-05-16",
+  "service": null,
+  "old_price": null,
+  "new_price": null,
+  "event_time": "10:30",
+  "person": "Sunita Sharma",
+  "document_type": null
+ },
+ "tokens": 1198,
+ "cost": 0.0005589,
+ "model": "gpt-oss-120b"
+}

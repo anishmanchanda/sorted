@@ -1,9 +1,9 @@
 {
  "data": {
-  "code": "import re\nfrom datetime import datetime\n\n\ndef extract(text: str) -> dict:\n    amount_match = re.search(r\"Net\\s+Amount\\s+Payable\\s*\\(\\s*Rs\\.\\s*\\)\\s*([0-9][0-9,]*\\.\\d{2})\", text, re.IGNORECASE)\n    if not amount_match:\n        raise ValueError(\"Missing Net Amount Payable label\")\n\n    due_date_match = re.search(r\"Due\\s+Date\\s*([0-9]{1,2}\\.[0-9]{1,2}\\.[0-9]{4})\", text, re.IGNORECASE)\n    if not due_date_match:\n        raise ValueError(\"Missing Due Date label\")\n\n    amount = float(amount_match.group(1).replace(',', ''))\n    due_date = datetime.strptime(due_date_match.group(1), \"%d.%m.%Y\").strftime(\"%Y-%m-%d\")\n\n    return {\n        \"type\": \"bill_due\",\n        \"provider\": \"BSES Rajdhani\",\n        \"amount\": amount,\n        \"currency\": \"INR\",\n        \"due_date\": due_date,\n    }\n",
-  "notes": "Anchored extraction on 'Net Amount Payable (Rs.)' and 'Due Date' with Indian-number formatting support."
+  "code": "import re\nfrom datetime import datetime\n\n\ndef extract(text: str) -> dict:\n    if not re.search(r\"BSES\\s+Rajdhani\\s+Power\\s+Limited\\s*-\\s*Electricity\\s+Bill\", text, re.I):\n        raise ValueError(\"Missing provider header label\")\n\n    amount_match = re.search(\n        r\"Net\\s+Amount\\s+Payable\\s*\\(\\s*Rs\\.\\s*\\)\\s*([0-9][0-9,]*\\.?[0-9]*)\",\n        text,\n        re.I,\n    )\n    if not amount_match:\n        raise ValueError(\"Missing Net Amount Payable label\")\n\n    due_match = re.search(\n        r\"Due\\s+Date\\s*([0-9]{1,2}\\.[0-9]{1,2}\\.[0-9]{4})\",\n        text,\n        re.I,\n    )\n    if not due_match:\n        raise ValueError(\"Missing Due Date label\")\n\n    amount = float(amount_match.group(1).replace(\",\", \"\"))\n    due_date = datetime.strptime(due_match.group(1), \"%d.%m.%Y\").strftime(\"%Y-%m-%d\")\n\n    return {\n        \"type\": \"bill_due\",\n        \"provider\": \"BSES Rajdhani\",\n        \"amount\": amount,\n        \"currency\": \"INR\",\n        \"due_date\": due_date,\n    }\n",
+  "notes": "Anchors extraction on the bill header plus Net Amount Payable and Due Date labels, handling comma-grouped INR amounts and dd.mm.yyyy dates."
  },
- "tokens": 1092,
- "cost": 0.0066675,
+ "tokens": 1173,
+ "cost": 0.0078825,
  "model": "gpt-5.4"
 }

@@ -55,8 +55,10 @@ class Orchestrator:
                 return ext, registry.handler(ability), 0, 0.0, "local code"
             registry.degrade(s, ability, err, src)
             event = f"{registry.handler(ability)} failed ({err[:80]}) -> degraded, LLM fallback"
-        if ability is None and (local := self._classify(src)):
-            return local
+        if ability is None:
+            local, event = self._classify(src)
+            if local:
+                return local
         agent = self.inbox if src.kind == "email" else self.document
         res = agent.extract(src.text, run_id)
         if ability is not None and ability.status == "shadow":
@@ -70,11 +72,13 @@ class Orchestrator:
 
         clf = classifier.current()
         if clf is None:
-            return None
+            return None, ""
         label, conf, layer = clf.predict(src.kind, src.sender, src.subject, src.text)
         if label == "ignore" and conf >= classifier.threshold():
-            return Extraction(type="ignore"), f"ml:{layer}", 0, 0.0, f"local classifier: ignore ({conf:.2f}, {layer})"
-        return None
+            return (Extraction(type="ignore"), f"ml:{layer}", 0, 0.0,
+                    f"local classifier: ignore ({conf:.2f}, {layer})"), ""
+        note = f"local classifier unsure ({label} {conf:.2f} < {classifier.threshold()}) -> LLM" if label else ""
+        return None, note if label == "ignore" else ""
 
     def process(self, s, src: db.SourceRecord) -> dict:
         run_id = uuid.uuid4().hex[:12]

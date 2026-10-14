@@ -11,7 +11,7 @@ from datetime import datetime
 
 
 def extract(text: str) -> dict:
-    amount_match = re.search(r'(?mi)^\s*Amount\s*₹\s*([0-9][0-9,]*\.\d{2})\s*$', text)
+    amount_match = re.search(r'(?mi)^\s*Amount\s*₹\s*([0-9][0-9,]*?(?:\.\d{1,2})?)\s*$', text)
     if not amount_match:
         raise ValueError('Missing Amount label')
     amount = float(amount_match.group(1).replace(',', ''))
@@ -19,11 +19,14 @@ def extract(text: str) -> dict:
     due_match = re.search(r'(?mi)^\s*Next\s+billing\s+date\s+([0-9]{1,2}\s+[A-Za-z]+\s+[0-9]{4})\s*$', text)
     if not due_match:
         raise ValueError('Missing Next billing date label')
-    due_raw = due_match.group(1).strip()
+    raw_due = due_match.group(1).strip()
     try:
-        due_date = datetime.strptime(due_raw, '%d %B %Y').strftime('%Y-%m-%d')
+        due_date = datetime.strptime(raw_due, '%d %B %Y').strftime('%Y-%m-%d')
     except ValueError:
-        raise ValueError('Invalid Next billing date format')
+        try:
+            due_date = datetime.strptime(raw_due, '%d %b %Y').strftime('%Y-%m-%d')
+        except ValueError as e:
+            raise ValueError('Invalid Next billing date') from e
 
     return {
         'type': 'subscription_receipt',

@@ -1,0 +1,18 @@
+{
+ "data": {
+  "type": "bill_due",
+  "provider": "BSES Rajdhani",
+  "amount": 2051.0,
+  "currency": "INR",
+  "due_date": "2026-05-20",
+  "service": null,
+  "old_price": null,
+  "new_price": null,
+  "event_time": null,
+  "person": null,
+  "document_type": null
+ },
+ "tokens": 1073,
+ "cost": 0.0004975499999999999,
+ "model": "gpt-oss-120b"
+}

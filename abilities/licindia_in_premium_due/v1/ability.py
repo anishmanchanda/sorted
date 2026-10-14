@@ -11,33 +11,20 @@ from datetime import datetime
 
 
 def extract(text: str) -> dict:
-    if not re.search(r'^\s*PREMIUM\s+DUE\s+NOTICE\s*$', text, re.IGNORECASE | re.MULTILINE):
-        raise ValueError('Missing PREMIUM DUE NOTICE label')
-
-    amount_match = re.search(
-        r'^\s*Premium\s+Amount\s*:\s*Rs\.\s*([0-9][0-9,]*\.\d{2})\s*$',
-        text,
-        re.IGNORECASE | re.MULTILINE,
-    )
+    amount_match = re.search(r'(?mi)^\s*Premium\s+Amount\s*:\s*Rs\.\s*([0-9][0-9,]*\.\d{2})\s*$', text)
     if not amount_match:
         raise ValueError('Missing Premium Amount label')
 
-    due_date_match = re.search(
-        r'^\s*Due\s+Date\s*:\s*(\d{1,2}/\d{1,2}/\d{4})\s*$',
-        text,
-        re.IGNORECASE | re.MULTILINE,
-    )
+    due_date_match = re.search(r'(?mi)^\s*Due\s+Date\s*:\s*(\d{2}/\d{2}/\d{4})\s*$', text)
     if not due_date_match:
         raise ValueError('Missing Due Date label')
 
     amount = float(amount_match.group(1).replace(',', ''))
     due_date = datetime.strptime(due_date_match.group(1), '%d/%m/%Y').strftime('%Y-%m-%d')
 
-    provider = 'LIC of India'
-
     return {
         'type': 'premium_due',
-        'provider': provider,
+        'provider': 'LIC',
         'amount': amount,
         'currency': 'INR',
         'due_date': due_date,

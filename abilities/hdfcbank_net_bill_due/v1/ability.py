@@ -11,15 +11,15 @@ from datetime import datetime
 
 
 def extract(text: str) -> dict:
-    due_match = re.search(r'Payment\s+Due\s+Date\s+([0-9]{2}/[0-9]{2}/[0-9]{4})', text, re.IGNORECASE)
-    if not due_match:
+    due_date_match = re.search(r'(?im)^\s*Payment\s+Due\s+Date\s+([0-9]{2}/[0-9]{2}/[0-9]{4})\s*$', text)
+    if not due_date_match:
         raise ValueError('Missing Payment Due Date')
 
-    amount_match = re.search(r'Total\s+Amount\s+Due\s+Rs\.\s*([0-9][0-9,]*\.\d{2})', text, re.IGNORECASE)
+    amount_match = re.search(r'(?im)^\s*Total\s+Amount\s+Due\s+Rs\.\s*([0-9][0-9,]*\.\d{2})\s*$', text)
     if not amount_match:
         raise ValueError('Missing Total Amount Due')
 
-    due_date = datetime.strptime(due_match.group(1), '%d/%m/%Y').strftime('%Y-%m-%d')
+    due_date = datetime.strptime(due_date_match.group(1), '%d/%m/%Y').strftime('%Y-%m-%d')
     amount = float(amount_match.group(1).replace(',', ''))
 
     return {

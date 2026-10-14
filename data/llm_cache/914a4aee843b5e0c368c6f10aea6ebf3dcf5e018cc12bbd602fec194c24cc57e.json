@@ -1,0 +1,12 @@
+{
+ "data": {
+  "answer": "Pay HDFC Bank bill \u20b913,903.23 on 2 Oct (id 42) and Spotify subscription \u20b9139 on 5 Oct (id 39).",
+  "obligation_ids": [
+   42,
+   39
+  ]
+ },
+ "tokens": 730,
+ "cost": 0.0003679,
+ "model": "gpt-oss-120b"
+}

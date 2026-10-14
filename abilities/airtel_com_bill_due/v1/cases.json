@@ -3,7 +3,7 @@
   "input": "From: Airtel Xstream Fiber <ebill@airtel.com>\nSubject: Your Airtel Xstream Fiber bill for April 2026 is ready\nDate: 2026-04-01 10:05\n\nHi Rohan,\n\nYour Airtel Xstream Fiber bill for account XXXXXX3456 is ready.\n\nAmount due: ₹1,178.82\nDue date: 20-Apr-2026\nBill period: 01 Apr - 30 Apr 2026\n\nPlan: Xstream Fiber Standard 100 Mbps (Rs 999 + GST). Pay using Airtel Thanks app to earn rewards.\n",
   "expected": {
    "type": "bill_due",
-   "provider": "Airtel",
+   "provider": "Airtel Xstream Fiber",
    "amount": 1178.82,
    "currency": "INR",
    "due_date": "2026-04-20"

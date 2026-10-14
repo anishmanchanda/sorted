@@ -1,9 +1,9 @@
 {
  "data": {
-  "code": "import re\nfrom datetime import datetime\n\n\ndef extract(text: str) -> dict:\n    if not isinstance(text, str):\n        raise ValueError(\"text must be a string\")\n\n    amount_match = re.search(r\"Renewal\\s+premium\\s*:\\s*\u20b9\\s*([0-9][0-9,]*\\.?[0-9]*)\", text, re.IGNORECASE)\n    if not amount_match:\n        raise ValueError(\"Missing renewal premium label\")\n\n    date_match = re.search(r\"expires\\s+on\\s+([0-9]{1,2}\\s+[A-Za-z]{3,9}\\s+[0-9]{4})\", text, re.IGNORECASE)\n    if not date_match:\n        raise ValueError(\"Missing expiry date label\")\n\n    amount_str = amount_match.group(1).replace(\",\", \"\")\n    amount = float(amount_str)\n\n    raw_date = date_match.group(1).strip()\n    parsed_date = None\n    for fmt in (\"%d %b %Y\", \"%d %B %Y\"):\n        try:\n            parsed_date = datetime.strptime(raw_date, fmt)\n            break\n        except ValueError:\n            continue\n    if parsed_date is None:\n        raise ValueError(\"Invalid expiry date format\")\n\n    return {\n        \"type\": \"insurance_renewal\",\n        \"provider\": \"ICICI Lombard\",\n        \"amount\": amount,\n        \"currency\": \"INR\",\n        \"due_date\": parsed_date.strftime(\"%Y-%m-%d\"),\n    }\n",
-  "notes": "Parses ICICI Lombard car insurance renewal emails by anchoring on the expiry-date and renewal-premium labels."
+  "code": "import re\nfrom datetime import datetime\n\n\ndef extract(text: str) -> dict:\n    if not isinstance(text, str):\n        raise ValueError(\"text must be a string\")\n\n    amount_match = re.search(r\"Renewal\\s+premium\\s*:\\s*\u20b9\\s*([0-9][0-9,]*\\.?[0-9]*)\", text, re.IGNORECASE)\n    if not amount_match:\n        raise ValueError(\"Missing Renewal premium label\")\n    amount = float(amount_match.group(1).replace(\",\", \"\"))\n\n    due_date_match = re.search(r\"\\bexpires\\s+on\\s+([0-9]{1,2}\\s+[A-Za-z]{3,9}\\s+[0-9]{4})\\b\", text, re.IGNORECASE)\n    if not due_date_match:\n        raise ValueError(\"Missing expires on label\")\n    due_date = datetime.strptime(due_date_match.group(1), \"%d %b %Y\").strftime(\"%Y-%m-%d\")\n\n    return {\n        \"type\": \"insurance_renewal\",\n        \"provider\": \"ICICI Lombard\",\n        \"amount\": amount,\n        \"currency\": \"INR\",\n        \"due_date\": due_date,\n    }\n",
+  "notes": "Parses ICICI Lombard renewal emails by anchoring on the premium and expiry labels and normalizing INR amount/date."
  },
- "tokens": 1155,
- "cost": 0.007925,
+ "tokens": 1087,
+ "cost": 0.006905,
  "model": "gpt-5.4"
 }

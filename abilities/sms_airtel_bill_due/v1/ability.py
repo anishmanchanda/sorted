@@ -11,25 +11,21 @@ from datetime import datetime
 
 
 def extract(text: str) -> dict:
-    amount_match = re.search(r'\bAirtel\s+Xstream\s+bill\s+of\s+Rs\s*([0-9][0-9,]*\.?[0-9]*)\b', text, re.IGNORECASE)
+    amount_match = re.search(r"\bAirtel\s+Xstream\s+bill\s+of\s+Rs\s*([0-9][0-9,]*\.?[0-9]*)\b", text, re.IGNORECASE)
     if not amount_match:
-        raise ValueError('Missing Airtel bill amount label')
+        raise ValueError("Missing Airtel Xstream bill amount label")
 
-    due_match = re.search(r'\bis\s+due\s+on\s*([0-9]{1,2}-[A-Za-z]{3}-[0-9]{4})\b', text, re.IGNORECASE)
+    due_match = re.search(r"\bis\s+due\s+on\s+([0-9]{1,2}-[A-Za-z]{3}-[0-9]{4})\b", text, re.IGNORECASE)
     if not due_match:
-        raise ValueError('Missing due date label')
+        raise ValueError("Missing due date label")
 
     amount = float(amount_match.group(1).replace(',', ''))
-
-    try:
-        due_date = datetime.strptime(due_match.group(1), '%d-%b-%Y').strftime('%Y-%m-%d')
-    except ValueError as e:
-        raise ValueError('Invalid due date format') from e
+    due_date = datetime.strptime(due_match.group(1), "%d-%b-%Y").strftime("%Y-%m-%d")
 
     return {
-        'type': 'bill_due',
-        'provider': 'Airtel',
-        'amount': amount,
-        'currency': 'INR',
-        'due_date': due_date,
+        "type": "bill_due",
+        "provider": "Airtel",
+        "amount": amount,
+        "currency": "INR",
+        "due_date": due_date,
     }

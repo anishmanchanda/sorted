@@ -16,30 +16,18 @@ def extract(text: str) -> dict:
 
     amount_match = re.search(r"Renewal\s+premium\s*:\s*₹\s*([0-9][0-9,]*\.?[0-9]*)", text, re.IGNORECASE)
     if not amount_match:
-        raise ValueError("Missing renewal premium label")
+        raise ValueError("Missing Renewal premium label")
+    amount = float(amount_match.group(1).replace(",", ""))
 
-    date_match = re.search(r"expires\s+on\s+([0-9]{1,2}\s+[A-Za-z]{3,9}\s+[0-9]{4})", text, re.IGNORECASE)
-    if not date_match:
-        raise ValueError("Missing expiry date label")
-
-    amount_str = amount_match.group(1).replace(",", "")
-    amount = float(amount_str)
-
-    raw_date = date_match.group(1).strip()
-    parsed_date = None
-    for fmt in ("%d %b %Y", "%d %B %Y"):
-        try:
-            parsed_date = datetime.strptime(raw_date, fmt)
-            break
-        except ValueError:
-            continue
-    if parsed_date is None:
-        raise ValueError("Invalid expiry date format")
+    due_date_match = re.search(r"\bexpires\s+on\s+([0-9]{1,2}\s+[A-Za-z]{3,9}\s+[0-9]{4})\b", text, re.IGNORECASE)
+    if not due_date_match:
+        raise ValueError("Missing expires on label")
+    due_date = datetime.strptime(due_date_match.group(1), "%d %b %Y").strftime("%Y-%m-%d")
 
     return {
         "type": "insurance_renewal",
         "provider": "ICICI Lombard",
         "amount": amount,
         "currency": "INR",
-        "due_date": parsed_date.strftime("%Y-%m-%d"),
+        "due_date": due_date,
     }

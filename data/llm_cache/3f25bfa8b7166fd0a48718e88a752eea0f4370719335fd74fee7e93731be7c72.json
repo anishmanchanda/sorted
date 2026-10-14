@@ -1,0 +1,9 @@
+{
+ "data": {
+  "code": "import re\nfrom datetime import datetime\n\n\ndef extract(text: str) -> dict:\n    person_match = re.search(\n        r'Appointment\\s+confirmed\\s+for\\s+(.+?)\\s+with\\s+Dr\\.',\n        text,\n        re.IGNORECASE | re.DOTALL,\n    )\n    if not person_match:\n        raise ValueError('Missing appointment person label')\n    person = re.sub(r'\\s+', ' ', person_match.group(1)).strip()\n\n    date_match = re.search(\n        r'(?mi)^Date:\\s*([A-Za-z]+,\\s*\\d{1,2}\\s+[A-Za-z]+\\s+\\d{4})\\s*$',\n        text,\n    )\n    if not date_match:\n        raise ValueError('Missing appointment Date label')\n    date_str = re.sub(r'\\s+', ' ', date_match.group(1)).strip()\n    try:\n        due_date = datetime.strptime(date_str, '%A, %d %B %Y').date().isoformat()\n    except ValueError:\n        try:\n            due_date = datetime.strptime(date_str, '%A, %d %b %Y').date().isoformat()\n        except Exception as e:\n            raise ValueError('Invalid appointment date') from e\n\n    time_match = re.search(r'(?mi)^Time:\\s*([^\\n\\r]+?)\\s*$', text)\n    if not time_match:\n        raise ValueError('Missing Time label')\n    time_str = re.sub(r'\\s+', ' ', time_match.group(1)).strip()\n    parsed_time = None\n    for fmt in ('%I:%M %p', '%I %p', '%H:%M'):\n        try:\n            parsed_time = datetime.strptime(time_str, fmt)\n            break\n        except ValueError:\n            continue\n    if parsed_time is None:\n        raise ValueError('Invalid appointment time')\n    event_time = parsed_time.strftime('%H:%M')\n\n    return {\n        'type': 'meeting',\n        'provider': 'Apollo Clinic',\n        'currency': 'INR',\n        'due_date': due_date,\n        'event_time': event_time,\n        'person': person,\n    }\n",
+  "notes": "Anchors to the appointment body Date/Time lines specifically to avoid matching the email header Date."
+ },
+ "tokens": 2106,
+ "cost": 0.012265,
+ "model": "gpt-5.4"
+}

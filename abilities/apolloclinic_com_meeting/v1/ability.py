@@ -18,30 +18,37 @@ def extract(text: str) -> dict:
     )
     if not person_match:
         raise ValueError('Missing appointment person label')
-    person = ' '.join(person_match.group(1).split())
+    person = re.sub(r'\s+', ' ', person_match.group(1)).strip()
 
     date_match = re.search(
-        r'\bDate:\s*([A-Za-z]+,\s*\d{1,2}\s+[A-Za-z]+\s+\d{4})',
+        r'(?mi)^Date:\s*([A-Za-z]+,\s*\d{1,2}\s+[A-Za-z]+\s+\d{4})\s*$',
         text,
-        re.IGNORECASE,
     )
     if not date_match:
-        raise ValueError('Missing Date label')
+        raise ValueError('Missing appointment Date label')
+    date_str = re.sub(r'\s+', ' ', date_match.group(1)).strip()
     try:
-        due_date = datetime.strptime(' '.join(date_match.group(1).replace(',', ', ').split()), '%A, %d %B %Y').strftime('%Y-%m-%d')
+        due_date = datetime.strptime(date_str, '%A, %d %B %Y').date().isoformat()
     except ValueError:
         try:
-            due_date = datetime.strptime(' '.join(date_match.group(1).replace(',', ', ').split()), '%A, %d %b %Y').strftime('%Y-%m-%d')
-        except ValueError:
-            raise ValueError('Invalid appointment date format')
+            due_date = datetime.strptime(date_str, '%A, %d %b %Y').date().isoformat()
+        except Exception as e:
+            raise ValueError('Invalid appointment date') from e
 
-    time_match = re.search(r'\bTime:\s*(\d{1,2}:\d{2}\s*[AP]M)\b', text, re.IGNORECASE)
+    time_match = re.search(r'(?mi)^Time:\s*([^\n\r]+?)\s*$', text)
     if not time_match:
         raise ValueError('Missing Time label')
-    try:
-        event_time = datetime.strptime(time_match.group(1).upper().replace(' ', ''), '%I:%M%p').strftime('%H:%M')
-    except ValueError:
-        raise ValueError('Invalid appointment time format')
+    time_str = re.sub(r'\s+', ' ', time_match.group(1)).strip()
+    parsed_time = None
+    for fmt in ('%I:%M %p', '%I %p', '%H:%M'):
+        try:
+            parsed_time = datetime.strptime(time_str, fmt)
+            break
+        except ValueError:
+            continue
+    if parsed_time is None:
+        raise ValueError('Invalid appointment time')
+    event_time = parsed_time.strftime('%H:%M')
 
     return {
         'type': 'meeting',

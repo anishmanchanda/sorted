@@ -10,33 +10,22 @@ import re
 from datetime import datetime
 
 
-def _parse_amount(value: str) -> float:
-    cleaned = value.strip()
-    cleaned = cleaned.replace('₹', '').replace('Rs.', '').replace('Rs', '')
-    cleaned = cleaned.replace(',', '').strip()
-    return float(cleaned)
-
-
-def _parse_date(value: str) -> str:
-    return datetime.strptime(value.strip(), '%d-%b-%Y').strftime('%Y-%m-%d')
-
-
 def extract(text: str) -> dict:
-    amount_match = re.search(r'(?im)^\s*Amount\s+due\s*:\s*([^\n\r]+)', text)
+    amount_match = re.search(r"Amount\s*due\s*:\s*[₹Rs\.\s]*([0-9][0-9,]*\.\d{2})", text, re.IGNORECASE)
     if not amount_match:
-        raise ValueError('Missing Amount due label')
+        raise ValueError("Missing Amount due label")
 
-    due_date_match = re.search(r'(?im)^\s*Due\s+date\s*:\s*([^\n\r]+)', text)
-    if not due_date_match:
-        raise ValueError('Missing Due date label')
+    due_match = re.search(r"Due\s*date\s*:\s*([0-9]{1,2}-[A-Za-z]{3}-[0-9]{4})", text, re.IGNORECASE)
+    if not due_match:
+        raise ValueError("Missing Due date label")
 
-    amount = _parse_amount(amount_match.group(1))
-    due_date = _parse_date(due_date_match.group(1))
+    amount = float(amount_match.group(1).replace(",", ""))
+    due_date = datetime.strptime(due_match.group(1), "%d-%b-%Y").strftime("%Y-%m-%d")
 
     return {
-        'type': 'bill_due',
-        'provider': 'Airtel',
-        'amount': amount,
-        'currency': 'INR',
-        'due_date': due_date,
+        "type": "bill_due",
+        "provider": "Airtel Xstream Fiber",
+        "amount": amount,
+        "currency": "INR",
+        "due_date": due_date,
     }

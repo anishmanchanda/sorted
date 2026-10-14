@@ -11,16 +11,16 @@ from datetime import datetime
 
 
 def extract(text: str) -> dict:
-    amount_match = re.search(r"Total\s+due\s*:\s*Rs\.\s*([0-9][0-9,]*\.\d+)", text, re.IGNORECASE)
-    if not amount_match:
+    m_amount = re.search(r"Total\s+due\s*:\s*Rs\.?\s*([0-9][0-9,]*\.?[0-9]{0,2})", text, re.IGNORECASE)
+    if not m_amount:
         raise ValueError("Missing Total due label")
 
-    date_match = re.search(r"Due\s+date\s*:\s*([0-9]{1,2}-[A-Za-z]{3}-[0-9]{2,4})", text, re.IGNORECASE)
-    if not date_match:
+    m_due = re.search(r"Due\s+date\s*:\s*([0-9]{1,2}-[A-Za-z]{3}-[0-9]{2})", text, re.IGNORECASE)
+    if not m_due:
         raise ValueError("Missing Due date label")
 
-    amount = float(amount_match.group(1).replace(",", ""))
-    due_date = datetime.strptime(date_match.group(1), "%d-%b-%y").strftime("%Y-%m-%d")
+    amount = float(m_amount.group(1).replace(",", ""))
+    due_date = datetime.strptime(m_due.group(1), "%d-%b-%y").strftime("%Y-%m-%d")
 
     return {
         "type": "bill_due",
