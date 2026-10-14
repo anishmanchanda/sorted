@@ -203,6 +203,8 @@ def main() -> None:
 
         notify.SINKS.append(sink)
         scheduler.get(paused=False)
+        scheduler.create_repeating("* * * * *", key="heartbeat", func_ref="brain.scheduler:heartbeat",
+                                   name="heartbeat")
         scheduler.create_repeating("0 3 * * *", key="nightly", func_ref="brain.telegram_bot:nightly",
                                    name="nightly compile + retrain")
         if config.env("IMAP_USER"):

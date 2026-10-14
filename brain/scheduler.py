@@ -78,6 +78,10 @@ def fire_reminder(text: str, obligation_id: int | None = None, medication_id: in
     notify.send_self(texts[0] if len(texts) == 1 else "Reminders:\n" + "\n".join(f"• {x}" for x in texts))
 
 
+def heartbeat() -> None:
+    """No-op job: wakes the running scheduler every minute so jobs added by other processes (CLI, MCP) fire."""
+
+
 def fire_dose(medication_id: int) -> None:
     with db.Session() as s:
         med = s.get(db.Medication, medication_id)

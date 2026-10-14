@@ -1,4 +1,4 @@
-.PHONY: setup samples demo demo-live test eval train lint bot mcp
+.PHONY: setup samples demo demo-live test eval train lint bot mcp mcp-http
 
 setup:
 	uv sync
@@ -29,5 +29,8 @@ train:  ## retrain the local classifier on labelled samples + LLM-labelled messa
 bot:  ## Telegram bot + scheduler (needs TELEGRAM_BOT_TOKEN)
 	uv run python -m brain.telegram_bot
 
-mcp:
-	@echo "MCP server lands in M6" && exit 1
+mcp:  ## Brain MCP server over stdio (for Claude Desktop / Cursor)
+	uv run python -m brain.mcp_server
+
+mcp-http:  ## Streamable HTTP on 127.0.0.1:8765/mcp, needs BRAIN_MCP_TOKEN
+	uv run python -m brain.mcp_server --http
