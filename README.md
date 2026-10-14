@@ -303,7 +303,7 @@ dropped server-side before storage.
 | Local ML classifier (TF-IDF + LogReg) with confidence threshold | Built |
 | Privacy score and cost per message | Built (`brain score`, `/score`, MCP) |
 | Scheduler: one-time, cron, relative; quiet hours; merging | Built |
-| Telegram bot, medicine tracker, reply handlers | Built (smoke-tested start-up; commands unit-tested) |
+| Telegram bot, medicine tracker, reply handlers | Built (tested live in Telegram; logic unit-tested) |
 | Brain MCP server (stdio + Streamable HTTP with bearer token and scope) | Built |
 | TinyFish Fetch / Agent / Search adapter | Built (one real Agent run recorded; Fetch and Search tested live) |
 | TinyFish web graduation (Agent → Playwright/Browser API script → scheduled replay → fallback) | Planned |
