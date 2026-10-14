@@ -153,9 +153,10 @@ class Engine:
         scheduler.now = self.now  # the whole process runs on simulated time
         db.init_db()
         if (self.dir / "sim.json").exists():
-            self.state = json.loads((self.dir / "sim.json").read_text())
+            self.state = json.loads((self.dir / "sim.json").read_text(encoding="utf-8"))
             feed = self.dir / "feed.jsonl"
-            self.feed = [json.loads(line) for line in feed.read_text().splitlines()] if feed.exists() else []
+            lines = feed.read_text(encoding="utf-8").splitlines() if feed.exists() else []
+            self.feed = [json.loads(line) for line in lines]
             self._env()
         else:
             self.reset()
@@ -169,7 +170,7 @@ class Engine:
         os.environ["BRAIN_TODAY"] = self.now().date().isoformat()
 
     def _save(self) -> None:
-        (self.dir / "sim.json").write_text(json.dumps(self.state, indent=1))
+        (self.dir / "sim.json").write_text(json.dumps(self.state, indent=1), encoding="utf-8")
 
     def end(self) -> datetime:
         return datetime.combine(date.fromisoformat(self.state["end"]), time(23, 59))
@@ -187,7 +188,7 @@ class Engine:
               "title": title, "detail": detail, "handler": handler, "actions": [list(a) for a in actions or []],
               **extra}
         self.feed.append(ev)
-        with open(self.dir / "feed.jsonl", "a") as f:
+        with open(self.dir / "feed.jsonl", "a", encoding="utf-8") as f:
             f.write(json.dumps(ev, default=str) + "\n")
         for fn in self.listeners:
             try:
@@ -239,7 +240,7 @@ class Engine:
         out = {}
         for path in (config.LABELS_PATH, self.dir / "extra" / "labels.jsonl"):
             if path.exists():
-                out.update({(r := json.loads(line))["id"]: r for line in path.read_text().splitlines()})
+                out.update({(r := json.loads(line))["id"]: r for line in path.read_text(encoding="utf-8").splitlines()})
         return out
 
     def clear_added(self) -> int:
@@ -259,11 +260,11 @@ class Engine:
             (extra / sub).mkdir(parents=True, exist_ok=True)
         sms_file = extra / "sms" / "sms.jsonl"
         sms_file.touch()
-        n = len(list((extra / "email").glob("*.eml"))) + len(sms_file.read_text().splitlines()) + 1
+        n = len(list((extra / "email").glob("*.eml"))) + len(sms_file.read_text(encoding="utf-8").splitlines()) + 1
         sid = f"{'sms_' if kind == 'sms' else ''}m{self.month_of(at)}_user{n}"
         aware = at.replace(tzinfo=IST)
         if kind == "sms":
-            with open(sms_file, "a") as f:
+            with open(sms_file, "a", encoding="utf-8") as f:
                 row = {"id": sid, "sender": sender, "received_at": aware.isoformat(), "body": body}
                 f.write(json.dumps(row) + "\n")
         else:
@@ -272,7 +273,7 @@ class Engine:
             msg["Date"] = format_datetime(aware)
             msg.set_content(body)
             (extra / "email" / f"{sid}.eml").write_bytes(bytes(msg))
-        with open(extra / "labels.jsonl", "a") as f:
+        with open(extra / "labels.jsonl", "a", encoding="utf-8") as f:
             f.write(json.dumps({"id": sid, "type": label}) + "\n")
         if not quiet:
             self.emit("system", f"Added your message {sid}", f"{kind} from {sender}, arrives {at:%d %b %H:%M}")

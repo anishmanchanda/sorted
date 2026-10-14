@@ -26,7 +26,7 @@ PERMISSION = {"update_subscription": "state.write", "reminder": "reminder.create
 
 
 def load_rules() -> list[dict]:
-    return [yaml.safe_load(p.read_text()) for p in sorted(RULES_DIR.glob("*.yaml"))]
+    return [yaml.safe_load(p.read_text(encoding="utf-8")) for p in sorted(RULES_DIR.glob("*.yaml"))]
 
 
 def _subscription(s, service: str) -> db.Subscription | None:

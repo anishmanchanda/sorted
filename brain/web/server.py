@@ -55,7 +55,7 @@ def create_app(engine, lifespan=None) -> FastAPI:
 
     @app.get("/", response_class=HTMLResponse)
     def index():
-        return INDEX.read_text()
+        return INDEX.read_text(encoding="utf-8")
 
     @app.get("/api/state")
     def state():

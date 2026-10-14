@@ -18,7 +18,7 @@ FIELDS = ("type", "provider", "amount", "due_date")
 
 
 def load_labels() -> dict[str, dict]:
-    with open(config.LABELS_PATH) as f:
+    with open(config.LABELS_PATH, encoding="utf-8") as f:
         return {(row := json.loads(line))["id"]: row for line in f if line.strip()}
 
 
@@ -110,7 +110,7 @@ def run() -> str:
         rows = [(h, sample_id(p), out) for h, p, out in s.execute(q)]
     report = render(evaluate(rows, labels), labels) + classifier_section()
     config.REPORTS_DIR.mkdir(exist_ok=True)
-    (config.REPORTS_DIR / "eval.md").write_text(report)
+    (config.REPORTS_DIR / "eval.md").write_text(report, encoding="utf-8")
     return report
 
 

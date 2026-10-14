@@ -11,7 +11,7 @@ HERE = pathlib.Path(__file__).parent
 _spec = importlib.util.spec_from_file_location("ability", HERE / "ability.py")
 ability = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(ability)
-CASES = json.loads((HERE / "cases.json").read_text())
+CASES = json.loads((HERE / "cases.json").read_text(encoding="utf-8"))
 
 
 def provider_match(a, b):

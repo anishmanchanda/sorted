@@ -488,13 +488,13 @@ def generate(out: Path, labels_path: Path, end: date = CANON_END) -> int:
     noise()
     pdfs()
     meeting_requests()
-    with open(OUT / "sms" / "sms.jsonl", "w") as f:
+    with open(OUT / "sms" / "sms.jsonl", "w", encoding="utf-8") as f:
         for r in sorted(sms_rows, key=lambda r: r["received_at"]):
             f.write(json.dumps(r) + "\n")
     (OUT / "dataset.json").write_text(json.dumps({
         "end": end.isoformat(), "offset_days": SHIFT.days, "messages": len(labels),
         "note": "Synthetic: fake people, numbers and amounts. Regenerate with `make dataset`."}, indent=1) + "\n")
-    with open(labels_path, "w") as f:
+    with open(labels_path, "w", encoding="utf-8") as f:
         for lab in sorted(labels, key=lambda r: r["id"]):
             f.write(json.dumps(lab, ensure_ascii=False) + "\n")
     return len(labels)
@@ -503,7 +503,9 @@ def generate(out: Path, labels_path: Path, end: date = CANON_END) -> int:
 def dataset_end(out: Path | None = None) -> date:
     """The end date the committed dataset was generated for (its simulated 'today')."""
     manifest = (out or config.SAMPLES_DIR) / "dataset.json"
-    return date.fromisoformat(json.loads(manifest.read_text())["end"]) if manifest.exists() else CANON_END
+    if not manifest.exists():
+        return CANON_END
+    return date.fromisoformat(json.loads(manifest.read_text(encoding="utf-8"))["end"])
 
 
 if __name__ == "__main__":

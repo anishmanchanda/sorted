@@ -91,7 +91,7 @@ async def start(engine, token: str):
     async def start_cmd(update: Update, context):
         if owner() is None:
             OWNER_FILE.parent.mkdir(exist_ok=True)
-            OWNER_FILE.write_text(str(update.effective_chat.id))
+            OWNER_FILE.write_text(str(update.effective_chat.id), encoding="utf-8")
         if allowed(update):
             await reply(update, HELP)
 

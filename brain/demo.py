@@ -24,7 +24,7 @@ ROOT = Path(__file__).resolve().parent.parent
 DEMO = ROOT / "data" / "demo"
 CANON_END = date(2026, 9, 30)  # brain.samples.CANON_END (repeated: env must be set before brain imports)
 # the committed synthetic dataset's simulated "today" (data/samples/dataset.json)
-END = date.fromisoformat(json.loads((ROOT / "data" / "samples" / "dataset.json").read_text())["end"])
+END = date.fromisoformat(json.loads((ROOT / "data" / "samples" / "dataset.json").read_text(encoding="utf-8"))["end"])
 os.environ.update({
     "BRAIN_DB_URL": f"sqlite:///{ROOT / 'data' / 'demo.db'}",  # the simulation never touches the live DB
     "BRAIN_MODEL_DIR": str(DEMO / "models"),
@@ -211,7 +211,7 @@ def main() -> None:
     say()
     say(f"LLM calls this run: {llm.stats['live']} live, {llm.stats['replayed']} replayed from `data/llm_cache/`.")
     config.REPORTS_DIR.mkdir(exist_ok=True)
-    (config.REPORTS_DIR / "demo_run.md").write_text("\n".join(lines) + "\n")
+    (config.REPORTS_DIR / "demo_run.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
     print("\nSaved reports/demo_run.md and reports/eval.md (simulation DB: data/demo.db)")
 
 

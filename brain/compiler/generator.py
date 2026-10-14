@@ -114,7 +114,7 @@ HERE = pathlib.Path(__file__).parent
 _spec = importlib.util.spec_from_file_location("ability", HERE / "ability.py")
 ability = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(ability)
-CASES = json.loads((HERE / "cases.json").read_text())
+CASES = json.loads((HERE / "cases.json").read_text(encoding="utf-8"))
 
 
 def provider_match(a, b):
@@ -135,7 +135,7 @@ def export(ability: db.Ability, cases: list[dict]) -> None:
     root = Path(config.env("BRAIN_ABILITIES_DIR", str(config.ROOT / "data" / "abilities")))
     d = root / ability.name / f"v{ability.version}"
     d.mkdir(parents=True, exist_ok=True)
-    (d / "ability.py").write_text(ability.code)
+    (d / "ability.py").write_text(ability.code, encoding="utf-8")
     (d / "cases.json").write_text(json.dumps(
         [{k: c[k] for k in ("input", "expected", "held_out")} for c in cases], indent=1, ensure_ascii=False))
     (d / "test_ability.py").write_text(TEST_TEMPLATE.replace("{compare}", inspect.getsource(compare)))

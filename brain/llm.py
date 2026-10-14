@@ -130,7 +130,7 @@ class LLM:
         key = hashlib.sha256(json.dumps(parts).encode()).hexdigest()
         cached = self.cache_dir / f"{key}.json" if self.cache_dir else None
         if cached and cached.exists():
-            rec = json.loads(cached.read_text())
+            rec = json.loads(cached.read_text(encoding="utf-8"))
             self.stats["replayed"] += 1
             data = shift_dates(rec["data"], date_offset() - rec.get("date_offset", 0)) if cache_key else rec["data"]
             return LLMResult(schema.model_validate(data), rec["tokens"], rec["cost"], rec["model"], True)

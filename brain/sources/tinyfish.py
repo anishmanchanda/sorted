@@ -110,7 +110,7 @@ def agent_run(url: str, goal: str, output_schema: dict | None = None, record: bo
     fixture = _fixture(url, goal)
     if config.env("TINYFISH_LIVE", "0") != "1":
         if fixture.exists():
-            return json.loads(fixture.read_text())["response"], True
+            return json.loads(fixture.read_text(encoding="utf-8"))["response"], True
         raise NotConfigured("TINYFISH_LIVE=0 and no recorded Agent response for this url+goal. "
                             "Set TINYFISH_LIVE=1 for a real run (uses TinyFish credits).")
     body = {"url": url, "goal": goal, "browser_profile": "lite"}
