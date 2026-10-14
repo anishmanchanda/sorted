@@ -2,7 +2,12 @@
 
 Labelled samples: 76 (`data/eval/labels.jsonl`)
 
-No `extract` traces in the DB yet. Run `make demo` first, then `make eval`.
+| handler | type | provider | amount | due_date |
+|---|---|---|---|---|
+| all | 100.0% (72/72) | 100.0% (64/64) | 100.0% (64/64) | 100.0% (64/64) |
+| llm | 100.0% (71/71) | 100.0% (64/64) | 100.0% (64/64) | 100.0% (64/64) |
+| rule | 100.0% (1/1) | - | - | - |
+| rule:injection_guard | 100.0% (1/1) | - | - | - |
 
 ## Dataset
 

@@ -6,16 +6,15 @@ so eval never spends tokens itself. Each trace's source_records.raw_path identif
 """
 
 import json
-import re
 from collections import defaultdict
 from pathlib import Path
 
 from sqlalchemy import select
 
 from brain import config, db
+from brain.state import provider_match
 
 FIELDS = ("type", "provider", "amount", "due_date")
-_STOP = {"bank", "ltd", "limited", "india", "of", "the", "co", "company", "insurance", "power", "govt"}
 
 
 def load_labels() -> dict[str, dict]:
@@ -25,17 +24,6 @@ def load_labels() -> dict[str, dict]:
 
 def sample_id(raw_path: str) -> str:
     return raw_path.rsplit("#", 1)[1] if "#" in raw_path else Path(raw_path).stem
-
-
-def _tokens(s: str) -> set[str]:
-    return set(re.findall(r"[a-z0-9]+", s.lower()))
-
-
-def provider_match(pred: str | None, gold: str | None) -> bool:
-    if not pred or not gold:
-        return pred == gold
-    p, g = " ".join(sorted(_tokens(pred))), " ".join(sorted(_tokens(gold)))
-    return p in g or g in p or bool((_tokens(pred) & _tokens(gold)) - _STOP)
 
 
 def score_one(pred: dict, gold: dict) -> dict[str, bool]:
@@ -53,7 +41,8 @@ def score_one(pred: dict, gold: dict) -> dict[str, bool]:
 
 
 def handler_group(handler: str) -> str:
-    return "llm" if handler == "llm" else "compiled"
+    """llm / compiled (ability:<name>@v<n>) / rule (rule:<name>, no LLM, not learned)."""
+    return {"ability": "compiled", "rule": "rule"}.get(handler.split(":")[0], "llm")
 
 
 def evaluate(rows: list[tuple[str, str, dict]], labels: dict[str, dict]) -> dict[str, dict[str, list[bool]]]:
@@ -81,7 +70,8 @@ def render(res, labels) -> str:
         lines += ["No `extract` traces in the DB yet. Run `make demo` first, then `make eval`.", ""]
     else:
         lines += ["| handler | " + " | ".join(FIELDS) + " |", "|---" * (len(FIELDS) + 1) + "|"]
-        order = ["all", "llm", "compiled"] + sorted(k for k in res if k not in ("all", "llm", "compiled"))
+        groups = ("all", "llm", "compiled", "rule")
+        order = list(groups) + sorted(k for k in res if k not in groups)
         for key in (k for k in order if k in res):
             lines.append(f"| {key} | " + " | ".join(_pct(res[key].get(f, [])) for f in FIELDS) + " |")
         lines.append("")

@@ -4,9 +4,9 @@ Subject: Appointment confirmed: Dr. Anjali Mehta, 17 Jun 2026 10:30 AM
 Date: Fri, 12 Jun 2026 16:15:00 +0530
 Message-ID: <2026-06_apollo_appt@samples.sorted.local>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============5741527570980404354=="
+Content-Type: multipart/mixed; boundary="===============0337148754520522608=="
 
---===============5741527570980404354==
+--===============0337148754520522608==
 Content-Type: text/html; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 
@@ -20,7 +20,7 @@ crinology).</p>
 rts.
 A calendar invite is attached.</p></body></html>
 
---===============5741527570980404354==
+--===============0337148754520522608==
 Content-Type: text/calendar
 Content-Transfer-Encoding: base64
 Content-Disposition: attachment; filename="invite.ics"
@@ -34,4 +34,4 @@ YToyMDI2MDYxN1QxMTAwMDAKU1VNTUFSWTpUaHlyb2lkIGZvbGxvdy11cCAtIERyLiBBbmphbGkg
 TWVodGEgKFN1bml0YSBTaGFybWEpCkxPQ0FUSU9OOkFwb2xsbyBDbGluaWNcLCBTZWN0b3IgMThc
 LCBOb2lkYQpFTkQ6VkVWRU5UCkVORDpWQ0FMRU5EQVIK
 
---===============5741527570980404354==--
+--===============0337148754520522608==--

@@ -1,4 +1,4 @@
-from brain.eval import evaluate, load_labels, provider_match, sample_id, score_one
+from brain.eval import evaluate, handler_group, load_labels, provider_match, sample_id, score_one
 
 
 def test_labels_cover_required_senders():
@@ -25,6 +25,7 @@ def test_scoring():
 def test_evaluate_groups_by_handler():
     labels = {"a": {"type": "ignore"}, "b": {"type": "ignore"}}
     res = evaluate([("llm", "a", {"type": "ignore"}), ("ability:x@v1", "b", {"type": "bill_due"})], labels)
+    assert handler_group("rule:injection_guard") == "rule"
     assert res["llm"]["type"] == [True] and res["compiled"]["type"] == [False] and len(res["all"]["type"]) == 2
     assert sample_id("data/samples/sms/sms.jsonl#sms_2026-04_hdfc") == "sms_2026-04_hdfc"
     assert sample_id("data/samples/email/2026-04_bses.eml") == "2026-04_bses"

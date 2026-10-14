@@ -48,7 +48,7 @@
 {"id": "2026-09_airtel", "kind": "email", "sender": "Airtel Xstream Fiber <ebill@airtel.com>", "type": "bill_due", "provider": "Airtel", "amount": 1178.82, "due_date": "2026-09-20"}
 {"id": "2026-09_apollo_appt", "kind": "email", "sender": "Apollo Clinic <appointments@apolloclinic.com>", "type": "meeting", "provider": "Apollo Clinic", "amount": null, "due_date": "2026-09-17", "event_time": "10:30", "person": "Sunita Sharma"}
 {"id": "2026-09_bses", "kind": "email", "sender": "BSES Rajdhani Power Ltd <ebill@bsesdelhi.com>", "type": "bill_due", "provider": "BSES Rajdhani", "amount": 1758.5, "due_date": "2026-09-20"}
-{"id": "2026-09_bses_bill", "kind": "pdf", "sender": "upload", "type": "bill_due", "provider": "BSES Rajdhani", "amount": 3561.5, "due_date": "2026-09-20"}
+{"id": "2026-09_bses_bill", "kind": "pdf", "sender": "upload", "type": "bill_due", "provider": "BSES Rajdhani", "amount": 1758.5, "due_date": "2026-09-20"}
 {"id": "2026-09_hdfc_cc", "kind": "email", "sender": "HDFC Bank Credit Cards <emailstatements.cards@hdfcbank.net>", "type": "bill_due", "provider": "HDFC Bank", "amount": 13903.23, "due_date": "2026-10-02", "minimum_due": 695.0, "layout": "v2"}
 {"id": "2026-09_icici_car", "kind": "email", "sender": "ICICI Lombard <renewals@icicilombard.com>", "type": "insurance_renewal", "provider": "ICICI Lombard", "amount": 14860.0, "due_date": "2026-09-20", "policy": "car", "vehicle": "DL 3C AB 1234"}
 {"id": "2026-09_lic", "kind": "email", "sender": "LIC of India <noreply@licindia.in>", "type": "premium_due", "provider": "LIC", "amount": 4215.0, "due_date": "2026-09-28"}

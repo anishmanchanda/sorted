@@ -22,6 +22,7 @@ from sqlalchemy import (
     func,
 )
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, sessionmaker
+from sqlalchemy.pool import StaticPool
 
 from brain import config
 
@@ -39,6 +40,9 @@ class SourceRecord(Base):
     body_hash: Mapped[str] = mapped_column(String(64), unique=True)
     received_at: Mapped[datetime] = mapped_column(DateTime)
     raw_path: Mapped[str] = mapped_column(String(500), default="")
+    # Redacted text: the only form agents, abilities and the compiler ever see. Raw stays at raw_path.
+    text: Mapped[str] = mapped_column(Text, default="")
+    status: Mapped[str] = mapped_column(String(10), default="new")  # new / done / queued
 
 
 class Obligation(Base):
@@ -142,7 +146,9 @@ class AuditLog(Base):
     detail: Mapped[dict] = mapped_column(JSON, default=dict)
 
 
-engine = create_engine(config.DB_URL)
+# in-memory DB (tests): one shared connection so every thread sees the same database
+engine = (create_engine(config.DB_URL, poolclass=StaticPool, connect_args={"check_same_thread": False})
+          if config.DB_URL == "sqlite://" else create_engine(config.DB_URL))
 Session = sessionmaker(engine, expire_on_commit=False)
 
 

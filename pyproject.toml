@@ -10,6 +10,9 @@ dependencies = [
     "python-dotenv>=1.0",
     "python-dateutil>=2.9",
     "openai>=1.40",
+    "fastapi>=0.143.0",
+    "uvicorn>=0.54.0",
+    "pdfplumber>=0.11.10",
 ]
 
 [project.scripts]
@@ -20,6 +23,7 @@ dev = [
     "pytest>=8",
     "ruff>=0.6",
     "fpdf2>=2.7",  # only used by scripts/gen_samples.py to write the sample PDFs
+    "httpx>=0.28.1",
 ]
 
 [build-system]
@@ -35,6 +39,7 @@ target-version = "py312"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP"]
+ignore = ["B008"]  # FastAPI Depends() in defaults is the idiom
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

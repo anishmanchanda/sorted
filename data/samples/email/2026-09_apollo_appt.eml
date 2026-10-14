@@ -4,9 +4,9 @@ Subject: Appointment confirmed: Dr. Anjali Mehta, 17 Sep 2026 10:30 AM
 Date: Sat, 12 Sep 2026 16:15:00 +0530
 Message-ID: <2026-09_apollo_appt@samples.sorted.local>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============7014867105100523649=="
+Content-Type: multipart/mixed; boundary="===============8609031244699329209=="
 
---===============7014867105100523649==
+--===============8609031244699329209==
 Content-Type: text/html; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 
@@ -20,7 +20,7 @@ inic, Sector 18, Noida</p>
 rts.
 A calendar invite is attached.</p></body></html>
 
---===============7014867105100523649==
+--===============8609031244699329209==
 Content-Type: text/calendar
 Content-Transfer-Encoding: base64
 Content-Disposition: attachment; filename="invite.ics"
@@ -34,4 +34,4 @@ YToyMDI2MDkxN1QxMTAwMDAKU1VNTUFSWTpUaHlyb2lkIGZvbGxvdy11cCAtIERyLiBBbmphbGkg
 TWVodGEgKFN1bml0YSBTaGFybWEpCkxPQ0FUSU9OOkFwb2xsbyBDbGluaWNcLCBTZWN0b3IgMThc
 LCBOb2lkYQpFTkQ6VkVWRU5UCkVORDpWQ0FMRU5EQVIK
 
---===============7014867105100523649==--
+--===============8609031244699329209==--
