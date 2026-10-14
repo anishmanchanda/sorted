@@ -35,3 +35,14 @@ Labelled samples: 76 (`data/eval/labels.jsonl`)
 | pdf/insurance_renewal | 1 |
 | sms/bill_due | 12 |
 | sms/ignore | 7 |
+
+## Local classifier (scikit-learn, held-out)
+
+5 stratified 70/30 splits of the labelled non-OTP samples (22 unseen per split).
+
+| metric | mean over splits |
+|---|---|
+| accuracy (all predictions) | 90.0% |
+| share with confidence >= 0.7 (decided locally if `ignore`) | 83.6% |
+| accuracy of those confident predictions | 100.0% |
+

@@ -55,11 +55,26 @@ class Orchestrator:
                 return ext, registry.handler(ability), 0, 0.0, "local code"
             registry.degrade(s, ability, err, src)
             event = f"{registry.handler(ability)} failed ({err[:80]}) -> degraded, LLM fallback"
+        if ability is None and (local := self._classify(src)):
+            return local
         agent = self.inbox if src.kind == "email" else self.document
         res = agent.extract(src.text, run_id)
         if ability is not None and ability.status == "shadow":
             event = f"{registry.handler(ability)} {registry.shadow(s, ability, src, res.data)}"
         return res.data, "llm", res.tokens, res.cost, event
+
+    @staticmethod
+    def _classify(src: db.SourceRecord):
+        """Local ML: a confident `ignore` (promotion, newsletter) never reaches the LLM."""
+        from brain.ml import classifier
+
+        clf = classifier.current()
+        if clf is None:
+            return None
+        label, conf, layer = clf.predict(src.kind, src.sender, src.subject, src.text)
+        if label == "ignore" and conf >= classifier.threshold():
+            return Extraction(type="ignore"), f"ml:{layer}", 0, 0.0, f"local classifier: ignore ({conf:.2f}, {layer})"
+        return None
 
     def process(self, s, src: db.SourceRecord) -> dict:
         run_id = uuid.uuid4().hex[:12]

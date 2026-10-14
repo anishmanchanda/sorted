@@ -3,6 +3,7 @@ import os
 # Tests never touch the real DB file, never hit a live LLM, and never use a replay cache.
 os.environ["BRAIN_DB_URL"] = "sqlite://"
 os.environ["BRAIN_LLM_CACHE"] = ""
+os.environ["BRAIN_MODEL_DIR"] = __import__("tempfile").mkdtemp(prefix="sorted-models-")
 os.environ["BRAIN_ABILITIES_DIR"] = __import__("tempfile").mkdtemp(prefix="sorted-abilities-")
 
 import pytest  # noqa: E402
@@ -16,9 +17,13 @@ from brain.validate import Extraction  # noqa: E402
 
 @pytest.fixture(autouse=True)
 def fresh_db():
+    from brain.ml import classifier
+
     db.Base.metadata.drop_all(db.engine)
     db.init_db()
+    classifier.set_current(None)
     yield
+    classifier.set_current(None)
 
 
 class FakeLLM:

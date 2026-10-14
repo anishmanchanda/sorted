@@ -1,4 +1,4 @@
-.PHONY: setup samples demo demo-live test eval lint bot mcp
+.PHONY: setup samples demo demo-live test eval train lint bot mcp
 
 setup:
 	uv sync
@@ -22,6 +22,9 @@ lint:
 
 eval:
 	uv run python -m brain.eval
+
+train:  ## retrain the local classifier on labelled samples + LLM-labelled messages
+	uv run python -m brain.ml.train
 
 bot:
 	@echo "Telegram bot lands in M5" && exit 1

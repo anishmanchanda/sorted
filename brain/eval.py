@@ -41,8 +41,8 @@ def score_one(pred: dict, gold: dict) -> dict[str, bool]:
 
 
 def handler_group(handler: str) -> str:
-    """llm / compiled (ability:<name>@v<n>) / rule (rule:<name>, no LLM, not learned)."""
-    return {"ability": "compiled", "rule": "rule"}.get(handler.split(":")[0], "llm")
+    """llm / compiled (ability:<name>@v<n>) / rule (rule:<name>) / ml (local classifier)."""
+    return {"ability": "compiled", "rule": "rule", "ml": "ml"}.get(handler.split(":")[0], "llm")
 
 
 def evaluate(rows: list[tuple[str, str, dict]], labels: dict[str, dict]) -> dict[str, dict[str, list[bool]]]:
@@ -70,13 +70,31 @@ def render(res, labels) -> str:
         lines += ["No `extract` traces in the DB yet. Run `make demo` first, then `make eval`.", ""]
     else:
         lines += ["| handler | " + " | ".join(FIELDS) + " |", "|---" * (len(FIELDS) + 1) + "|"]
-        groups = ("all", "llm", "compiled", "rule")
+        groups = ("all", "llm", "compiled", "ml", "rule")
         order = list(groups) + sorted(k for k in res if k not in groups)
         for key in (k for k in order if k in res):
             lines.append(f"| {key} | " + " | ".join(_pct(res[key].get(f, [])) for f in FIELDS) + " |")
         lines.append("")
     lines += ["## Dataset", "", "| kind/type | n |", "|---|---|"]
     lines += [f"| {k} | {n} |" for k, n in sorted(kinds.items())]
+    return "\n".join(lines) + "\n"
+
+
+def classifier_section(seeds=(1, 2, 3, 7, 11)) -> str:
+    """Held-out accuracy of the local TF-IDF + LogisticRegression classifier (stratified 70/30 splits)."""
+    from brain.ml.classifier import threshold
+    from brain.ml.train import held_out_report
+
+    reps = [held_out_report(seed) for seed in seeds]
+    mean = lambda k: 100 * sum(r[k] for r in reps) / len(reps)  # noqa: E731
+    lines = ["", "## Local classifier (scikit-learn, held-out)", "",
+             f"{len(seeds)} stratified 70/30 splits of the labelled non-OTP samples "
+             f"({reps[0]['test']} unseen per split).",
+             "", "| metric | mean over splits |", "|---|---|",
+             f"| accuracy (all predictions) | {mean('accuracy'):.1f}% |",
+             f"| share with confidence >= {threshold()} (decided locally if `ignore`) | "
+             f"{mean('confident_share'):.1f}% |",
+             f"| accuracy of those confident predictions | {mean('confident_accuracy'):.1f}% |", ""]
     return "\n".join(lines) + "\n"
 
 
@@ -90,7 +108,7 @@ def run() -> str:
             .where(db.Trace.task_kind == "extract")
         )
         rows = [(h, sample_id(p), out) for h, p, out in s.execute(q)]
-    report = render(evaluate(rows, labels), labels)
+    report = render(evaluate(rows, labels), labels) + classifier_section()
     config.REPORTS_DIR.mkdir(exist_ok=True)
     (config.REPORTS_DIR / "eval.md").write_text(report)
     return report

@@ -23,6 +23,8 @@ from brain import eval as brain_eval  # noqa: E402
 from brain.compiler import registry  # noqa: E402
 from brain.compiler.generator import compile_pending  # noqa: E402
 from brain.llm import LLM  # noqa: E402
+from brain.ml import classifier  # noqa: E402
+from brain.ml.train import trace_examples, train  # noqa: E402
 from brain.orchestrator import Orchestrator  # noqa: E402
 from brain.sources import tinyfish  # noqa: E402
 from brain.sources.fixtures import load_fixtures  # noqa: E402
@@ -46,7 +48,8 @@ def money(x) -> str:
 
 def describe(msg, out: dict) -> str:
     handler = out.get("handler", "")
-    who = {"llm": "LLM", "": "-"}.get(handler, "LOCAL" if handler.startswith("ability:") else "RULE")
+    who = {"llm": "LLM", "": "-"}.get(handler, "LOCAL" if handler.startswith("ability:") else
+                                       "LOCAL ML" if handler.startswith("ml:") else "RULE")
     if handler.startswith("ability:"):
         who += " " + handler.rsplit("@", 1)[1]
     ext = out.get("extraction")
@@ -79,7 +82,10 @@ def main() -> None:
     db.init_db()
     scheduler.get().remove_all_jobs()
     shutil.rmtree(config.ROOT / "abilities", ignore_errors=True)
-    notify.SINKS[:] = [lambda text: say(f"      💬 chat alert to you: {text}")]
+    alerts: list[str] = []  # printed after the message line that caused them
+    notify.SINKS[:] = [alerts.append]
+    classifier.MODEL_PATH.unlink(missing_ok=True)
+    classifier.set_current(None)  # the local classifier starts empty and learns from the LLM's labels
 
     orch = Orchestrator(llm=llm)
     msgs = load_fixtures()
@@ -88,6 +94,9 @@ def main() -> None:
         say(f"=== Month {n} · {datetime.strptime(month, '%Y-%m'):%B %Y} ===")
         for m in batch:
             say(describe(m, orch.ingest(m)))
+            for text in alerts:
+                say(f"      💬 chat alert to you: {text}")
+            alerts.clear()
         with db.Session() as s:
             results = compile_pending(s, llm)
             s.commit()
@@ -102,6 +111,9 @@ def main() -> None:
                     s.commit()
                 say(f"  [approval] auto-approved for demo: {r['ability']} v{r['version']} -> shadow "
                     f"(in real use: Telegram /approve or `brain approve`)")
+        clf = train(trace_examples())  # only what the LLM labelled so far: no peeking at future months
+        say(f"  [ml] retrained the local classifier on {clf.n_examples} LLM-labelled messages "
+            f"({len(clf.rules)} sender rules)")
         with db.Session() as s:
             row = next(r for r in score.monthly(s) if r["month"] == month)
         say(f"  -- {row['tasks']} messages, {row['local']} handled by local code, {row['llm_calls']} LLM calls, "

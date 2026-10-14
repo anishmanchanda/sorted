@@ -40,7 +40,8 @@ Meaning per type:
   driving_licence), due_date = valid-until date, provider = issuing authority.
 - ignore: promotions, newsletters, OTPs, phishing or anything else. Other fields null.
 
-provider = the company's short name (e.g. "HDFC Bank", "BSES Rajdhani", "Netflix"). Dates are ISO
+provider is REQUIRED for every type except ignore: the company's short name (e.g. "HDFC Bank",
+"BSES Rajdhani", "Netflix"); for subscriptions it is the brand, same as service. Dates are ISO
 YYYY-MM-DD (resolve two-digit years and month names). Amounts are plain numbers, no commas or symbols."""
 
 
