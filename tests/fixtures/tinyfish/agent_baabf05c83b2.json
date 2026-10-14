@@ -1,0 +1,19 @@
+{
+ "url": "https://help.netflix.com/en/node/24926",
+ "goal": "Find the monthly price of the Netflix Standard plan (without ads). Return provider 'Netflix', the plan name, the monthly price as a number and the currency code.",
+ "recorded_at": "2026-10-14",
+ "response": {
+  "run_id": "e5b0a404-c24d-4bd5-8dbd-162ddb96cb85",
+  "status": "COMPLETED",
+  "started_at": "2026-10-14T09:30:40.197Z",
+  "finished_at": "2026-10-14T09:30:50.590Z",
+  "num_of_steps": 3,
+  "result": {
+   "provider": "Netflix",
+   "plan": "Standard",
+   "price": 19.99,
+   "currency": "USD"
+  },
+  "error": null
+ }
+}

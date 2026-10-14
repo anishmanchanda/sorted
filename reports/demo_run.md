@@ -1,6 +1,6 @@
 # Sorted demo run
 
-Generated 2026-10-14 14:58 by `make demo`. LLM routes: small=cerebras/gpt-oss-120b, strong=openai/gpt-5.4. Compile after 3 accepted traces; shadow runs = 1 (demo setting; default 2). Costs are estimates from BRAIN_PRICES.
+Generated 2026-10-14 15:01 by `make demo`. LLM routes: small=cerebras/gpt-oss-120b, strong=openai/gpt-5.4. Compile after 3 accepted traces; shadow runs = 1 (demo setting; default 2). Costs are estimates from BRAIN_PRICES.
 
 ```text
 
@@ -176,6 +176,10 @@ Generated code and its tests: `abilities/<name>/v<n>/` (run them with `uv run py
 
 - 03 Jul 2026 09:00 — Spotify price rises to ₹139 on 05 Jul 2026. Keep it or cancel before then.
 - 16 Aug 2026 09:00 — Netflix price rises to ₹649 on 18 Aug 2026. Keep it or cancel before then.
+
+## TinyFish (web)
+
+Agent API run (replayed from tests/fixtures/tinyfish/) on https://help.netflix.com/en/node/24926: `{'provider': 'Netflix', 'plan': 'Standard', 'price': 19.99, 'currency': 'USD'}`, stored as a `portal` trace so the task can graduate like any other. (TinyFish proxies have no India exit, so the public page shows US pricing.)
 
 ## Privacy score and cost per simulated month
 

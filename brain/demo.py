@@ -24,7 +24,12 @@ from brain.compiler import registry  # noqa: E402
 from brain.compiler.generator import compile_pending  # noqa: E402
 from brain.llm import LLM  # noqa: E402
 from brain.orchestrator import Orchestrator  # noqa: E402
+from brain.sources import tinyfish  # noqa: E402
 from brain.sources.fixtures import load_fixtures  # noqa: E402
+
+NETFLIX_PLANS = "https://help.netflix.com/en/node/24926"
+NETFLIX_GOAL = ("Find the monthly price of the Netflix Standard plan (without ads). Return provider 'Netflix', the "
+                "plan name, the monthly price as a number and the currency code.")
 
 CACHE = config.ROOT / "data" / "llm_cache"
 lines: list[str] = []
@@ -119,6 +124,16 @@ def main() -> None:
     say()
     for run_at, text, _ in scheduler.upcoming():
         say(f"- {run_at:%d %b %Y %H:%M} — {text}")
+    say()
+    say("## TinyFish (web)")
+    say()
+    try:
+        out = tinyfish.portal(NETFLIX_PLANS, NETFLIX_GOAL, schema=tinyfish.PRICE_SCHEMA)
+        say(f"Agent API run ({'replayed from tests/fixtures/tinyfish/' if out['replayed'] else 'live'}) on "
+            f"{NETFLIX_PLANS}: `{out.get('result')}`, stored as a `portal` trace so the task can graduate like "
+            f"any other. (TinyFish proxies have no India exit, so the public page shows US pricing.)")
+    except tinyfish.NotConfigured as e:
+        say(f"Skipped: {e}")
     say()
     say("## Privacy score and cost per simulated month")
     say()

@@ -114,6 +114,36 @@ def cmd_score(_args) -> None:
     print(score.summary())
 
 
+def cmd_fetch(args) -> None:
+    """TinyFish Fetch (free): a web page through the same pipeline as email."""
+    from brain.sources import tinyfish
+
+    db.init_db()
+    try:
+        msg = tinyfish.fetch_message(args.url)
+    except tinyfish.NotConfigured as e:
+        return print(e)
+    if args.expect_price is not None:
+        seen = tinyfish.price_on_page(msg.body, args.expect_price)
+        print(f"price {args.expect_price} {'found' if seen else 'NOT found'} on {args.url}")
+    _show(msg, _orch().ingest(msg))
+
+
+def cmd_portal(args) -> None:
+    """TinyFish Agent: a goal on a portal page. Replays recorded runs unless TINYFISH_LIVE=1 (uses credits)."""
+    from brain.sources import tinyfish
+
+    db.init_db()
+    try:
+        out = tinyfish.portal(args.url, args.goal, schema=tinyfish.PRICE_SCHEMA if args.price else None,
+                              record=args.record)
+    except tinyfish.NotConfigured as e:
+        return print(e)
+    print(f"{'replayed' if out['replayed'] else 'live'} run -> {out['outcome']}: {out.get('result')}")
+    if out.get("usage"):
+        print(out["usage"])
+
+
 def cmd_serve_sms(args) -> None:
     import uvicorn
 
@@ -144,6 +174,16 @@ def main(argv: list[str] | None = None) -> None:
     sp.set_defaults(fn=cmd_approve)
     sub.add_parser("abilities", help="list abilities with health stats").set_defaults(fn=cmd_abilities)
     sub.add_parser("score", help="privacy score and cost per message, per month").set_defaults(fn=cmd_score)
+    sp = sub.add_parser("fetch", help="TinyFish Fetch a page into the pipeline")
+    sp.add_argument("url")
+    sp.add_argument("--expect-price", type=float, help="check that this price appears on the page")
+    sp.set_defaults(fn=cmd_fetch)
+    sp = sub.add_parser("portal", help="TinyFish Agent goal on a portal page (replay unless TINYFISH_LIVE=1)")
+    sp.add_argument("url")
+    sp.add_argument("goal")
+    sp.add_argument("--price", action="store_true", help="use the price schema instead of the bill schema")
+    sp.add_argument("--record", action="store_true", help="save the live response to tests/fixtures/tinyfish")
+    sp.set_defaults(fn=cmd_portal)
     sp = sub.add_parser("serve-sms", help="run the POST /ingest/sms webhook")
     sp.add_argument("--host", default="127.0.0.1")
     sp.add_argument("--port", type=int, default=8787)
