@@ -31,3 +31,11 @@ def test_otp_filter(fixtures):
 def test_injection_detector(fixtures):
     flagged = [m.raw_path for m in fixtures if looks_like_injection(m.redacted_text())]
     assert flagged == ["data/samples/email/m3_injection.eml"]
+
+
+def test_redaction_masks_upi_ids():
+    out = redact("Pay ramesh.k@okhdfcbank or 9876543210@ybl. Paid to netflix@icici. Mail rohan@example.in")
+    assert "ramesh" not in out and "9876543210" not in out and "netflix@icici" not in out
+    assert out.count("[upi]") == 3 and "[email]" in out
+    assert redact(out) == out
+
