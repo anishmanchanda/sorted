@@ -3,7 +3,7 @@
 **A household admin assistant that uses AI as a compiler, not an interpreter.** It learns a task with an LLM,
 then writes, tests and switches to its own local code, so it gets cheaper, faster and more private every month.
 
-*AzinHack 2026 · Team Not Found: Anish Manchanda, Aryan Thakur, Keshav Goel*
+*Team Not Found: Anish Manchanda, Aryan Thakur, Keshav Goel and Vinayaka Chauhan*
 
 ## The problem
 
@@ -428,4 +428,4 @@ Later: the Android SMS app and iPhone Shortcut, WhatsApp reminder templates, enc
 
 ## Team
 
-**Team Not Found:** Anish Manchanda, Aryan Thakur, Keshav Goel.
+**Team Not Found:** Anish Manchanda, Aryan Thakur, Keshav Goel and Vinayaka Chauhan.

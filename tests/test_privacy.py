@@ -39,3 +39,23 @@ def test_redaction_masks_upi_ids():
     assert out.count("[upi]") == 3 and "[email]" in out
     assert redact(out) == out
 
+
+def test_telegram_owner_rejects_bad_values(monkeypatch, tmp_path):
+    import pytest
+
+    from brain import telegram_bot
+
+    owner_file = tmp_path / "telegram_owner"
+    monkeypatch.setattr(telegram_bot, "OWNER_FILE", owner_file)
+    monkeypatch.delenv("TELEGRAM_OWNER_ID", raising=False)
+    monkeypatch.setattr(telegram_bot.config, "env", lambda k, d=None: None)
+    assert telegram_bot.owner() is None
+    owner_file.write_text("12345\n", encoding="utf-8")
+    assert telegram_bot.owner() == 12345
+    owner_file.write_text("", encoding="utf-8")  # a half-written file must not reopen the bot to anyone
+    with pytest.raises(SystemExit):
+        telegram_bot.owner()
+    bad_env = {"TELEGRAM_OWNER_ID": "not-a-number"}
+    monkeypatch.setattr(telegram_bot.config, "env", lambda k, d=None: bad_env.get(k))
+    with pytest.raises(SystemExit):
+        telegram_bot.owner()

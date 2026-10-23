@@ -125,9 +125,19 @@ def poll_imap() -> None:
 
 # ------------------------------------------------------------------ Telegram wiring
 def owner() -> int | None:
+    """The one chat allowed to use the bot. A bad value stops the bot with a clear message instead of a bare
+    ValueError, and never falls back to "no owner yet", which would let the next /start claim the bot."""
     if v := config.env("TELEGRAM_OWNER_ID"):
-        return int(v)
-    return int(OWNER_FILE.read_text()) if OWNER_FILE.exists() else None
+        try:
+            return int(v.strip())
+        except ValueError:
+            raise SystemExit(f"TELEGRAM_OWNER_ID must be a numeric Telegram chat id, got {v!r}.") from None
+    if not OWNER_FILE.exists():
+        return None
+    try:
+        return int(OWNER_FILE.read_text(encoding="utf-8").strip())
+    except ValueError:
+        raise SystemExit(f"{OWNER_FILE} is corrupt; delete it and send /start again to set the owner.") from None
 
 
 def main() -> None:
@@ -158,7 +168,7 @@ def main() -> None:
     async def start(update: Update, context):
         if owner() is None:
             OWNER_FILE.parent.mkdir(exist_ok=True)
-            OWNER_FILE.write_text(str(update.effective_chat.id))
+            OWNER_FILE.write_text(str(update.effective_chat.id), encoding="utf-8")
         if allowed(update):
             await update.message.reply_text(HELP)
 
