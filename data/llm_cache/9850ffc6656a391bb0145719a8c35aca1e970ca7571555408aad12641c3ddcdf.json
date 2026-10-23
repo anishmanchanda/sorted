@@ -1,0 +1,22 @@
+{
+ "data": {
+  "type": "other",
+  "provider": "Global Traders Ltd.",
+  "amount": 78900.0,
+  "currency": "INR",
+  "due_date": "2026-08-27",
+  "service": null,
+  "old_price": null,
+  "new_price": null,
+  "event_time": null,
+  "person": null,
+  "topic": "shipment request",
+  "document_type": null,
+  "category": "shipment_request"
+ },
+ "tokens": 1247,
+ "cost": 0.0005480499999999999,
+ "model": "gpt-oss-120b",
+ "date_offset": 23,
+ "key": null
+}

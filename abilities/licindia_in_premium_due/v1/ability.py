@@ -8,21 +8,25 @@ OUTPUT_FIELDS = ['type', 'provider', 'amount', 'currency', 'due_date']
 
 import re
 from datetime import datetime
+from decimal import Decimal
 
 
 def extract(text: str) -> dict:
-    amount_match = re.search(r'^\s*Premium\s+Amount\s*:\s*Rs\.\s*([0-9,]+(?:\.\d{1,2})?)\s*$', text, re.IGNORECASE | re.MULTILINE)
-    if not amount_match:
+    amt_match = re.search(r'(?im)^\s*Premium\s+Amount\s*:\s*(?:Rs\.?|INR)\s*([0-9][0-9,]*\.\d{2})\s*$', text)
+    if not amt_match:
         raise ValueError('Missing Premium Amount label')
 
-    due_date_match = re.search(r'^\s*Due\s+Date\s*:\s*(\d{1,2}/\d{1,2}/\d{4})\s*$', text, re.IGNORECASE | re.MULTILINE)
-    if not due_date_match:
+    due_match = re.search(r'(?im)^\s*Due\s+Date\s*:\s*([0-3]?\d/[0-1]?\d/\d{4})\s*$', text)
+    if not due_match:
         raise ValueError('Missing Due Date label')
 
-    amount_str = amount_match.group(1).replace(',', '')
-    amount = float(amount_str)
+    amount_str = amt_match.group(1).replace(',', '')
+    amount = float(Decimal(amount_str))
 
-    due_date = datetime.strptime(due_date_match.group(1), '%d/%m/%Y').strftime('%Y-%m-%d')
+    try:
+        due_date = datetime.strptime(due_match.group(1), '%d/%m/%Y').strftime('%Y-%m-%d')
+    except ValueError:
+        raise ValueError('Invalid Due Date format')
 
     return {
         'type': 'premium_due',

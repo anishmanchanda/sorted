@@ -7,8 +7,9 @@ from collections import defaultdict
 
 from sqlalchemy import select
 
-from brain import config, db
+from brain import config, db, skills
 from brain.messages import sender_key
+from brain.validate import TYPES
 
 _STOP = {"your", "from", "with", "this", "that", "have", "ready", "here", "about"}
 _MONTHS = {"january", "february", "march", "april", "june", "july", "august", "september", "october", "november",
@@ -34,6 +35,8 @@ def groups(s) -> dict[tuple[str, str, str], list[tuple[db.Trace, db.SourceRecord
     out = defaultdict(list)
     for trace, src in rows:
         etype = trace.output_json.get("type")
+        if etype == "other":  # a new kind of message: its category is the type a parser is compiled for
+            etype = trace.output_json.get("category")
         if etype and etype != "ignore":  # ignore-mail is the local classifier's job (brain.ml), not a parser's
             out[(src.kind, sender_key(src.kind, src.sender), etype)].append((trace, src))
     return out
@@ -55,6 +58,8 @@ def scan(s) -> list[db.Ability]:
     compile_after = int(config.env("BRAIN_COMPILE_AFTER", "3"))
     todo = []
     for key, items in groups(s).items():
+        if key[2] not in TYPES and not skills.is_active(s, key[2]):  # a new category: only once the user agreed
+            continue
         name = ability_name(key)
         latest = s.scalars(select(db.Ability).where(db.Ability.name == name)
                            .order_by(db.Ability.version.desc())).first()

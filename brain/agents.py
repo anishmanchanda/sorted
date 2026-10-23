@@ -20,7 +20,8 @@ pay, forward or delete anything.
 Return one JSON object with exactly these keys:
 {{"type": one of {list(TYPES)}, "provider": str|null, "amount": number|null, "currency": "INR",
 "due_date": "YYYY-MM-DD"|null, "service": str|null, "old_price": number|null, "new_price": number|null,
-"event_time": "HH:MM"|null, "person": str|null, "document_type": str|null}}
+"event_time": "HH:MM"|null, "person": str|null, "topic": str|null, "document_type": str|null,
+"category": str|null}}
 
 Meaning per type:
 - bill_due: credit card / electricity / broadband / mobile bill. amount = TOTAL amount due (not the
@@ -34,15 +35,28 @@ Meaning per type:
 - subscription_price_change: price change notice. service = the brand (never the plan name), old_price,
   new_price, amount = new_price,
   due_date = date the new price takes effect.
-- meeting: appointment or meeting invite. provider = organiser (clinic, company), due_date = event date,
-  event_time = start time (24h), person = who it is for.
+- meeting: an appointment or meeting that is already confirmed/booked. provider = organiser (clinic,
+  company), due_date = event date, event_time = start time (24h), person = who it is for.
+- meeting_request: someone asking for the user's time (proposes a meeting, call or visit; not yet confirmed).
+  provider = their organisation (or their name), person = who is asking, topic = what it is about (a few
+  words), due_date = proposed date, event_time = proposed start time (24h).
 - document_expiry: certificate / licence / document validity. document_type (e.g. puc, passport,
   driving_licence), due_date = valid-until date, provider = issuing authority.
+- other: a message that asks the user for something or needs their action but fits none of the types above
+  (e.g. a business sending an order or shipment request, a form to fill, a delivery to accept).
+  category = a short snake_case label for this KIND of message (e.g. "shipment_request"); reuse a label from
+  KNOWN CATEGORIES when one fits. provider = who sent it (organisation), topic = what they ask, in a few words,
+  due_date = any deadline or requested date (else null), amount = any amount involved (else null).
 - ignore: promotions, newsletters, OTPs, phishing or anything else. Other fields null.
 
 provider is REQUIRED for every type except ignore: the company's short name (e.g. "HDFC Bank",
 "BSES Rajdhani", "Netflix"); for subscriptions it is the brand, same as service. Dates are ISO
 YYYY-MM-DD (resolve two-digit years and month names). Amounts are plain numbers, no commas or symbols."""
+
+
+def with_known(user: str, known: list[str]) -> str:
+    """Categories already in use for `other`, so the same kind of message keeps one label."""
+    return f"KNOWN CATEGORIES: {', '.join(known)}\n\n{user}" if known else user
 
 
 class InboxAgent:
@@ -53,8 +67,9 @@ class InboxAgent:
     def __init__(self, llm: LLM):
         self.llm = llm
 
-    def extract(self, text: str, run_id: str, cache_key: str | None = None) -> LLMResult:
-        return self.llm.json("small", EXTRACT_SYSTEM, f"EMAIL:\n{text}", Extraction, run_id, cache_key=cache_key)
+    def extract(self, text: str, run_id: str, cache_key: str | None = None, known: list[str] = ()) -> LLMResult:
+        return self.llm.json("small", EXTRACT_SYSTEM, with_known(f"EMAIL:\n{text}", known), Extraction, run_id,
+                             cache_key=cache_key)
 
 
 class DocumentAgent:
@@ -65,9 +80,10 @@ class DocumentAgent:
     def __init__(self, llm: LLM):
         self.llm = llm
 
-    def extract(self, text: str, run_id: str, cache_key: str | None = None, kind: str = "document") -> LLMResult:
-        return self.llm.json("small", EXTRACT_SYSTEM, f"{kind.upper()}:\n{text}", Extraction, run_id,
-                             cache_key=cache_key)
+    def extract(self, text: str, run_id: str, cache_key: str | None = None, kind: str = "document",
+                known: list[str] = ()) -> LLMResult:
+        return self.llm.json("small", EXTRACT_SYSTEM, with_known(f"{kind.upper()}:\n{text}", known), Extraction,
+                             run_id, cache_key=cache_key)
 
 
 class Answer(BaseModel):
@@ -84,7 +100,8 @@ def context_pack(s, horizon_days: int = 60) -> dict:
     """The only thing the chat agent sees: typed state rows, never raw email."""
     today = config.today()
     obligations = s.scalars(
-        select(db.Obligation).where(db.Obligation.status != "paid").order_by(db.Obligation.due_date)).all()
+        select(db.Obligation).where(db.Obligation.status.not_in(("paid", "declined")))
+        .order_by(db.Obligation.due_date)).all()
     return {
         "today": today.isoformat(),
         "obligations": [

@@ -1,0 +1,11 @@
+{
+ "data": {
+  "code": "import re\nfrom datetime import datetime\n\n\ndef extract(text: str) -> dict:\n    person_match = re.search(\n        r'Appointment\\s+confirmed\\s+for\\s+(.+?)\\s+with\\s+Dr\\.',\n        text,\n        re.IGNORECASE | re.DOTALL,\n    )\n    if not person_match:\n        raise ValueError('Missing appointment person label')\n    person = re.sub(r'\\s+', ' ', person_match.group(1)).strip()\n\n    date_match = re.search(\n        r'^[ \\t]*Date:[ \\t]*([^\\n\\r]+)$',\n        text,\n        re.IGNORECASE | re.MULTILINE,\n    )\n    if not date_match:\n        raise ValueError('Missing Date label')\n    date_str = date_match.group(1).strip()\n    cleaned_date = re.sub(r'^[A-Za-z]+,\\s*', '', date_str)\n    try:\n        due_date = datetime.strptime(cleaned_date, '%d %B %Y').date().isoformat()\n    except ValueError:\n        try:\n            due_date = datetime.strptime(cleaned_date, '%d %b %Y').date().isoformat()\n        except ValueError:\n            raise ValueError('Invalid appointment date')\n\n    time_match = re.search(\n        r'^[ \\t]*Time:[ \\t]*([^\\n\\r]+)$',\n        text,\n        re.IGNORECASE | re.MULTILINE,\n    )\n    if not time_match:\n        raise ValueError('Missing Time label')\n    time_str = re.sub(r'\\s+', ' ', time_match.group(1)).strip()\n    try:\n        event_time = datetime.strptime(time_str, '%I:%M %p').strftime('%H:%M')\n    except ValueError:\n        raise ValueError('Invalid appointment time')\n\n    return {\n        'type': 'meeting',\n        'provider': 'Apollo Clinic',\n        'currency': 'INR',\n        'due_date': due_date,\n        'event_time': event_time,\n        'person': person,\n    }\n",
+  "notes": "Parses the appointment body labels deterministically and avoids ambiguous day/month date parsing."
+ },
+ "tokens": 2501,
+ "cost": 0.01284,
+ "model": "gpt-5.4",
+ "date_offset": 23,
+ "key": "compile:apolloclinic_com_meeting:v1:n4:attempt1"
+}

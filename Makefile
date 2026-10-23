@@ -1,15 +1,18 @@
-.PHONY: setup samples demo demo-live test eval train lint bot mcp mcp-http
+.PHONY: setup dataset demo demo-live sim test eval train lint bot mcp mcp-http
 
 setup:
 	uv sync
 	@test -f .env || (cp .env.example .env && echo "created .env from .env.example; add your API keys")
 	uv run brain init
 
-samples:  ## regenerate the committed canonical test fixtures (data/samples)
+dataset:  ## regenerate the committed synthetic dataset (data/samples) so it ends today; then re-run make demo
 	uv run python -m brain.samples
 
 demo:  ## synthetic 6-month simulation in data/demo.db (never the live DB); replays data/llm_cache
 	uv run python -m brain.demo
+
+sim:  ## interactive simulation: web dashboard on http://127.0.0.1:8000 + your Telegram bot (stop make bot first)
+	uv run python -m brain.web
 
 demo-live:  ## same, but every LLM call goes to the providers
 	uv run python -m brain.demo --live

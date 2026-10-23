@@ -15,8 +15,8 @@ def env(name: str, default: str = "") -> str:
 
 
 DB_URL = env("BRAIN_DB_URL", f"sqlite:///{ROOT / 'data' / 'brain.db'}")
-SAMPLES_DIR = Path(env("BRAIN_SAMPLES_DIR", str(ROOT / "data" / "samples")))
-LABELS_PATH = Path(env("BRAIN_LABELS", str(ROOT / "data" / "eval" / "labels.jsonl")))
+SAMPLES_DIR = ROOT / env("BRAIN_SAMPLES_DIR", "data/samples")  # relative env paths resolve against the repo root
+LABELS_PATH = ROOT / env("BRAIN_LABELS", "data/eval/labels.jsonl")
 DEMO_DIR = ROOT / "data" / "demo"  # `make demo` writes its synthetic, date-shifted inbox here
 DEMO_DB_URL = f"sqlite:///{ROOT / 'data' / 'demo.db'}"  # the simulation never touches the live DB
 REPORTS_DIR = ROOT / "reports"

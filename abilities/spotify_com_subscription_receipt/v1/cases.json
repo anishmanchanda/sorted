@@ -1,36 +1,36 @@
 [
  {
-  "input": "From: Spotify <no-reply@spotify.com>\nSubject: Your Spotify Premium receipt\nDate: 2026-04-19 03:30\n\nYour receipt from Spotify\n\nSpotify Premium Individual — Rs 119/month\n\nDate: 19/04/2026\nOrder ID: SP-XXXXX3790\n\nYour next payment of Rs 119 is on 19/05/2026.\n\nManage your account at spotify.com/account.\n",
+  "input": "From: Spotify <no-reply@spotify.com>\nSubject: Your Spotify Premium receipt\nDate: 2026-04-28 03:30\n\nYour receipt from Spotify\n\nSpotify Premium Individual — Rs 119/month\n\nDate: 28/04/2026\nOrder ID: SP-XXXXX3790\n\nYour next payment of Rs 119 is on 28/05/2026.\n\nManage your account at spotify.com/account.\n",
   "expected": {
    "type": "subscription_receipt",
    "provider": "Spotify",
    "amount": 119.0,
    "currency": "INR",
-   "due_date": "2026-05-19",
+   "due_date": "2026-05-28",
    "service": "Spotify"
   },
   "held_out": false
  },
  {
-  "input": "From: Spotify <no-reply@spotify.com>\nSubject: Your Spotify Premium receipt\nDate: 2026-05-19 03:30\n\nYour receipt from Spotify\n\nSpotify Premium Individual — Rs 119/month\n\nDate: 19/05/2026\nOrder ID: SP-XXXXX7706\n\nYour next payment of Rs 119 is on 19/06/2026.\n\nManage your account at spotify.com/account.\n",
+  "input": "From: Spotify <no-reply@spotify.com>\nSubject: Your Spotify Premium receipt\nDate: 2026-05-28 03:30\n\nYour receipt from Spotify\n\nSpotify Premium Individual — Rs 119/month\n\nDate: 28/05/2026\nOrder ID: SP-XXXXX7706\n\nYour next payment of Rs 119 is on 28/06/2026.\n\nManage your account at spotify.com/account.\n",
   "expected": {
    "type": "subscription_receipt",
    "provider": "Spotify",
    "amount": 119.0,
    "currency": "INR",
-   "due_date": "2026-06-19",
+   "due_date": "2026-06-28",
    "service": "Spotify"
   },
   "held_out": false
  },
  {
-  "input": "From: Spotify <no-reply@spotify.com>\nSubject: Your Spotify Premium receipt\nDate: 2026-06-19 03:30\n\nYour receipt from Spotify\n\nSpotify Premium Individual — Rs 119/month\n\nDate: 19/06/2026\nOrder ID: SP-XXXXX5932\n\nYour next payment of Rs 119 is on 19/07/2026.\n\nManage your account at spotify.com/account.\n",
+  "input": "From: Spotify <no-reply@spotify.com>\nSubject: Your Spotify Premium receipt\nDate: 2026-06-28 03:30\n\nYour receipt from Spotify\n\nSpotify Premium Individual — Rs 119/month\n\nDate: 28/06/2026\nOrder ID: SP-XXXXX5932\n\nYour next payment of Rs 119 is on 28/07/2026.\n\nManage your account at spotify.com/account.\n",
   "expected": {
    "type": "subscription_receipt",
    "provider": "Spotify",
    "amount": 119.0,
    "currency": "INR",
-   "due_date": "2026-07-19",
+   "due_date": "2026-07-28",
    "service": "Spotify"
   },
   "held_out": true

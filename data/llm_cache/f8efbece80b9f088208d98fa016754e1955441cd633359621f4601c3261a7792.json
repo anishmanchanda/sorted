@@ -1,0 +1,22 @@
+{
+ "data": {
+  "type": "meeting_request",
+  "provider": "Acme Infra",
+  "amount": null,
+  "currency": "INR",
+  "due_date": "2026-10-29",
+  "service": null,
+  "old_price": null,
+  "new_price": null,
+  "event_time": "11:00",
+  "person": "Ravi Kumar",
+  "topic": "kitchen renovation site visit",
+  "document_type": null,
+  "category": null
+ },
+ "tokens": 1351,
+ "cost": 0.00064365,
+ "model": "gpt-oss-120b",
+ "date_offset": 23,
+ "key": "extract:m6_meeting_kitchen"
+}

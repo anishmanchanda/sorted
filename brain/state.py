@@ -10,7 +10,7 @@ from brain.validate import Extraction
 
 OBLIGATION_TYPE = {
     "bill_due": "bill", "premium_due": "premium", "insurance_renewal": "renewal",
-    "subscription_receipt": "subscription", "meeting": "meeting",
+    "subscription_receipt": "subscription", "meeting": "meeting", "meeting_request": "meeting",
 }
 _STOP = {"bank", "ltd", "limited", "india", "of", "the", "co", "company", "insurance", "power", "govt",
          "premium", "plan", "standard", "individual", "subscription", "membership", "service", "services"}
@@ -45,14 +45,18 @@ def apply(s, src: db.SourceRecord, ext: Extraction, problems: list[str]) -> str:
         else:  # a receipt is what was actually charged: that is the current price
             sub.price, sub.source_id = ext.amount, src.id
 
+    is_meeting = ext.type in ("meeting", "meeting_request")
+    details = " · ".join(filter(None, [ext.event_time, ext.person, ext.topic])) if is_meeting else \
+        (ext.topic or "") if ext.type == "other" else ""
     ob = db.Obligation(
-        type=OBLIGATION_TYPE[ext.type], provider=ext.provider or "?", amount=ext.amount, currency=ext.currency,
+        type=ext.category if ext.type == "other" else OBLIGATION_TYPE[ext.type], provider=ext.provider or "?",
+        amount=ext.amount, currency=ext.currency,
         due_date=ext.due_date, repeat_rule="monthly" if ext.type in ("bill_due", "premium_due",
                                                                      "subscription_receipt") else "",
-        status="flagged" if problems else "open", confidence=0.4 if problems else 1.0,
-        note="; ".join(problems), source_id=src.id,
+        status="flagged" if problems else "proposed" if ext.type == "meeting_request" else "open",
+        confidence=0.4 if problems else 1.0, note="; ".join(filter(None, [details, *problems])), source_id=src.id,
     )
-    if ext.due_date:
+    if ext.due_date and ext.type != "other":  # new kinds (e.g. shipment requests) legitimately repeat
         near = s.scalars(select(db.Obligation).where(
             db.Obligation.type == ob.type,
             db.Obligation.due_date.between(ext.due_date - timedelta(days=7), ext.due_date + timedelta(days=7)),

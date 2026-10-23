@@ -1,11 +1,11 @@
 {
  "data": {
-  "code": "import re\nfrom datetime import datetime\n\n\ndef extract(text: str) -> dict:\n    subject_match = re.search(r'^Subject:\\s*(.+)$', text, re.MULTILINE)\n    if not subject_match:\n        raise ValueError('Missing Subject header')\n\n    amount_match = re.search(r'Renewal\\s+premium\\s*:\\s*\u20b9\\s*([0-9][0-9,]*\\.?[0-9]*)', text, re.IGNORECASE)\n    if not amount_match:\n        raise ValueError('Missing Renewal premium label')\n\n    due_match = re.search(r'expires\\s+on\\s+([0-9]{1,2}\\s+[A-Za-z]{3}\\s+[0-9]{4})', text, re.IGNORECASE)\n    if not due_match:\n        raise ValueError('Missing expires on label')\n\n    amount = float(amount_match.group(1).replace(',', ''))\n    due_date = datetime.strptime(due_match.group(1), '%d %b %Y').strftime('%Y-%m-%d')\n\n    return {\n        'type': 'insurance_renewal',\n        'provider': 'ICICI Lombard',\n        'amount': amount,\n        'currency': 'INR',\n        'due_date': due_date,\n    }\n",
-  "notes": "Parses ICICI Lombard car insurance renewal emails by anchoring on the premium and expiry labels."
+  "code": "import re\nfrom datetime import datetime\n\n\ndef _parse_amount(amount_text: str) -> float:\n    cleaned = amount_text.strip()\n    cleaned = cleaned.replace(',', '')\n    return float(cleaned)\n\n\ndef _parse_date(date_text: str) -> str:\n    dt = datetime.strptime(date_text.strip(), '%d %b %Y')\n    return dt.strftime('%Y-%m-%d')\n\n\ndef extract(text: str) -> dict:\n    if not re.search(r'ICICI\\s+Lombard', text, re.IGNORECASE):\n        raise ValueError('Missing provider label')\n\n    amount_match = re.search(\n        r'Renewal\\s+premium\\s*:\\s*\u20b9\\s*([0-9][0-9,]*\\.\\d{2})',\n        text,\n        re.IGNORECASE,\n    )\n    if not amount_match:\n        raise ValueError('Missing renewal premium label')\n\n    due_date_match = re.search(\n        r'expires\\s+on\\s+([0-9]{1,2}\\s+[A-Za-z]{3}\\s+[0-9]{4})',\n        text,\n        re.IGNORECASE,\n    )\n    if not due_date_match:\n        raise ValueError('Missing expiry date label')\n\n    return {\n        'type': 'insurance_renewal',\n        'provider': 'ICICI Lombard',\n        'amount': _parse_amount(amount_match.group(1)),\n        'currency': 'INR',\n        'due_date': _parse_date(due_date_match.group(1)),\n    }\n",
+  "notes": "Anchored extraction on the fixed 'Renewal premium' and 'expires on' labels with strict failure on layout changes."
  },
- "tokens": 1091,
- "cost": 0.006965,
+ "tokens": 1170,
+ "cost": 0.00815,
  "model": "gpt-5.4",
- "date_offset": 14,
+ "date_offset": 23,
  "key": "compile:icicilombard_com_insurance_renewal:v1:n3:attempt0"
 }

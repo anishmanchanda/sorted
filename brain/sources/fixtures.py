@@ -10,7 +10,7 @@ from brain.sources.pdf import from_pdf
 
 
 def _rel(p: Path) -> str:
-    return str(p.relative_to(config.ROOT))
+    return str(p.relative_to(config.ROOT)) if p.is_relative_to(config.ROOT) else str(p)
 
 
 def load_fixtures(root: Path = config.SAMPLES_DIR) -> list[Message]:

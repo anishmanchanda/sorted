@@ -1,0 +1,11 @@
+{
+ "data": {
+  "code": "import re\nfrom datetime import datetime\n\n\ndef extract(text: str) -> dict:\n    def parse_amount(value: str) -> float:\n        cleaned = value.replace(',', '').strip()\n        try:\n            return float(cleaned)\n        except Exception:\n            raise ValueError('Invalid amount')\n\n    def parse_date(value: str) -> str:\n        s = value.strip()\n        for fmt in ('%d/%m/%Y', '%d %b %Y', '%d %B %Y'):\n            try:\n                return datetime.strptime(s, fmt).strftime('%Y-%m-%d')\n            except Exception:\n                pass\n        raise ValueError('Invalid date')\n\n    amount_match = re.search(\n        r'(?im)^\\s*(?:Total\\s+Amount\\s+Due\\s+Rs\\.?|Amount\\s+payable\\s+INR)\\s*([0-9][0-9,]*\\.\\d{2})\\s*$',\n        text,\n    )\n    if not amount_match:\n        raise ValueError('Missing amount label')\n\n    due_match = re.search(\n        r'(?im)^\\s*(?:Payment\\s+Due\\s+Date|Pay\\s+by)\\s+([0-9]{1,2}(?:/[0-9]{1,2}/[0-9]{4}|\\s+[A-Za-z]{3,9}\\s+[0-9]{4}))\\s*$',\n        text,\n    )\n    if not due_match:\n        raise ValueError('Missing due date label')\n\n    return {\n        'type': 'bill_due',\n        'provider': 'HDFC Bank',\n        'amount': parse_amount(amount_match.group(1)),\n        'currency': 'INR',\n        'due_date': parse_date(due_match.group(1)),\n    }\n",
+  "notes": "Parses both statement layouts by anchoring on amount and due-date labels, with strict failures if labels change."
+ },
+ "tokens": 1694,
+ "cost": 0.01016,
+ "model": "gpt-5.4",
+ "date_offset": 23,
+ "key": "compile:hdfcbank_net_bill_due:v2:n6:attempt0"
+}

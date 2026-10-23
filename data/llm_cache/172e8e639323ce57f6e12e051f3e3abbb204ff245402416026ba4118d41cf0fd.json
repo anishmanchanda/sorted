@@ -1,0 +1,22 @@
+{
+ "data": {
+  "type": "bill_due",
+  "provider": "Airtel Xstream Fiber",
+  "amount": 1178.82,
+  "currency": "INR",
+  "due_date": "2026-09-12",
+  "service": null,
+  "old_price": null,
+  "new_price": null,
+  "event_time": null,
+  "person": null,
+  "topic": null,
+  "document_type": null,
+  "category": null
+ },
+ "tokens": 1278,
+ "cost": 0.0005777,
+ "model": "gpt-oss-120b",
+ "date_offset": 23,
+ "key": "extract:m5_airtel"
+}

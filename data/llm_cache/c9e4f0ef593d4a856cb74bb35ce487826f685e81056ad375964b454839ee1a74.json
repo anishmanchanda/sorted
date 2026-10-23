@@ -1,0 +1,22 @@
+{
+ "data": {
+  "type": "meeting_request",
+  "provider": "Gupta & Co. Chartered Accountants",
+  "amount": null,
+  "currency": "INR",
+  "due_date": "2026-10-02",
+  "service": null,
+  "old_price": null,
+  "new_price": null,
+  "event_time": "18:30",
+  "person": "Neha Gupta",
+  "topic": "second advance tax instalment and capital gains discussion",
+  "document_type": null,
+  "category": null
+ },
+ "tokens": 2777,
+ "cost": 0.00126275,
+ "model": "gpt-oss-120b",
+ "date_offset": 23,
+ "key": "extract:m6_meeting_advance"
+}

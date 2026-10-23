@@ -1,0 +1,11 @@
+{
+ "data": {
+  "code": "import re\nfrom decimal import Decimal\n\n\ndef extract(text: str) -> dict:\n    provider = \"Global Traders Ltd.\"\n\n    amount_match = re.search(\n        r\"\\b(?:total\\s+invoice\\s+amount\\s+is|total\\s+cost\\s+is|totals)\\s+INR\\s*([0-9][0-9,]*\\.?[0-9]*)\",\n        text,\n        re.IGNORECASE,\n    )\n    if not amount_match:\n        raise ValueError(\"Missing amount label\")\n    amount = float(Decimal(amount_match.group(1).replace(\",\", \"\")))\n\n    due_match = re.search(\n        r\"\\b(?:arrive\\s+no\\s+later\\s+than|delivered\\s+by)\\s+(\\d{4}-\\d{2}-\\d{2})\\b\",\n        text,\n        re.IGNORECASE,\n    )\n    if not due_match:\n        raise ValueError(\"Missing due date label\")\n    due_date = due_match.group(1)\n\n    topic = \"shipment request\"\n    topic_match = re.search(\n        r\"Please\\s+arrange\\s+for\\s+(.+?)\\s+to\\s+be\\s+dispatched\",\n        text,\n        re.IGNORECASE | re.DOTALL,\n    )\n    if topic_match:\n        phrase = re.sub(r\"\\s+\", \" \", topic_match.group(1)).strip(\" .\")\n        if phrase:\n            topic = \"Shipment request for \" + phrase\n\n    return {\n        \"type\": \"other\",\n        \"provider\": provider,\n        \"amount\": amount,\n        \"currency\": \"INR\",\n        \"due_date\": due_date,\n        \"topic\": topic,\n        \"category\": \"shipment_request\",\n    }\n",
+  "notes": "Parses labeled INR amount and delivery deadline, with a specific topic extraction for the dispatch phrasing and a safe fallback to generic shipment request."
+ },
+ "tokens": 1473,
+ "cost": 0.009695,
+ "model": "gpt-5.4",
+ "date_offset": 23,
+ "key": "compile:globaltraders_example_in_shipment_request:v1:n5:attempt0"
+}

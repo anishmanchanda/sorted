@@ -1,0 +1,22 @@
+{
+ "data": {
+  "type": "bill_due",
+  "provider": "HDFC Bank",
+  "amount": 19391.89,
+  "currency": "INR",
+  "due_date": "2026-09-24",
+  "service": null,
+  "old_price": null,
+  "new_price": null,
+  "event_time": null,
+  "person": null,
+  "topic": null,
+  "document_type": null,
+  "category": null
+ },
+ "tokens": 1307,
+ "cost": 0.0006198499999999999,
+ "model": "gpt-oss-120b",
+ "date_offset": 23,
+ "key": "extract:sms_m5_hdfc"
+}

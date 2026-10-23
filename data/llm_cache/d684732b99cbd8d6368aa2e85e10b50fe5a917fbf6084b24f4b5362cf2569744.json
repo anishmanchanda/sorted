@@ -1,0 +1,22 @@
+{
+ "data": {
+  "type": "document_expiry",
+  "provider": "Transport Department",
+  "amount": 100.0,
+  "currency": "INR",
+  "due_date": "2026-12-03",
+  "service": null,
+  "old_price": null,
+  "new_price": null,
+  "event_time": null,
+  "person": null,
+  "topic": null,
+  "document_type": "puc",
+  "category": null
+ },
+ "tokens": 1248,
+ "cost": 0.0005584,
+ "model": "gpt-oss-120b",
+ "date_offset": 23,
+ "key": "extract:m2_puc_certificate"
+}

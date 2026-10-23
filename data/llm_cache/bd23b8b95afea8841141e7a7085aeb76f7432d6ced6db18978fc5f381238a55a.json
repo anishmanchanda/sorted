@@ -1,0 +1,12 @@
+{
+ "data": {
+  "title": "Shipment requests",
+  "action": "remind_before_due",
+  "why": "Track upcoming shipment requests and act before their dates."
+ },
+ "tokens": 492,
+ "cost": 0.00022739999999999997,
+ "model": "gpt-oss-120b",
+ "date_offset": 23,
+ "key": null
+}

@@ -1,0 +1,22 @@
+{
+ "data": {
+  "type": "ignore",
+  "provider": null,
+  "amount": null,
+  "currency": "INR",
+  "due_date": null,
+  "service": null,
+  "old_price": null,
+  "new_price": null,
+  "event_time": null,
+  "person": null,
+  "topic": null,
+  "document_type": null,
+  "category": null
+ },
+ "tokens": 1003,
+ "cost": 0.00040544999999999996,
+ "model": "gpt-oss-120b",
+ "date_offset": 23,
+ "key": "extract:sms_m3_promo1"
+}

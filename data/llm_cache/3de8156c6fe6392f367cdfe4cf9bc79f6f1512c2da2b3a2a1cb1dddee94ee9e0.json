@@ -1,0 +1,22 @@
+{
+ "data": {
+  "type": "subscription_price_change",
+  "provider": "Netflix",
+  "amount": 649.0,
+  "currency": "INR",
+  "due_date": "2026-09-10",
+  "service": "Netflix",
+  "old_price": 499.0,
+  "new_price": 649.0,
+  "event_time": null,
+  "person": null,
+  "topic": null,
+  "document_type": null,
+  "category": null
+ },
+ "tokens": 1194,
+ "cost": 0.0005202999999999999,
+ "model": "gpt-oss-120b",
+ "date_offset": 23,
+ "key": "extract:m4_netflix_price"
+}

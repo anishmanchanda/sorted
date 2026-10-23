@@ -1,0 +1,22 @@
+{
+ "data": {
+  "type": "subscription_price_change",
+  "provider": "YouTube",
+  "amount": 149.0,
+  "currency": "INR",
+  "due_date": "2026-11-04",
+  "service": "YouTube",
+  "old_price": 129.0,
+  "new_price": 149.0,
+  "event_time": null,
+  "person": null,
+  "topic": null,
+  "document_type": null,
+  "category": null
+ },
+ "tokens": 1256,
+ "cost": 0.0005764,
+ "model": "gpt-oss-120b",
+ "date_offset": 23,
+ "key": "extract:m6_youtube_price"
+}

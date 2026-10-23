@@ -1,0 +1,14 @@
+{
+ "data": {
+  "intent": "due_items",
+  "period": "next_14_days",
+  "provider": null,
+  "start": null,
+  "end": null
+ },
+ "tokens": 507,
+ "cost": 0.00020705,
+ "model": "gpt-oss-120b",
+ "date_offset": 23,
+ "key": null
+}

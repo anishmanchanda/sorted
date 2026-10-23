@@ -1,0 +1,54 @@
+{
+ "data": {
+  "label": "Shipment Requests",
+  "messages": [
+   {
+    "kind": "email",
+    "sender": "Alpha Traders <orders@alphatraders.example.in>",
+    "subject": "New Shipment Request - Ref: SR20260601",
+    "body": "Order ref: SR20260601\nItems: Cotton Fabric - 200 rolls\nItems: Silk Yarn - 150 kg\nOrder value: Rs 1,85,000\nRequired dispatch date: 15 Jun 2026\nPlease process this order at the earliest and confirm the shipment schedule. We need the fabric for a bulk order to our client in Mumbai. Let us know if any documents are required.\n",
+    "at": "2026-06-05T09:14"
+   },
+   {
+    "kind": "email",
+    "sender": "Alpha Traders <orders@alphatraders.example.in>",
+    "subject": "New Shipment Request - Ref: SR20260602",
+    "body": "Order ref: SR20260602\nItems: Steel Rods - 350 pieces\nItems: Aluminum Sheets - 500 sq ft\nOrder value: Rs 2,40,500\nRequired dispatch date: 30 Jun 2026\nKindly arrange for the dispatch from your warehouse and share the bill of lading. This order is for our construction project in Gurgaon and we need a prompt confirmation. Thank you for your cooperation.\n",
+    "at": "2026-06-20T14:37"
+   },
+   {
+    "kind": "email",
+    "sender": "Alpha Traders <orders@alphatraders.example.in>",
+    "subject": "New Shipment Request - Ref: SR20260701",
+    "body": "Order ref: SR20260701\nItems: LED Bulbs - 1,200 units\nItems: Power Cables - 800 meters\nOrder value: Rs 98,750\nRequired dispatch date: 13 Jul 2026\nWe would appreciate it if you could expedite this shipment as we are preparing for a seasonal sale. Please confirm stock availability and the expected delivery time. Attach any necessary certificates with the shipment.\n",
+    "at": "2026-07-03T11:02"
+   },
+   {
+    "kind": "email",
+    "sender": "Alpha Traders <orders@alphatraders.example.in>",
+    "subject": "New Shipment Request - Ref: SR20260702",
+    "body": "Order ref: SR20260702\nItems: Plastic Granules - 2,500 kg\nItems: Polyethylene Sheets - 1,200 sq ft\nOrder value: Rs 1,60,300\nRequired dispatch date: 02 Aug 2026\nThis order supports our packaging line upgrade. Please arrange for the dispatch and provide a packing list. If there are any changes in pricing, inform us before shipping. We look forward to your prompt acknowledgment.\n",
+    "at": "2026-07-22T16:45"
+   },
+   {
+    "kind": "email",
+    "sender": "Alpha Traders <orders@alphatraders.example.in>",
+    "subject": "New Shipment Request - Ref: SR20260801",
+    "body": "Order ref: SR20260801\nItems: Glass Panels - 120 units\nItems: Stainless Steel Screws - 5,000 pcs\nOrder value: Rs 2,12,900\nRequired dispatch date: 18 Aug 2026\nPlease prioritize this shipment as it is needed for a high\u2011value client project in Delhi. Confirm the estimated time of arrival and any applicable freight charges. We appreciate your usual efficient service.\n",
+    "at": "2026-08-07T08:21"
+   },
+   {
+    "kind": "email",
+    "sender": "Alpha Traders <orders@alphatraders.example.in>",
+    "subject": "New Shipment Request - Ref: SR20260802",
+    "body": "Order ref: SR20260802\nItems: Rubber Gaskets - 3,400 pcs\nItems: Hydraulic Oil - 2,100 liters\nOrder value: Rs 1,47,650\nRequired dispatch date: 30 Aug 2026\nUrgent processing required for this order due to upcoming maintenance work. Kindly send the shipping documents in advance and notify us of the carrier details. Let us know if any customs clearance assistance is needed.\n",
+    "at": "2026-08-25T13:58"
+   }
+  ]
+ },
+ "tokens": 2034,
+ "cost": 0.0012907,
+ "model": "gpt-oss-120b",
+ "date_offset": 23,
+ "key": null
+}

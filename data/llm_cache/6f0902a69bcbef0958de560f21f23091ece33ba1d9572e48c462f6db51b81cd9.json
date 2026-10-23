@@ -1,0 +1,22 @@
+{
+ "data": {
+  "type": "other",
+  "provider": "Alpha Traders",
+  "amount": 160300.0,
+  "currency": "INR",
+  "due_date": "2026-08-02",
+  "service": null,
+  "old_price": null,
+  "new_price": null,
+  "event_time": null,
+  "person": null,
+  "topic": "New shipment request",
+  "document_type": null,
+  "category": "shipment_request"
+ },
+ "tokens": 1278,
+ "cost": 0.0005748999999999999,
+ "model": "gpt-oss-120b",
+ "date_offset": 23,
+ "key": null
+}

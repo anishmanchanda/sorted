@@ -20,17 +20,18 @@ Channels: a Telegram bot and an MCP server for Claude Desktop and Cursor.
 
 ```bash
 make setup        # uv sync, .env from .env.example, init data/brain.db
-make test         # 54 offline tests (LLM/TinyFish/HTTP mocked) — keep them offline
+make test         # 59 offline tests (LLM/TinyFish/HTTP mocked) — keep them offline
 make lint         # ruff (line length 120)
 make demo         # synthetic 6-month simulation -> reports/demo_run.md, data/demo.db; replays data/llm_cache (no key)
 make demo-live    # same, every LLM call live (does NOT record to the cache)
 make eval         # re-score the last demo -> reports/eval.md (needs data/demo.db)
 make train        # retrain local classifier (live DB traces + labelled samples)
-make samples      # regenerate committed canonical fixtures in data/samples (fixed 2026 dates; used by tests)
+make dataset      # regenerate the ONE persistent synthetic dataset (data/samples + dataset.json) to end today
+make sim          # interactive simulation: dashboard http://127.0.0.1:8000 + Telegram (demo DB; stop make bot first)
 make bot          # Telegram bot + scheduler (live DB)
 make mcp          # MCP server over stdio; make mcp-http = Streamable HTTP + bearer token
 uv run brain --help   # CLI: ingest, say, ask, due, compile, approve, abilities, score [--demo], fetch, portal, imap, drain, serve-sms
-uv run pytest abilities   # the 36 tests the compiler generated for its own parsers
+uv run pytest abilities   # the 37 tests the compiler generated for its own parsers
 ```
 
 ## Map
@@ -50,7 +51,23 @@ uv run pytest abilities   # the 36 tests the compiler generated for its own pars
 - `brain/ml/`: TF-IDF + LogReg classifier. `brain/scheduler.py`: APScheduler with the SQLAlchemy job store.
 - `brain/sources/`: fixtures, IMAP, the SMS webhook, PDF, and TinyFish (Agent replays from
   `tests/fixtures/tinyfish/` unless `TINYFISH_LIVE=1`).
-- `brain/demo.py`, `brain/samples.py`: the simulation and the synthetic data generator.
+- `brain/demo.py`, `brain/samples.py`: the non-interactive simulation and the synthetic data generator.
+- `brain/sim.py` + `brain/web/`: interactive simulation engine (simulated clock; `scheduler.now` is patched to it),
+  FastAPI dashboard (`server.py` + `index.html`) and Telegram front end (`telegram_sim.py`). Entry point `python -m brain.web`.
+- `brain/query.py`: compiled chat questions. LLM → `QuerySpec` (intent/period/provider); fixed executor + templates;
+  recognisers compiled per intent (kind=`query` abilities, positive + negative tests); misses/mismatch → v2.
+- `brain/meetings.py`, `brain/actions.py`: meeting requests (proposed slot / another time typed in chat / decline →
+  reminders, placeholder Meet link, Google Calendar link, .ics → templated reply sent ONLY on the Send button, to an
+  outbox = audit `email_sent`) and button actions (`approve:`, `reject:`, `meet:<src>:yes|no|other|at:<iso>`,
+  `mail:<src>:send|skip`, `skill:<category>:yes|no`) shared by Telegram and the web.
+- `brain/skills.py`: extractor type `other` + invented `category`; after 3 of a category the sim proposes a skill
+  (one LLM plan, fixed action set: remind_before_due / notify_on_arrival / track_only). The detector compiles
+  parsers for a category only once its skill is active. `Engine._reassess` runs after every delivered message.
+- `Engine.generate` (dashboard "Add synthetic data", Telegram `/generate`): one LLM call writes templated ASCII
+  messages into `data/demo/extra/` (+ `labels.jsonl`); past-dated ones are backfilled at once. Only committed
+  samples (`data/samples/`) use replay cache keys; added messages are always live.
+- Query periods include `range` (start/end phrases resolved by `query.resolve`, compared normalised) and the
+  `digest` intent ("all dues and updates between X and Y").
 - `brain/telegram_bot.py`, `brain/mcp_server.py`: the channels. Bot logic lives in pure functions so it can be
   tested.
 
@@ -59,7 +76,9 @@ uv run pytest abilities   # the 36 tests the compiler generated for its own pars
 - **Two databases.** `data/brain.db` is live (bot, MCP, CLI). `data/demo.db` is the simulation. `demo.py` sets
   `BRAIN_DB_URL` and the other env vars **before importing `brain`**, because `config`, `db.engine` and
   `classifier.MODEL_PATH` read env at import time. Never point the demo at the live DB.
-- **Demo dates are relative to the run date.** Sample ids are `m1_…` to `m6_…` ("Sim month N"), detected by
+- **One persistent dataset** (`data/samples`, `dataset.json` holds its end date) is used by tests, demo, sim and eval;
+  only `make dataset` regenerates it. Guide for humans: `DEMO.md`.
+- **Demo dates are relative to the dataset end date.** Sample ids are `m1_…` to `m6_…` ("Sim month N"), detected by
   `messages.sim_sample()`. `score` groups those by Sim month and real data by calendar month.
 - **Replay cache.** Demo LLM calls use semantic keys (`extract:<sample_id>`,
   `compile:<name>:v<n>:n<traces>:attempt<k>`) hashed together with the system prompt. Replayed ISO dates shift
@@ -85,10 +104,10 @@ tested live in Telegram. The MCP server has been tested end to end with the offi
 TinyFish Agent run is recorded.
 
 Latest recorded simulation:
-- 0% local code in Sim months 1–2, 67% in Sim months 5–6.
+- 0% local code in Sim months 1–2, 62% / 47% in Sim months 5–6 (81 messages incl. meeting requests).
 - 11 ability versions compiled, including HDFC v2 after the layout change.
-- Extraction accuracy: compiled code 100%; overall type 98.6% (one LLM miss on the ICICI policy PDF).
-- Classifier held-out accuracy: 90%.
+- Extraction accuracy (77 non-OTP samples): 100% type/provider/due date; amount 98.6% (LLM 53/54, compiled 15/15).
+- Classifier held-out accuracy: 88.7% (confident predictions 100%).
 
 Next, for the in-person round:
 - Run against a real inbox (IMAP) and report real-inbox accuracy.

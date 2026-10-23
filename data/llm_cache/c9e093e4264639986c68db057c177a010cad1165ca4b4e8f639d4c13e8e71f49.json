@@ -1,0 +1,54 @@
+{
+ "data": {
+  "label": "Shipment Requests",
+  "messages": [
+   {
+    "kind": "email",
+    "sender": "Arjun Mehta <procurement@globaltraders.example.in>",
+    "subject": "Shipment Request #TRN-2026-001 \u2013 Steel Rods",
+    "body": "Dear Rohan,\n\nPlease arrange for 500 units of hot\u2011rolled steel rods (length 6\u202fft, grade\u202fA) to be dispatched to our Delhi warehouse. Our internal reference is TRN\u20112026\u2011001. The total invoice amount is INR\u202f4,75,000. We need the consignment to arrive no later than 2026\u201106\u201120 to meet our production schedule. Kindly confirm the expected ETA and share the pro\u2011forma invoice at the earliest.\n\nThank you,\nArjun Mehta\nProcurement Manager, Global Traders Ltd.",
+    "at": "2026-06-05T09:15"
+   },
+   {
+    "kind": "email",
+    "sender": "Arjun Mehta <procurement@globaltraders.example.in>",
+    "subject": "Re: Shipment Request #TRN-2026-001 \u2013 Follow\u2011up",
+    "body": "Hi Rohan,\n\nFollowing up on the steel rods request sent on June\u202f5, we would like to add an extra 200 units of the same specification to the order, raising the total to INR\u202f6,30,000. Please let us know if this amendment affects the delivery date. If the revised shipment can still be delivered by June\u202f22, that would be ideal. Awaiting your updated pro\u2011forma.\n\nBest regards,\nArjun Mehta\nGlobal Traders Ltd.",
+    "at": "2026-06-22T14:42"
+   },
+   {
+    "kind": "email",
+    "sender": "Arjun Mehta <procurement@globaltraders.example.in>",
+    "subject": "New Shipment Request #TRN-2026-002 \u2013 PVC Pipes",
+    "body": "Dear Rohan,\n\nWe need 300 pieces of 1\u00bd\u2011inch PVC drainage pipes (white, PN\u202f16) for our upcoming construction project. The items are listed under reference TRN\u20112026\u2011002 with a total value of INR\u202f1,12,500. Kindly schedule dispatch to reach our Delhi site by 2026\u201107\u201122. Please forward the shipping schedule and invoice details.\n\nThanks,\nArjun Mehta\nProcurement, Global Traders Ltd.",
+    "at": "2026-07-08T11:00"
+   },
+   {
+    "kind": "email",
+    "sender": "Arjun Mehta <procurement@globaltraders.example.in>",
+    "subject": "Urgent Shipment Request #TRN-2026-003 \u2013 Copper Wire",
+    "body": "Hi Rohan,\n\nDue to an unexpected surge in demand, we urgently require 200\u202fkg of 2.5\u202fmm\u00b2 copper wire, reference TRN\u20112026\u2011003. The total cost is INR\u202f2,40,000. We would appreciate if the consignment can be dispatched within the next three days and delivered by 2026\u201108\u201105. Please confirm availability and shipping arrangements.\n\nRegards,\nArjun Mehta\nGlobal Traders Ltd.",
+    "at": "2026-07-27T16:30"
+   },
+   {
+    "kind": "email",
+    "sender": "Arjun Mehta <procurement@globaltraders.example.in>",
+    "subject": "Shipment Request #TRN-2026-004 \u2013 Galvanized Nails",
+    "body": "Dear Rohan,\n\nPlease supply 1,500 units of 3\u2011inch galvanized nails (pack of 100) for our hardware inventory. This order is logged as TRN\u20112026\u2011004 and totals INR\u202f78,900. We would like the shipment to arrive no later than 2026\u201108\u201127. Kindly issue the invoice and share the tracking number once the goods are dispatched.\n\nThank you,\nArjun Mehta\nProcurement, Global Traders Ltd.",
+    "at": "2026-08-12T10:05"
+   },
+   {
+    "kind": "email",
+    "sender": "Arjun Mehta <procurement@globaltraders.example.in>",
+    "subject": "Final Shipment Request #TRN-2026-005 \u2013 Safety Helmets",
+    "body": "Hi Rohan,\n\nWe are placing a final order of 100 industrial safety helmets (ANSI\u2011Z89.1 certified, size\u202fM/L) under reference TRN\u20112026\u2011005. The total amount is INR\u202f1,05,000. Please arrange dispatch so the items reach our Delhi office by 2026\u201109\u201110. Let us know if any documentation is required from our side.\n\nBest,\nArjun Mehta\nGlobal Traders Ltd.",
+    "at": "2026-08-28T15:20"
+   }
+  ]
+ },
+ "tokens": 2088,
+ "cost": 0.0013687999999999999,
+ "model": "gpt-oss-120b",
+ "date_offset": 23,
+ "key": null
+}

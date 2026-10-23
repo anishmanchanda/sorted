@@ -28,6 +28,8 @@ def compare(expected: dict, got) -> list[str]:
         have = got.get(key)
         if key in ("provider", "service"):
             ok = isinstance(have, str) and provider_match(have, want)
+        elif key == "topic":  # the LLM's own few-word summary, not a fact in the text: any non-empty string
+            ok = isinstance(have, str) and bool(have.strip())
         elif isinstance(want, (int, float)) and not isinstance(want, bool):
             ok = isinstance(have, (int, float)) and not isinstance(have, bool) and abs(have - want) < 0.01
         elif isinstance(want, str):

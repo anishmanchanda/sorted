@@ -1,7 +1,7 @@
 From: Spotify <no-reply@spotify.com>
 To: rohan.sharma.demo@example.in
 Subject: Your Spotify Premium receipt
-Date: Fri, 05 Jun 2026 03:30:00 +0530
+Date: Sun, 28 Jun 2026 03:30:00 +0530
 Message-ID: <m3_spotify_receipt@samples.sorted.local>
 Content-Type: text/html; charset="utf-8"
 Content-Transfer-Encoding: 7bit
@@ -10,6 +10,6 @@ MIME-Version: 1.0
 <html><body>
 <p>Your receipt from Spotify</p>
 <p>Spotify Premium Individual &mdash; Rs 119/month<br>
-Date: 05/06/2026<br>Order ID: SP-895285932<br>
-Your next payment of Rs 119 is on 05/07/2026.</p>
+Date: 28/06/2026<br>Order ID: SP-895285932<br>
+Your next payment of Rs 119 is on 28/07/2026.</p>
 <p>Manage your account at spotify.com/account.</p></body></html>

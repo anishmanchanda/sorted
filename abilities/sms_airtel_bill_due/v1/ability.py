@@ -11,29 +11,16 @@ from datetime import datetime
 
 
 def extract(text: str) -> dict:
-    if not isinstance(text, str):
-        raise ValueError("text must be a string")
+    amount_match = re.search(r"\bAirtel\s+Xstream\s+bill\s+of\s+Rs\s*([\d,]+(?:\.\d+)?)\b", text, re.IGNORECASE)
+    if not amount_match:
+        raise ValueError("Missing Airtel Xstream bill amount label")
 
-    pattern = re.compile(
-        r"Airtel\s+Xstream\s+bill\s+of\s+Rs\s*([0-9,]+(?:\.[0-9]+)?)\s+for\s+a/c\s+\S+\s+is\s+due\s+on\s+([0-9]{1,2}-[A-Za-z]{3}-[0-9]{4})",
-        re.IGNORECASE,
-    )
-    match = pattern.search(text)
-    if not match:
-        raise ValueError("Required Airtel bill due labels not found")
+    due_match = re.search(r"\bis\s+due\s+on\s+(\d{1,2}-[A-Za-z]{3}-\d{4})\b", text, re.IGNORECASE)
+    if not due_match:
+        raise ValueError("Missing due date label")
 
-    amount_str = match.group(1).replace(",", "")
-    due_date_str = match.group(2)
-
-    try:
-        amount = float(amount_str)
-    except Exception:
-        raise ValueError("Invalid amount format")
-
-    try:
-        due_date = datetime.strptime(due_date_str, "%d-%b-%Y").strftime("%Y-%m-%d")
-    except Exception:
-        raise ValueError("Invalid due date format")
+    amount = float(amount_match.group(1).replace(',', ''))
+    due_date = datetime.strptime(due_match.group(1), "%d-%b-%Y").strftime("%Y-%m-%d")
 
     return {
         "type": "bill_due",

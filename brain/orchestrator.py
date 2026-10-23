@@ -5,7 +5,7 @@ import uuid
 import openai
 from sqlalchemy import select
 
-from brain import db, planner, rules, state
+from brain import db, meetings, notify, planner, rules, skills, state
 from brain.agents import ChatAgent, DocumentAgent, InboxAgent
 from brain.compiler import registry
 from brain.filters import is_otp, looks_like_injection
@@ -60,8 +60,9 @@ class Orchestrator:
             if local:
                 return local
         agent = self.inbox if src.kind == "email" else self.document
-        sim = sim_sample(src.raw_path)  # synthetic sample: replayable across the demo's date shift
-        res = agent.extract(src.text, run_id, cache_key=f"extract:{sim[0]}" if sim else None)
+        sim = sim_sample(src.raw_path)  # committed synthetic sample: replayable across the demo's date shift
+        key = f"extract:{sim[0]}" if sim and "data/samples/" in src.raw_path else None
+        res = agent.extract(src.text, run_id, cache_key=key, known=skills.known(s))
         if ability is not None and ability.status == "shadow":
             event = f"{registry.handler(ability)} {registry.shadow(s, ability, src, res.data)}"
         return res.data, "llm", res.tokens, res.cost, event
@@ -95,6 +96,10 @@ class Orchestrator:
         fired, after_commit = rules.apply(s, src, ext) if not problems else ([], [])
         if outcome == "open":  # relative reminders ("3 days before due"), no LLM
             after_commit.append(lambda: planner.plan_obligations(src.id))
+        if outcome == "proposed":  # someone asked for the user's time: offer to add it to their calendar
+            after_commit.append(lambda: notify.ask_self(*meetings.prompt(src.id)))
+        if ext.type == "other" and not problems:  # a new kind of message: its skill's action, if learned
+            after_commit += skills.effects(s, ext, src.id)
         s.add(db.Trace(run_id=run_id, task_kind="extract", input_ref=src.id, handler=handler, tokens=tokens,
                        cost=cost, output_json=ext.model_dump(mode="json", exclude_none=True), accepted=not problems))
         src.status = "done"
@@ -113,6 +118,16 @@ class Orchestrator:
         return results
 
     def ask(self, question: str) -> str:
+        return self.ask_detail(question)["answer"]
+
+    def ask_detail(self, question: str) -> dict:
+        """Chat: compiled recognisers or the LLM turn the question into a query; fixed code answers it."""
+        from brain import query
+
+        return query.answer(question, self.llm, self.free_chat)
+
+    def free_chat(self, question: str) -> str:
+        """Questions outside the known intents: an LLM answer from the typed state."""
         run_id = uuid.uuid4().hex[:12]
         try:
             res = self.chat.answer(question, run_id)

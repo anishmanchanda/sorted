@@ -10,26 +10,41 @@ import re
 from datetime import datetime
 
 
+def _parse_amount(amount_text: str) -> float:
+    cleaned = amount_text.strip()
+    cleaned = cleaned.replace(',', '')
+    return float(cleaned)
+
+
+def _parse_date(date_text: str) -> str:
+    dt = datetime.strptime(date_text.strip(), '%d %b %Y')
+    return dt.strftime('%Y-%m-%d')
+
+
 def extract(text: str) -> dict:
-    subject_match = re.search(r'^Subject:\s*(.+)$', text, re.MULTILINE)
-    if not subject_match:
-        raise ValueError('Missing Subject header')
+    if not re.search(r'ICICI\s+Lombard', text, re.IGNORECASE):
+        raise ValueError('Missing provider label')
 
-    amount_match = re.search(r'Renewal\s+premium\s*:\s*₹\s*([0-9][0-9,]*\.?[0-9]*)', text, re.IGNORECASE)
+    amount_match = re.search(
+        r'Renewal\s+premium\s*:\s*₹\s*([0-9][0-9,]*\.\d{2})',
+        text,
+        re.IGNORECASE,
+    )
     if not amount_match:
-        raise ValueError('Missing Renewal premium label')
+        raise ValueError('Missing renewal premium label')
 
-    due_match = re.search(r'expires\s+on\s+([0-9]{1,2}\s+[A-Za-z]{3}\s+[0-9]{4})', text, re.IGNORECASE)
-    if not due_match:
-        raise ValueError('Missing expires on label')
-
-    amount = float(amount_match.group(1).replace(',', ''))
-    due_date = datetime.strptime(due_match.group(1), '%d %b %Y').strftime('%Y-%m-%d')
+    due_date_match = re.search(
+        r'expires\s+on\s+([0-9]{1,2}\s+[A-Za-z]{3}\s+[0-9]{4})',
+        text,
+        re.IGNORECASE,
+    )
+    if not due_date_match:
+        raise ValueError('Missing expiry date label')
 
     return {
         'type': 'insurance_renewal',
         'provider': 'ICICI Lombard',
-        'amount': amount,
+        'amount': _parse_amount(amount_match.group(1)),
         'currency': 'INR',
-        'due_date': due_date,
+        'due_date': _parse_date(due_date_match.group(1)),
     }

@@ -1,0 +1,22 @@
+{
+ "data": {
+  "type": "meeting_request",
+  "provider": "Delhi Public School",
+  "amount": null,
+  "currency": "INR",
+  "due_date": "2026-08-31",
+  "service": null,
+  "old_price": null,
+  "new_price": null,
+  "event_time": "10:00",
+  "person": "Mrs. Kavita Rao",
+  "topic": "mid-term progress",
+  "document_type": null,
+  "category": null
+ },
+ "tokens": 2665,
+ "cost": 0.00117915,
+ "model": "gpt-oss-120b",
+ "date_offset": 23,
+ "key": "extract:m5_meeting_parent-teacher"
+}

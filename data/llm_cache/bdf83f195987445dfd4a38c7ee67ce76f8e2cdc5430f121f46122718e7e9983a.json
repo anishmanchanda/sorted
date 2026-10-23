@@ -1,0 +1,11 @@
+{
+ "data": {
+  "code": "import re\nfrom dateutil import parser\n\n\ndef extract(text: str) -> dict:\n    if not re.search(r'^From:\\s*Apollo Clinic\\b', text, re.IGNORECASE | re.MULTILINE):\n        raise ValueError('Missing From label')\n\n    if not re.search(r'^Subject:\\s*Appointment confirmed:', text, re.IGNORECASE | re.MULTILINE):\n        raise ValueError('Missing Subject label')\n\n    person_match = re.search(\n        r'Appointment\\s+confirmed\\s+for\\s+(.+?)\\s+with\\s+Dr\\.',\n        text,\n        re.IGNORECASE | re.DOTALL,\n    )\n    if not person_match:\n        raise ValueError('Missing appointment person label')\n    person = re.sub(r'\\s+', ' ', person_match.group(1)).strip()\n\n    body_date_match = re.search(r'^Date:\\s*([A-Za-z]+,\\s*\\d{1,2}\\s+[A-Za-z]+\\s+\\d{4})\\s*$', text, re.IGNORECASE | re.MULTILINE)\n    if not body_date_match:\n        raise ValueError('Missing appointment Date label')\n    due_date = parser.parse(body_date_match.group(1).strip(), dayfirst=True).date().isoformat()\n\n    time_match = re.search(r'^Time:\\s*(.+?)\\s*$', text, re.IGNORECASE | re.MULTILINE)\n    if not time_match:\n        raise ValueError('Missing Time label')\n    event_time = parser.parse(time_match.group(1).strip()).strftime('%H:%M')\n\n    return {\n        'type': 'meeting',\n        'provider': 'Apollo Clinic',\n        'currency': 'INR',\n        'due_date': due_date,\n        'event_time': event_time,\n        'person': person,\n    }\n",
+  "notes": "Uses the appointment body Date/Time labels, not the email header Date, to avoid day-month parsing errors."
+ },
+ "tokens": 2418,
+ "cost": 0.011995,
+ "model": "gpt-5.4",
+ "date_offset": 23,
+ "key": "compile:apolloclinic_com_meeting:v1:n5:attempt1"
+}

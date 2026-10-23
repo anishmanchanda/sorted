@@ -35,12 +35,13 @@ Replies: 1 / done (dose taken), snooze 1h, paid [provider]."""
 def due_text(days: int = 7) -> str:
     today = config.today()
     with db.Session() as s:
-        obs = s.scalars(select(db.Obligation).where(db.Obligation.status != "paid",
+        obs = s.scalars(select(db.Obligation).where(db.Obligation.status.not_in(("paid", "declined")),
                                                     db.Obligation.due_date.between(today, today + timedelta(days=days)))
                         .order_by(db.Obligation.due_date)).all()
         low = s.scalars(select(db.Medication).where(db.Medication.stock <= 5)).all()
     lines = [f"{o.due_date:%a %d %b} · {o.provider} {o.type}" + (f" ₹{float(o.amount):,.2f}" if o.amount else "")
-             + (f"  ⚠️ {o.note}" if o.status == "flagged" else "") for o in obs]
+             + (f"  ⚠️ {o.note}" if o.status == "flagged" else "")
+             + (" (proposed, not confirmed)" if o.status == "proposed" else "") for o in obs]
     lines += [f"💊 {m.name} ({m.person}): only {m.stock} left" for m in low]
     return (f"Due in the next {days} days:\n" + "\n".join(lines)) if lines else f"Nothing due in the next {days} days."
 

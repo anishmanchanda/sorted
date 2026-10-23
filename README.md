@@ -26,47 +26,47 @@ Cursor through an MCP server.
 `make demo` replays 6 simulated months of synthetic bills in seconds to show how the share of local code grows;
 no real user data or history.
 
-The simulation is 76 synthetic messages (54 emails, 19 SMS, 3 PDFs) labelled "Sim month 1-6". Its dates are
-generated relative to the run date, so the simulated timeline ends today and every reminder still scheduled
-afterwards is in the future. It runs in its own database (`data/demo.db`), separate from the live bot's
-database, so the bot's `/score` shows only your real usage (`/score demo` shows the simulation). Every figure
-below is copied from [`reports/demo_run.md`](reports/demo_run.md) and [`reports/eval.md`](reports/eval.md).
+The simulation uses one persistent, committed synthetic dataset ([`data/samples/`](data/samples)): 81 messages (59 emails, 19 SMS, 3 PDFs) labelled "Sim month 1-6". Its simulated
+timeline ends on 23 Oct 2026 (`make dataset` regenerates it to end today). It runs in its own database
+(`data/demo.db`), separate from the live bot's database. Every figure below is copied from
+[`reports/demo_run.md`](reports/demo_run.md) and [`reports/eval.md`](reports/eval.md).
 
 | period | messages | handled by local code | LLM calls | tokens | privacy score | cost / message (USD, est.) |
 |---|---|---|---|---|---|---|
-| Sim month 1 | 10 | 0 | 10 | 9,643 | 0% | 0.00043 |
-| Sim month 2 | 12 | 0 | 12 | 11,348 | 0% | 0.00042 |
-| Sim month 3 | 14 | 1 | 22 | 25,877 | 7% | 0.00605 |
-| Sim month 4 | 12 | 0 | 13 | 13,730 | 0% | 0.00169 |
-| Sim month 5 | 12 | 8 | 5 | 5,398 | **67%** | 0.00075 |
-| Sim month 6 | 12 | 8 | 5 | 5,685 | **67%** | 0.00105 |
+| Sim month 1 | 10 | 0 | 10 | 14,009 | 0% | 0.00063 |
+| Sim month 2 | 12 | 0 | 12 | 16,101 | 0% | 0.00060 |
+| Sim month 3 | 15 | 1 | 23 | 28,663 | 7% | 0.00556 |
+| Sim month 4 | 12 | 0 | 13 | 20,334 | 0% | 0.00249 |
+| Sim month 5 | 13 | 8 | 7 | 12,944 | **62%** | 0.00252 |
+| Sim month 6 | 15 | 7 | 9 | 13,499 | **47%** | 0.00115 |
 
-- Sim month 3: 8 abilities compiled and passed their tests. Its LLM calls include the compiler agent (strong
-  model), so its cost per message is the highest. The Apollo Clinic parser failed its tests (a brittle date
-  parser, even after one retry) and stayed a candidate; it was recompiled with more evidence in Sim month 4 and
-  passed. Sim month 4 is the shadow month: abilities run next to the LLM, and the LLM's answer is still used.
-- Sim month 6: HDFC redesigns its statement email. `hdfcbank_net_bill_due@v1` fails ("Missing Payment Due Date
-  label"), the message falls back to the LLM and v2 is compiled from the old cases plus the new layout.
-- 11 ability versions compiled, each passing all its visible tests and 100% of its held-out cases. The code is in
-  [`abilities/`](abilities). `uv run pytest abilities` runs their 36 generated tests.
-- **Extraction accuracy:** compiled code got 100% of fields right (16 extractions). Across all 72 non-OTP
-  samples: type 98.6%, provider 100%, amount 98.4%, due date 100%. The one LLM miss in this recording: the ICICI
-  policy-schedule PDF was labelled a "document expiry" instead of an "insurance renewal". The data is synthetic
-  and template-generated, so real inboxes will be harder. We will report real-inbox numbers when we have them.
-- **Local ML classifier** (TF-IDF + logistic regression, held-out): 90.0% accuracy over 5 stratified 70/30
-  splits. 83.6% of predictions clear the 0.7 confidence threshold, and those are 100% correct; everything
-  below the threshold goes to the LLM. In the simulation it starts empty and learns only from the LLM's labels,
-  so with so few examples it never clears the threshold and correctly defers to the LLM.
-- **Scheduler with no LLM:** a simulated clock fired 32 reminders on time ("HDFC Bank bill ₹13,903.23 is due on
-  16 Oct…", three days before each due date). Price-increase rules sent 3 chat alerts (Spotify ₹119→₹139, Netflix
-  ₹499→₹649, YouTube ₹129→₹149), each with a reminder two days before the new price.
+- **Sim month 3:** 8 parsers compiled and passed their tests. Its LLM calls include the compiler agent, so its
+  cost per message is the highest. Sim month 4 is the shadow month, where compiled code runs next to the LLM and
+  the LLM's answer is still used.
+- **The Apollo Clinic parser:** failed its tests in Sim months 3, 4 and 5. It stayed a candidate, with the LLM
+  still doing the work, until it passed in Sim month 6 with more examples.
+- **Sim month 6:** HDFC redesigns its statement email. `hdfcbank_net_bill_due@v1` fails ("Missing Total Amount
+  Due"), and the message falls back to the LLM. v2 compiles from the old cases plus the new layout and passes.
+  Sim month 6 also has the new meeting requests and a one-off dentist email, which the LLM handles. That is why
+  its local share is lower than Sim month 5's.
+- **Compiled code:** 11 parser versions, each passing all visible tests and 100% of its held-out cases. The code
+  is in [`abilities/`](abilities). `uv run pytest abilities` runs their 37 generated tests.
+- **Extraction accuracy** across all 77 non-OTP samples: 100% on type, provider and due date; 98.6% on amount
+  (the LLM got 53 of 54 amounts right; compiled code got 15 of 15). The data is synthetic and template-generated, so real inboxes will be
+  harder.
+- **Local ML classifier** (TF-IDF + logistic regression, held-out): 88.7% accuracy over 5 stratified 70/30
+  splits. 82.6% of predictions clear the 0.7 confidence threshold, and those are 100% correct; everything below
+  the threshold goes to the LLM.
+- **No-LLM scheduling and rules:**
+  - 32 reminders fired on time from templates.
+  - 3 price-increase alerts (Spotify, Netflix, YouTube).
+  - 4 meeting requests turned into "add it to your calendar?" prompts.
 - **Safety:** the prompt-injection email never reaches an LLM. OTP SMS are dropped before storage.
-- **Replay:** the demo runs without an API key. Recorded LLM answers in `data/llm_cache/` are keyed per message,
-  and their dates move with the timeline. We checked a key-less replay with the run date 37 days later: same
-  results, 0 live calls. Only the chat answer needs a key on a different date.
-- 54 offline tests (`make test`).
+- 59 offline tests (`make test`).
 
 ## Quickstart
+
+**Step-by-step demo guide (dashboard + Telegram): [DEMO.md](DEMO.md).**
 
 Python 3.12 and [uv](https://docs.astral.sh/uv/) required.
 
@@ -75,7 +75,7 @@ git clone <this repo> && cd sorted
 make setup      # installs deps, creates .env from .env.example, creates the SQLite DB
 make demo       # 6 simulated months of synthetic bills -> reports/demo_run.md (data/demo.db; no key)
 make eval       # re-score the last demo: accuracy per handler + classifier held-out -> reports/eval.md
-make test       # 54 offline tests (LLM and TinyFish mocked)
+make test       # 57 offline tests (LLM and TinyFish mocked)
 ```
 
 `make demo` replays the LLM responses recorded in [`data/llm_cache/`](data/llm_cache) during our live run,
@@ -99,6 +99,76 @@ uv run brain imap --since 2026-10-01 # read-only IMAP (Gmail app password)
 make bot        # Telegram bot + scheduler
 make mcp        # Brain MCP server over stdio
 ```
+
+## Interactive simulation: web dashboard + Telegram
+
+```bash
+make sim
+```
+
+This opens a dashboard at http://127.0.0.1:8000. If `TELEGRAM_BOT_TOKEN` is set, the same simulation also runs
+through your Telegram bot; stop `make bot` first, because one token allows only one bot connection. You play
+Rohan Sharma, the person the synthetic data belongs to, and move a simulated clock:
+
+| Control | Effect |
+|---|---|
+| Next event, +1 day, +1 week, to month end, run to today | Dashboard buttons. In Telegram: `/next`, `/day`, `/week`, `/month`, `/end` |
+| Auto-play | Steps through events every few seconds |
+| Auto-approve (demo) | Approves each ability as soon as it passes its tests. Off: you approve each one yourself |
+
+As the clock moves:
+
+- **Mail arrives** through the real pipeline. The live feed shows each message with how it was handled:
+  `LLM`, `compiled code`, `local ML`, `rule`, or `dropped before storage`.
+- **Reminders fire on simulated time** with no AI: "HDFC Bank bill ₹13,903.23 is due on 16 Oct. Reply 'paid'…".
+- **Meeting requests:** "📅 Meeting request from Ravi Kumar (Acme Infra) · They proposed: Thu 29 Oct, 11:00 AM ·
+  Do you want to meet?" comes with three buttons: the proposed slot, **Another time** (then type e.g. "Friday
+  5pm"; a date parser reads it, no AI), or **Decline**. Booking schedules reminders for the day before and the
+  hour before and gives you a Google Meet link, a prefilled Google Calendar link and an `.ics` file. Sorted then
+  drafts a reply to the person ("Friday 30 October at 5:00 PM works for me… Google Meet: …") and sends it **only
+  if you press Send**. Limits: there is no mail server, so "sent" means it lands in the dashboard's outbox, and
+  the Meet link is a placeholder in Meet's format until a Google Calendar API connection creates real ones.
+- **New kinds of messages become new skills.** When no known type fits, the extractor labels a message `other`
+  with a category it invents (e.g. `shipment_request`). After 3 of the same category, Sorted notices it on its
+  own and asks: "🆕 New kind of message: Shipment requests… Learn this skill?" One LLM call plans the skill from a
+  fixed, safe action set (remind you before each one's date, message you on arrival, or just track them). If you
+  agree, the compiler writes and sandbox-tests a parser for those messages, which goes through the usual approve →
+  shadow → active path, and every later one triggers the skill's action with no AI.
+- **Questions over a date range:** "give me all my dues and updates between 1 June and 15 July" returns a digest
+  of bills due, appointments, requests and every update received in that window. The LLM maps it to
+  `{intent: digest, period: range, start, end}`, and fixed code builds the answer. Repeated digest questions get
+  compiled like any other question type.
+- **Approvals:** at each Sim month end the compiler runs, and every ability that passes its tests asks for your
+  approval with a button.
+- **Chat questions get compiled too.** Ask "Do I have any doctor appointments this month?":
+  - The LLM turns the question into a typed query, `{intent: appointments, period: this_month}`. Fixed read-only
+    code runs it and fills a template answer.
+  - Ask the same *kind* of question 3 times, and the compiler writes a small recogniser, `query_appointments`.
+    The sandbox tests it on your past questions, plus other questions it must *not* claim. You approve it, it
+    shadows the LLM, and then those questions are answered with **0 LLM calls**.
+  - A phrasing it doesn't recognise goes to the LLM. Repeated misses, or disagreeing with the LLM, trigger
+    version 2.
+
+What the dashboard shows:
+
+- **Privacy panel:** the privacy score per Sim month as bars and a table (messages, local code, LLM calls,
+  tokens, cost per message), plus the share of chat questions answered by code.
+- **"From AI to compiled code":** one card per ability showing its path:
+  - LLM solves → compiled + tested (shown and held-out cases) → approved → shadow → active (local runs);
+  - a bar showing how much of that task's work is now done by code;
+  - the code the AI wrote and its test cases.
+- **Synthetic inbox:** every message, with its Sim month, label and delivered/pending status. Click a message
+  to see the redacted text the AI and the compiled code actually see. You can add your own synthetic emails or
+  SMS (templates for meeting requests, bills and appointments); they arrive at the current simulated time.
+- **Add synthetic data:** describe it ("a supplier sending requests for new shipments sporadically between June
+  and August") and one LLM call writes the messages. With no period they spread over the whole timeline.
+  Messages dated before the simulated clock arrive at once; the rest arrive as the clock moves. Sorted
+  re-assesses after every message, so a new kind of message leads to a skill proposal (above). In Telegram:
+  `/generate <description>`.
+- **Outbox:** replies you approved, exactly as they would be sent.
+
+Telegram also has `/sim`, `/score`, `/due`, `/abilities`, `/generate` and `/reset`. Free text works as in the dashboard
+chat; replies show whether the answer came from the LLM or from compiled code.
 
 ## Architecture
 
@@ -284,13 +354,18 @@ dropped server-side before storage.
 | `brain/scheduler.py`, `brain/replies.py`, `brain/notify.py` | Durable reminders, quiet hours, merging, rule-based replies, the user-only outbound channel |
 | `brain/score.py`, `brain/eval.py` | Privacy score + cost per message; extraction accuracy per handler, classifier held-out accuracy |
 | `brain/telegram_bot.py`, `brain/mcp_server.py` | Channels |
+| `brain/query.py` | Compiled chat questions: LLM question → typed query; fixed read-only executor + template answers; compiler for question recognisers (positive and negative test cases), shadow, misses → v2 |
+| `brain/meetings.py`, `brain/actions.py` | Meeting requests (slot / another time / decline, reminders, Meet + Calendar links, `.ics`, reply drafted and sent only on approval); button actions shared by Telegram and the web |
+| `brain/skills.py` | New message categories → skill proposals with a fixed safe action; gates compiling parsers for them |
+| `brain/sim.py`, `brain/web/` | Interactive simulation engine (simulated clock, delivery, reminders, month-end compiles); FastAPI dashboard and Telegram front end (`make sim`) |
 | `brain/demo.py`, `brain/samples.py` | The synthetic 6-month simulation behind `make demo` (own DB, dates relative to the run date, simulated clock); the sample generator (`make samples`) |
 
 ## Safety and privacy
 
-- Message text is always data. The extraction prompt says so, but the real defence is structural: **no tool
-  exists** to message other people, pay, forward or delete. The only outbound channel is a message to the
-  user themself. A regex guard also keeps obvious injection text away from the LLM (tested on the sample).
+- Message text is always data. The extraction prompt says so, but the real defence is structural: **no agent
+  or LLM has a tool** to message other people, pay, forward or delete (a test enforces this). The one message
+  to someone else is the meeting reply: a fixed template that goes out only when the user presses Send, and in
+  this build it goes to an outbox, not a mail server. A regex guard also keeps obvious injection text away from the LLM (tested on the sample).
 - Redaction runs before any LLM call, inside the wrapper, so no caller can skip it.
 - Generated code must pass an AST allowlist (`re`, `datetime`, `decimal`, `html`, `json`, `dateutil` only;
   no `open`/`eval`/`exec`/`__import__`/dunder access/`os`/`socket`/…). It runs only in a separate process with an
@@ -314,6 +389,12 @@ dropped server-side before storage.
 | Local ML classifier (TF-IDF + LogReg) with confidence threshold | Built |
 | Privacy score and cost per message | Built (`brain score`, `/score`, `/score demo`, MCP) |
 | Scheduler: one-time, cron, relative; quiet hours; merging | Built |
+| Interactive simulation: web dashboard + Telegram, simulated clock, approvals by button | Built (`make sim`) |
+| Compiled chat questions (question recognisers that replace the LLM for repeated question types) | Built |
+| Meeting requests → pick/type a time → reminders, Meet + Google Calendar links, `.ics` → reply sent only on your button press | Built (reply goes to an outbox, no mail server; Meet link is a placeholder; real Calendar/Meet via Google's API is planned) |
+| New message categories → Sorted proposes a skill → compiled parser + fixed safe action | Built |
+| Synthetic data generated from a description, re-assessed as it arrives | Built (dashboard + `/generate`) |
+| Date-range digest questions ("dues and updates between X and Y") | Built |
 | Telegram bot, medicine tracker, reply handlers | Built (tested live in Telegram; logic unit-tested) |
 | Brain MCP server (stdio + Streamable HTTP with bearer token and scope) | Built |
 | TinyFish Fetch / Agent / Search adapter | Built (one real Agent run recorded; Fetch and Search tested live) |

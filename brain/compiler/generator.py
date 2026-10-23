@@ -65,6 +65,8 @@ def compare(expected: dict, got) -> list[str]:
         have = got.get(key)
         if key in ("provider", "service"):
             ok = isinstance(have, str) and provider_match(have, want)
+        elif key == "topic":  # the LLM's own few-word summary, not a fact in the text: any non-empty string
+            ok = isinstance(have, str) and bool(have.strip())
         elif isinstance(want, (int, float)) and not isinstance(want, bool):
             ok = isinstance(have, (int, float)) and not isinstance(have, bool) and abs(have - want) < 0.01
         elif isinstance(want, str):
@@ -91,6 +93,9 @@ def split_cases(ability: db.Ability, items) -> list[dict]:
 
 def _prompt(ability, fields, visible) -> str:
     parts = [f"ABILITY: {ability.name}", f"OUTPUT_FIELDS: {fields}", "", "EXAMPLES (input -> expected output):"]
+    if "topic" in fields:  # in the user turn, so recorded compiles still replay
+        parts[2] = ("topic is a free summary: return a short phrase from the message (e.g. the subject); any "
+                    "non-empty text passes.")
     for i, c in enumerate(visible, 1):
         parts += [f"--- example {i} ---", "INPUT:", c["input"], "EXPECTED:", json.dumps(c["expected"])]
     return "\n".join(parts)
@@ -197,5 +202,6 @@ def compile_ability(s, ability: db.Ability, llm: LLM) -> dict:
             "held_out": len(held), "held_out_pass_rate": held_rate, "tokens": tokens, "error": ability.last_error}
 
 
-def compile_pending(s, llm: LLM) -> list[dict]:
-    return [compile_ability(s, ab, llm) for ab in detector.scan(s)]
+def compile_pending(s, llm: LLM, only_type: str | None = None) -> list[dict]:
+    return [compile_ability(s, ab, llm) for ab in detector.scan(s)
+            if only_type is None or ab.trigger_json.get("type") == only_type]

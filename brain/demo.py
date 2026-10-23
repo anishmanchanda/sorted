@@ -13,6 +13,7 @@ demo also runs with no API key. `make demo-live` ignores the cache and calls the
 """
 
 import calendar
+import json
 import os
 import shutil
 import sys
@@ -22,18 +23,17 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 DEMO = ROOT / "data" / "demo"
 CANON_END = date(2026, 9, 30)  # brain.samples.CANON_END (repeated: env must be set before brain imports)
-END = date.fromisoformat(os.environ.get("BRAIN_DEMO_END") or date.today().isoformat())
+# the committed synthetic dataset's simulated "today" (data/samples/dataset.json)
+END = date.fromisoformat(json.loads((ROOT / "data" / "samples" / "dataset.json").read_text())["end"])
 os.environ.update({
     "BRAIN_DB_URL": f"sqlite:///{ROOT / 'data' / 'demo.db'}",  # the simulation never touches the live DB
-    "BRAIN_SAMPLES_DIR": str(DEMO / "samples"),
-    "BRAIN_LABELS": str(DEMO / "labels.jsonl"),
     "BRAIN_MODEL_DIR": str(DEMO / "models"),
     "BRAIN_ABILITIES_DIR": str(ROOT / "abilities"),  # committed: the code the demo compiled, for judges to read
     "BRAIN_SHADOW_RUNS": "1",  # demo only: one matching shadow run instead of the default 2
     "BRAIN_DATE_OFFSET": str((END - CANON_END).days),
 })
 
-from brain import config, db, notify, samples, scheduler, score  # noqa: E402
+from brain import config, db, notify, scheduler, score  # noqa: E402
 from brain import eval as brain_eval  # noqa: E402
 from brain.compiler import registry  # noqa: E402
 from brain.compiler.generator import compile_pending  # noqa: E402
@@ -114,7 +114,9 @@ def main() -> None:
     say()
     say("```text")
 
-    n_samples = samples.generate(DEMO / "samples", DEMO / "labels.jsonl", END)
+    n_samples = len(load_fixtures())
+    for stale in ("sim.json", "feed.jsonl"):  # the interactive simulation (make sim) starts fresh after this
+        (DEMO / stale).unlink(missing_ok=True)
     db.Base.metadata.drop_all(db.engine)
     db.init_db()
     scheduler.get().remove_all_jobs()

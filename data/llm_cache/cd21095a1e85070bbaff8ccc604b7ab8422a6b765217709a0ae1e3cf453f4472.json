@@ -1,11 +1,11 @@
 {
  "data": {
-  "code": "import re\nfrom datetime import datetime\nfrom decimal import Decimal\n\n\ndef extract(text: str) -> dict:\n    if not re.search(r\"Airtel\\s+Xstream\\s+Fiber\", text, re.IGNORECASE):\n        raise ValueError(\"Missing Airtel Xstream Fiber label\")\n\n    amount_match = re.search(r\"Amount\\s*due\\s*:\\s*[\u20b9Rs\\.\\s]*([0-9][0-9,]*\\.?[0-9]{0,2})\", text, re.IGNORECASE)\n    if not amount_match:\n        raise ValueError(\"Missing Amount due label\")\n    amount = float(Decimal(amount_match.group(1).replace(',', '')))\n\n    due_match = re.search(r\"Due\\s*date\\s*:\\s*([0-9]{1,2}-[A-Za-z]{3}-[0-9]{4})\", text, re.IGNORECASE)\n    if not due_match:\n        raise ValueError(\"Missing Due date label\")\n    due_date = datetime.strptime(due_match.group(1), \"%d-%b-%Y\").strftime(\"%Y-%m-%d\")\n\n    return {\n        \"type\": \"bill_due\",\n        \"provider\": \"Airtel Xstream Fiber\",\n        \"amount\": amount,\n        \"currency\": \"INR\",\n        \"due_date\": due_date,\n    }\n",
-  "notes": "Parses Airtel Xstream Fiber bill emails by anchored Amount due and Due date labels, normalizing INR amount and due date."
+  "code": "import re\nfrom datetime import datetime\n\n\ndef extract(text: str) -> dict:\n    amount_match = re.search(r'(?im)^\\s*Amount\\s+due\\s*:\\s*[\u20b9Rs\\.\\s]*([0-9][0-9,]*\\.?[0-9]{0,2})\\s*$', text)\n    if not amount_match:\n        raise ValueError('Missing Amount due label')\n\n    due_match = re.search(r'(?im)^\\s*Due\\s+date\\s*:\\s*([0-9]{1,2}-[A-Za-z]{3}-[0-9]{4})\\s*$', text)\n    if not due_match:\n        raise ValueError('Missing Due date label')\n\n    provider_match = re.search(r'(?im)^\\s*From\\s*:\\s*(Airtel Xstream Fiber)\\s*<', text)\n    if not provider_match:\n        raise ValueError('Missing From label')\n\n    amount = float(amount_match.group(1).replace(',', ''))\n    due_date = datetime.strptime(due_match.group(1), '%d-%b-%Y').strftime('%Y-%m-%d')\n    provider = provider_match.group(1)\n\n    return {\n        'type': 'bill_due',\n        'provider': provider,\n        'amount': amount,\n        'currency': 'INR',\n        'due_date': due_date,\n    }\n",
+  "notes": "Parses Airtel Xstream Fiber bill emails by anchored Amount due, Due date, and From labels."
  },
- "tokens": 1054,
- "cost": 0.0071225,
+ "tokens": 1065,
+ "cost": 0.0072875,
  "model": "gpt-5.4",
- "date_offset": 14,
+ "date_offset": 23,
  "key": "compile:airtel_com_bill_due:v1:n3:attempt0"
 }

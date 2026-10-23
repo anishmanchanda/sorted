@@ -10,7 +10,6 @@ Anything below BRAIN_CLASSIFIER_THRESHOLD goes to the LLM, whose label becomes n
 
 from collections import defaultdict
 from dataclasses import dataclass
-from pathlib import Path
 
 import joblib
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -21,7 +20,7 @@ from brain import config
 from brain.compiler.detector import subject_words
 from brain.messages import sender_key
 
-MODEL_PATH = Path(config.env("BRAIN_MODEL_DIR", str(config.ROOT / "data" / "models"))) / "classifier.joblib"
+MODEL_PATH = config.ROOT / config.env("BRAIN_MODEL_DIR", "data/models") / "classifier.joblib"
 
 
 @dataclass

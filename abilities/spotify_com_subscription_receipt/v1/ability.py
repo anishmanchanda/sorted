@@ -12,16 +12,15 @@ from datetime import datetime
 
 def extract(text: str) -> dict:
     amount_match = re.search(
-        r"Spotify\s+Premium\s+Individual\s+[—-]\s+Rs\s*([\d,]+(?:\.\d+)?)\s*/\s*month",
+        r"Spotify\s+Premium\s+Individual\s+[—-]\s+Rs\s*([0-9][0-9,]*(?:\.[0-9]+)?)/month",
         text,
         re.IGNORECASE,
     )
     if not amount_match:
-        raise ValueError("Missing Spotify plan amount label")
+        raise ValueError("Missing subscription amount label")
 
     due_match = re.search(
-        r"Your\s+next\s+payment\s+of\s+Rs\s*[\d,]+(?:\.\d+)?\s+is\s+on\s+(\d{1,2}/\d{1,2}/\d{4})\."
-        ,
+        r"Your\s+next\s+payment\s+of\s+Rs\s*[0-9][0-9,]*(?:\.[0-9]+)?\s+is\s+on\s+([0-9]{2}/[0-9]{2}/[0-9]{4})\." ,
         text,
         re.IGNORECASE,
     )

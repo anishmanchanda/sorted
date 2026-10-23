@@ -10,15 +10,12 @@ import re
 from datetime import datetime
 
 def extract(text: str) -> dict:
-    if not re.search(r'^Subject:\s*Your\s+Netflix\s+payment\s+receipt\s*$', text, re.IGNORECASE | re.MULTILINE):
-        raise ValueError('Missing subject label')
-
-    amount_match = re.search(r'(?mi)^Amount\s+₹\s*([0-9][0-9,]*\.\d{2})\s*$', text)
+    amount_match = re.search(r'(?mi)^\s*Amount\s*₹\s*([0-9][0-9,]*\.\d{2})\s*$', text)
     if not amount_match:
         raise ValueError('Missing Amount label')
     amount = float(amount_match.group(1).replace(',', ''))
 
-    due_match = re.search(r'(?mi)^Next\s+billing\s+date\s+([0-9]{1,2}\s+[A-Za-z]+\s+[0-9]{4})\s*$', text)
+    due_match = re.search(r'(?mi)^\s*Next\s+billing\s+date\s+([0-9]{1,2}\s+[A-Za-z]+\s+[0-9]{4})\s*$', text)
     if not due_match:
         raise ValueError('Missing Next billing date label')
     due_date = datetime.strptime(due_match.group(1).strip(), '%d %B %Y').strftime('%Y-%m-%d')

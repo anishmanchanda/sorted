@@ -1,0 +1,6 @@
+{
+ "end": "2026-10-23",
+ "offset_days": 23,
+ "messages": 81,
+ "note": "Synthetic: fake people, numbers and amounts. Regenerate with `make dataset`."
+}

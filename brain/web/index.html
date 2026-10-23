@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sorted simulation</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--ink:#16181d;--muted:#5f6673;--line:#e3e6eb;--llm:#c2410c;--llm-bg:#fff1e6;
+--code:#047857;--code-bg:#e7f6ef;--ml:#6d28d9;--ml-bg:#f1eafd;--warn:#b91c1c;--accent:#1d4ed8}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1115;--card:#171a21;--ink:#e8eaee;--muted:#9aa2b1;--line:#2a2f3a;
+--llm:#fb923c;--llm-bg:#3a2214;--code:#34d399;--code-bg:#11302a;--ml:#c4b5fd;--ml-bg:#2a2140;--warn:#f87171;--accent:#93c5fd}}
+*{box-sizing:border-box}body{margin:0;font:14px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink)}
+header{position:sticky;top:0;z-index:5;display:flex;flex-wrap:wrap;gap:12px;align-items:center;padding:10px 16px;
+background:var(--card);border-bottom:1px solid var(--line)}
+h1{font-size:16px;margin:0 8px 0 0}h2{font-size:14px;margin:0 0 10px}.muted{color:var(--muted)}
+button{font:inherit;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;padding:6px 10px;cursor:pointer}
+button:hover{border-color:var(--accent)}button.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.clock{font-variant-numeric:tabular-nums;font-weight:600}.pill{display:inline-block;border-radius:99px;padding:1px 8px;font-size:12px;font-weight:600}
+.llm{background:var(--llm-bg);color:var(--llm)}.code{background:var(--code-bg);color:var(--code)}.ml{background:var(--ml-bg);color:var(--ml)}
+.rule{background:var(--line);color:var(--muted)}
+main{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:16px;padding:16px;max-width:1500px;margin:auto}
+@media (max-width:1000px){main{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:16px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:12px}
+.tile{border:1px solid var(--line);border-radius:10px;padding:10px}.tile b{display:block;font-size:22px}
+.bars{display:flex;gap:10px;align-items:flex-end;height:150px;margin:6px 0 4px}
+.bar{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:12px;color:var(--muted)}
+.stack{width:100%;max-width:70px;display:flex;flex-direction:column-reverse;border-radius:6px;overflow:hidden;background:var(--line)}
+.stack div{width:100%}table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;padding:5px 6px;border-bottom:1px solid var(--line)}
+th{color:var(--muted);font-weight:600}td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+.abilities{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:10px}
+.ab{border:1px solid var(--line);border-radius:10px;padding:10px}.ab h3{font-size:13px;margin:0 0 2px;word-break:break-all}
+.pipe{display:flex;gap:3px;margin:8px 0}.pipe span{flex:1;font-size:11px;text-align:center;padding:4px 2px;border-radius:5px;background:var(--line);color:var(--muted)}
+.pipe span.done{background:var(--code-bg);color:var(--code)}.pipe span.now{outline:2px solid var(--code)}.pipe span.bad{background:var(--llm-bg);color:var(--warn)}
+.offload{height:8px;border-radius:4px;background:var(--llm-bg);overflow:hidden}.offload div{height:100%;background:var(--code)}
+details pre{max-height:260px;overflow:auto;background:var(--bg);padding:8px;border-radius:8px;font-size:12px}
+.feed{max-height:520px;overflow:auto}.ev{border-bottom:1px solid var(--line);padding:7px 0}.ev .t{font-size:11px;color:var(--muted)}
+.ev.you{text-align:right}.ev.you .body{display:inline-block;background:var(--accent);color:#fff;border-radius:10px;padding:5px 9px}
+.ev .body{white-space:pre-wrap;word-break:break-word}.ev.ask .body{font-weight:600}
+.chat{display:flex;gap:6px}.chat input{flex:1;font:inherit;padding:8px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+.tabs{display:flex;gap:6px;margin-bottom:12px}.tabs button.on{background:var(--ink);color:var(--card)}
+.hidden{display:none}#modal{position:fixed;inset:0;background:#0008;display:flex;align-items:center;justify-content:center;padding:16px;z-index:9}
+#modal.hidden{display:none}#modal .card{max-width:760px;width:100%;max-height:85vh;overflow:auto}.row{display:flex;gap:8px;flex-wrap:wrap}
+.row input,.row select,textarea{font:inherit;padding:6px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+textarea{width:100%;min-height:90px}#gen{min-height:64px}.links{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.links a{text-decoration:none}.mail{border:1px solid var(--line);border-radius:8px;padding:8px;margin-top:8px;font-size:12px;white-space:pre-wrap}
+.answer{white-space:pre-wrap;word-break:break-word;margin-top:4px}button:disabled{opacity:.5;cursor:default}
+.ev.outbox .body{border-left:3px solid var(--code);padding-left:8px}.ab.skill{border-color:var(--ml)}tr.click{cursor:pointer}tr.click:hover{background:var(--bg)}
+</style>
+</head>
+<body>
+<header>
+  <h1>Sorted · simulation</h1>
+  <span class="muted">You are Rohan Sharma · synthetic data, no real user</span>
+  <span class="clock" id="clock">…</span><span class="pill rule" id="month"></span><span class="muted" id="progress"></span>
+  <span style="flex:1"></span>
+  <button class="primary" onclick="step('next')">Next event</button>
+  <button onclick="step('day')">+1 day</button><button onclick="step('week')">+1 week</button>
+  <button onclick="step('month')">To month end</button><button onclick="step('end')">Run to today</button>
+  <label class="muted"><input type="checkbox" id="auto"> auto-play</label>
+  <label class="muted" title="Approve every ability that passes its tests (for demos). Off: you approve each one."><input type="checkbox" id="autoapprove" onchange="api('/api/settings',{auto_approve:this.checked})"> auto-approve (demo)</label>
+  <button onclick="resetSim()">Reset</button>
+</header>
+<main>
+<section>
+  <div class="tabs"><button class="on" data-tab="overview">Privacy &amp; offloading</button><button data-tab="inbox">Synthetic inbox</button></div>
+  <div id="overview">
+    <div class="card">
+      <h2>Privacy score: how much of the work runs as local code</h2>
+      <div class="tiles" id="tiles"></div>
+      <div class="bars" id="bars"></div>
+      <div class="muted" style="font-size:12px;margin-bottom:8px">Each bar is one Sim month of messages: <span class="pill code">local code</span> (compiled abilities, local ML, rules) vs <span class="pill llm">LLM</span>.</div>
+      <table id="months"></table>
+    </div>
+    <div class="card">
+      <h2>From AI to compiled code</h2>
+      <p class="muted" style="margin-top:0">Each card is a task the LLM did repeatedly. The compiler wrote code for it, the sandbox tested it (including held-out cases it never saw), you approved it, it ran in shadow next to the LLM, and then it took over. The green bar is the share of that task's work now done by code.</p>
+      <div class="abilities" id="abilities"><span class="muted">Nothing compiled yet. Advance past Sim month 3, or ask the same kind of question three times.</span></div>
+    </div>
+  </div>
+  <div id="inbox" class="hidden">
+    <div class="card">
+      <h2>Add a synthetic message</h2>
+      <div class="row">
+        <select id="nkind"><option value="email">email</option><option value="sms">sms</option></select>
+        <select id="ntemplate" onchange="fillTemplate()"><option value="">blank</option><option value="meeting">meeting request</option><option value="bill">bill</option><option value="appt">doctor appointment</option></select>
+        <input id="nsender" placeholder="From, e.g. Priya Sharma <priya@example.in>" style="flex:1;min-width:240px">
+      </div>
+      <div class="row" style="margin-top:8px"><input id="nsubject" placeholder="Subject" style="flex:1"></div>
+      <textarea id="nbody" placeholder="Body"></textarea>
+      <div class="row"><span class="muted">Arrives one minute after the current simulated time.</span><span style="flex:1"></span><button class="primary" onclick="addMessage()">Add to inbox</button></div>
+    </div>
+    <div class="card"><h2>All synthetic messages <span class="muted" id="dcount"></span> <button style="float:right;font-size:12px" onclick="clearAdded()">Remove messages I added</button></h2><table id="dataset"></table></div>
+  </div>
+</section>
+<aside>
+  <div class="card"><h2>Ask Sorted</h2>
+    <div class="chat"><input id="q" placeholder="Do I have any doctor appointments this month?" onkeydown="if(event.key==='Enter')ask()"><button class="primary" onclick="ask()">Ask</button></div>
+    <div class="muted" style="font-size:12px;margin-top:6px">Try "all my dues and updates between 1 June and 15 July". Ask the same kind of question 3 times and it gets compiled into code too.</div>
+    <div id="answer" style="margin-top:8px"></div>
+  </div>
+  <div class="card"><h2>Waiting for you</h2><div id="pending" class="muted">Nothing.</div></div>
+  <div class="card"><h2>Add synthetic data</h2>
+    <textarea id="gen" placeholder="e.g. a supplier sending requests for new shipments sporadically between June and August"></textarea>
+    <div class="row" style="margin-top:6px"><span class="muted" style="font-size:12px;flex:1">The AI writes the messages (needs an API key). No period given: spread over the whole timeline. Past-dated ones arrive at once.</span><button class="primary" id="genbtn" onclick="generate()">Generate</button></div>
+    <div id="genout" class="muted" style="font-size:12px;margin-top:6px"></div>
+  </div>
+  <div class="card"><h2>Outbox <span class="muted" style="font-weight:400">(replies you approved)</span></h2><div id="outbox" class="muted">Nothing sent. Sorted only replies when you press Send.</div></div>
+  <div class="card"><h2>Live feed</h2><div class="feed" id="feed"></div></div>
+</aside>
+</main>
+<div id="modal" class="hidden" onclick="if(event.target.id==='modal')this.classList.add('hidden')"><div class="card" id="mbody"></div></div>
+<script>
+const $=id=>document.getElementById(id), esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let lastFeed=0, busy=false;
+const api=(p,b)=>fetch(p,b?{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)}:{}).then(r=>r.json());
+function badge(h,label){const x=label||h||'';const c=/ability|compiled/.test(x)?'code':/ml:|local ML/.test(x)?'ml':/rule|dropped|you|compiler/.test(x)?'rule':'llm';
+  const t=label||(/ability:/.test(h)?'compiled code':/ml:/.test(h)?'local ML':/rule/.test(h)?'rule':h==='llm'?'LLM':h);return t?`<span class="pill ${c}">${esc(t)}</span>`:''}
+async function refresh(){const {status,stats}=await api('/api/state');
+  $('clock').textContent=new Date(status.clock).toLocaleString('en-IN',{weekday:'short',day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+  $('month').textContent=`Sim month ${status.month}/6`;$('progress').textContent=`${status.delivered}/${status.total} messages arrived`;$('autoapprove').checked=status.auto_approve;
+  const q=stats.questions;$('tiles').innerHTML=[['Privacy score',`${Math.round(stats.privacy*100)}%`,`${stats.local} of ${stats.messages} messages by local code`],
+   ['LLM calls',stats.llm_calls,`${stats.tokens.toLocaleString()} tokens · ≈$${stats.cost.toFixed(4)} (est.)`],
+   ['Questions by code',`${q.local}/${q.local+q.llm}`,'chat questions answered with 0 LLM calls'],
+   ['Cost / message',stats.messages?`$${(stats.cost/stats.messages).toFixed(5)}`:'–','includes compiling (est.)']]
+   .map(([a,b,c])=>`<div class="tile"><span class="muted">${a}</span><b>${b}</b><span class="muted" style="font-size:12px">${c}</span></div>`).join('');
+  $('bars').innerHTML=stats.months.map(m=>{const llm=m.tasks-m.local;return `<div class="bar"><b style="color:var(--ink)">${Math.round(m.privacy*100)}%</b>
+    <div class="stack" style="height:${Math.max(12,m.tasks*8)}px"><div class="code" style="height:${m.local/m.tasks*100}%;background:var(--code)"></div><div style="height:${llm/m.tasks*100}%;background:var(--llm)"></div></div>${esc(m.month)}</div>`}).join('')||'<span class="muted">No messages yet. Press Next event.</span>';
+  $('months').innerHTML='<tr><th>Period</th><th class="num">Messages</th><th class="num">Local code</th><th class="num">LLM calls</th><th class="num">Tokens</th><th class="num">Privacy</th><th class="num">Cost/msg</th></tr>'+
+   stats.months.map(m=>`<tr><td>${esc(m.month)}</td><td class="num">${m.tasks}</td><td class="num">${m.local}</td><td class="num">${m.llm_calls}</td><td class="num">${m.tokens.toLocaleString()}</td><td class="num">${Math.round(m.privacy*100)}%</td><td class="num">$${m.cost_per_message.toFixed(5)}</td></tr>`).join('');
+  $('pending').innerHTML=(status.awaiting_time?'<div class="ev ask"><div class="body">🕐 Type the time that suits you in "Ask Sorted", e.g. "Friday 5pm".</div></div>':'')+(status.pending_actions.length?status.pending_actions.map(e=>`<div class="ev ask"><div class="body">${esc(e.title)}</div><div class="row" style="margin-top:6px">${e.actions.map(([l,a])=>`<button onclick="act('${a}',this)">${esc(l)}</button>`).join('')}</div></div>`).join(''):status.awaiting_time?'':'Nothing.');
+  const ob=await api('/api/outbox');if(ob.length)$('outbox').innerHTML=ob.slice().reverse().map(m=>`<div class="mail"><b>To:</b> ${esc(m.to)}\n<b>Subject:</b> ${esc(m.subject)}\n\n${esc(m.body)}</div>`).join('');
+  const evs=await api('/api/feed?after='+lastFeed);if(evs.length){lastFeed=evs[evs.length-1].id;
+   $('feed').insertAdjacentHTML('afterbegin',evs.reverse().map(e=>`<div class="ev ${e.kind}"><div class="t">${esc(e.sim_time.replace('T',' '))} · ${KIND[e.kind]||e.kind} ${e.kind==='message'?badge(e.handler,e.label):''}</div><div class="body">${esc(e.title)}${e.detail&&e.kind!=='action'?`<div class="muted" style="font-size:12px">${esc(e.detail)}</div>`:''}${linkRow(e)}</div></div>`).join(''));
+   loadAbilities()}}
+const KIND={message:'📨 message',notify:'🔔 to you',ask:'❓ question for you',chat:'💬 answer',you:'you',action:'✔ done',compile:'⚙️ compiler',system:'ℹ️',outbox:'📤 sent'};
+function linkRow(r){const l=[];if(r.meet)l.push(`<a href="${esc(r.meet)}" target="_blank"><button>🎥 Google Meet</button></a>`);if(r.link)l.push(`<a href="${esc(r.link)}" target="_blank"><button>📅 Add to Google Calendar</button></a>`);if(r.ics_url)l.push(`<a href="${r.ics_url}"><button>Download .ics</button></a>`);return l.length?`<div class="links">${l.join('')}</div>`:''}
+const STEPS=['LLM solves','compiled + tested','approved','shadow','active'];
+function stage(a){return {candidate:0,generated:1,tested:1,shadow:3,active:4,degraded:4,retired:-1}[a.status]}
+async function loadAbilities(){const abs=await api('/api/abilities');if(!abs.length)return;
+  $('abilities').innerHTML=abs.map(a=>{if(a.kind==='skill'){const p=a.trigger.plan||{};
+   return `<div class="ab skill"><h3>🆕 ${esc(p.title||a.name)} <span class="pill ${a.status==='active'?'code':a.status==='retired'?'rule':'ml'}">${a.status==='candidate'?'proposed':a.status==='active'?'learned':'declined'}</span></h3>
+    <div class="muted" style="font-size:12px">A new kind of message Sorted noticed by itself: ${a.llm_solves} seen (from ${esc((a.trigger.senders||[]).join(', '))}). Skill: ${esc(a.what)}.${p.why?' '+esc(p.why):''}</div>
+    ${a.status==='candidate'?`<div class="row" style="margin-top:6px"><button class="primary" onclick="act('skill:${a.trigger.category}:yes',this)">Learn it</button><button onclick="act('skill:${a.trigger.category}:no',this)">Not now</button></div>`:''}
+    <div class="muted" style="font-size:12px;margin-top:4px">${a.status==='active'?'Parsers for these messages appear as their own cards below once compiled.':''}</div></div>`}
+   const s=stage(a),c=a.compile||{};const share=a.local_runs/Math.max(1,a.local_runs+a.llm_solves);
+   const pipe=STEPS.map((n,i)=>{let txt=n;if(i===0)txt=`${a.llm_solves} LLM solve${a.llm_solves===1?'':'s'}`;if(i===1&&c.visible!==undefined)txt=`tests ${c.visible}+${c.held_out} (${Math.round((c.held_out_pass_rate||0)*100)}%)`;
+     if(i===3)txt=`shadow ${a.shadow_matches}`;if(i===4)txt=`${a.local_runs} local run${a.local_runs===1?'':'s'}`;
+     const cls=a.status==='degraded'&&i===4?'bad':i<s||(i===s&&a.status==='active')?'done':i===s?'now':'';return `<span class="${cls}">${esc(txt)}</span>`}).join('');
+   const act=a.status==='tested'?`<div class="row"><button class="primary" onclick="act('approve:${a.name}',this)">Approve</button><button onclick="act('reject:${a.name}',this)">Reject</button></div>`:'';
+   return `<div class="ab"><h3>${esc(a.name)} <span class="muted">v${a.version}</span> <span class="pill ${a.status==='active'?'code':a.status==='degraded'?'llm':'rule'}">${a.status}</span></h3>
+    <div class="muted" style="font-size:12px">${esc(a.what)}${a.kind==='query'?' (chat)':''} · compile cost ${c.tokens||0} tokens</div><div class="pipe">${pipe}</div>
+    <div class="offload" title="share of this task now done by code"><div style="width:${share*100}%"></div></div>
+    <div class="muted" style="font-size:12px;margin-top:4px">${Math.round(share*100)}% of this task's work offloaded to code${a.last_error?` · <span style="color:var(--warn)">${esc(a.last_error.slice(0,140))}</span>`:''}</div>${act}
+    <details><summary class="muted">code the AI wrote · ${a.tests.length} test cases</summary><pre>${esc(a.code||'(not generated)')}</pre>
+    <table>${a.tests.map(t=>`<tr><td>${t.held_out?'<span class="pill rule">held-out</span>':''}</td><td style="font-size:11px">${esc(t.input.slice(0,160))}</td><td style="font-size:11px">${esc(JSON.stringify(t.expected))}</td></tr>`).join('')}</table></details></div>`}).join('')}
+async function step(to){if(busy)return;busy=true;document.body.style.cursor='progress';try{await api('/api/step',{to})}finally{busy=false;document.body.style.cursor='';refresh();loadDataset()}}
+async function resetSim(){if(confirm('Reset the simulation to Sim month 1?')){await api('/api/reset',{});lastFeed=0;$('feed').innerHTML='';$('abilities').innerHTML='';refresh();loadDataset()}}
+async function act(a,btn){if(btn)btn.closest('.row').querySelectorAll('button').forEach(b=>b.disabled=true);
+  const r=await api('/api/action',{action:a});$('answer').innerHTML=`<div class="answer">${esc(r.text)}</div>${linkRow(r)}`;
+  if(a.endsWith(':other')){$('q').placeholder='e.g. Friday 5pm';$('q').focus()}refresh();loadAbilities()}
+async function ask(){const text=$('q').value.trim();if(!text)return;$('q').value='';$('answer').innerHTML='<span class="muted">thinking…</span>';
+  const r=await api('/api/chat',{text});$('answer').innerHTML=`<div class="t muted" style="font-size:12px">${esc(r.how||'')}</div><div class="answer">${esc(r.answer)}</div>${linkRow(r)}`;$('q').placeholder='Do I have any doctor appointments this month?';refresh();loadAbilities()}
+async function generate(){const request=$('gen').value.trim();if(!request)return;$('genbtn').disabled=true;$('genout').textContent='Writing synthetic messages… (one AI call; backfilled ones are then read by the pipeline)';
+  try{const r=await api('/api/generate',{request});$('genout').textContent=r.error||r.detail||`Added ${r.ids.length}: ${r.label}. ${r.backfilled} arrived now (dated in the past), ${r.later} arrive as the clock moves. Sorted re-checks what it could learn as each one arrives.`;if(!r.error)$('gen').value=''}
+  finally{$('genbtn').disabled=false;refresh();loadDataset();loadAbilities()}}
+async function clearAdded(){if(!confirm('Remove every message you added or generated? Reset afterwards to replay without them.'))return;const r=await fetch('/api/messages/added',{method:'DELETE'}).then(r=>r.json());alert(`Removed ${r.removed}.`);loadDataset()}
+async function loadDataset(){const rows=await api('/api/messages');$('dcount').textContent=`(${rows.length})`;
+  $('dataset').innerHTML='<tr><th>Sim month</th><th>Arrives</th><th>Kind</th><th>From</th><th>Subject / text</th><th>Type (label)</th><th>Status</th></tr>'+rows.map(r=>
+   `<tr class="click" onclick="showMessage('${r.id}')"><td>${r.sim_month}</td><td>${esc(r.time.slice(0,16).replace('T',' '))}</td><td>${r.kind}</td><td>${esc(r.sender.replace(/<.*>/,''))}</td><td>${esc(r.subject.slice(0,70))}</td><td>${r.added?'<span class="pill ml">added</span> ':''}${esc(r.label)}</td><td><span class="pill ${r.status==='delivered'?'code':'rule'}">${r.status}</span></td></tr>`).join('')}
+async function showMessage(id){const m=await api('/api/messages/'+id);const res=m.result?`<p>${badge(m.result.handler,m.result.label)} ${esc(m.result.detail)}</p>`:'<p class="muted">Not delivered yet.</p>';
+  $('mbody').innerHTML=`<h2>${esc(m.subject||m.id)}</h2><p class="muted">${esc(m.sender)} · ${esc(m.time.replace('T',' '))} · ${m.kind}</p>${res}<h2>What the AI / compiled code sees (redacted)</h2><pre style="white-space:pre-wrap">${esc(m.redacted)}</pre>`;$('modal').classList.remove('hidden')}
+const TEMPLATES={meeting:['Priya Sharma <priya@lawfirm.example.in>','Can we meet about the property papers?','Hi Rohan,\n\nWould Thursday at 4:00 PM work to go through the property registration papers? It should take about an hour.\n\nRegards,\nPriya Sharma\nSharma Legal'],
+ bill:['Tata Play <billing@tataplay.example.in>','Your Tata Play bill is ready','Dear Customer,\n\nAmount due: Rs 599.00\nDue date: (pick a date a week after the current simulated day)\n\nPay via the Tata Play app.'],
+ appt:['Max Healthcare <appointments@maxhealthcare.example.in>','Appointment confirmed: Dr. Rhea Kapoor','Dear Rohan Sharma,\n\nYour appointment with Dr. Rhea Kapoor (General Physician) is confirmed.\nDate: (a date in the coming week)\nTime: 05:30 PM\nLocation: Max Hospital, Saket'] };
+function fillTemplate(){const t=TEMPLATES[$('ntemplate').value];if(t){[$('nsender').value,$('nsubject').value,$('nbody').value]=t}}
+async function addMessage(){const b={kind:$('nkind').value,sender:$('nsender').value,subject:$('nsubject').value,body:$('nbody').value};if(!b.sender||!b.body)return alert('From and body are required');
+  const r=await api('/api/messages',b);alert(`Added ${r.id}. Press "Next event" to let it arrive (it costs one live LLM call).`);loadDataset()}
+document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('on',x===b));
+  ['overview','inbox'].forEach(id=>$(id).classList.toggle('hidden',id!==b.dataset.tab))});
+setInterval(()=>{if($('auto').checked&&!busy)step('next')},2500);setInterval(()=>{if(!busy)refresh()},3000);refresh();loadAbilities();loadDataset();
+</script>
+</body>
+</html>

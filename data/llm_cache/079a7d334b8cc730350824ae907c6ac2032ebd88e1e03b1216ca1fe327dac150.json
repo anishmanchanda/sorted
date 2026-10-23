@@ -1,0 +1,22 @@
+{
+ "data": {
+  "type": "subscription_price_change",
+  "provider": "Spotify",
+  "amount": 139.0,
+  "currency": "INR",
+  "due_date": "2026-07-28",
+  "service": "Spotify",
+  "old_price": 119.0,
+  "new_price": 139.0,
+  "event_time": null,
+  "person": null,
+  "topic": null,
+  "document_type": null,
+  "category": null
+ },
+ "tokens": 1221,
+ "cost": 0.00054855,
+ "model": "gpt-oss-120b",
+ "date_offset": 23,
+ "key": "extract:m3_spotify_price"
+}

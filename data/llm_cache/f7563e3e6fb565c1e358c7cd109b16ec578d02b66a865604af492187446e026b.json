@@ -1,0 +1,54 @@
+{
+ "data": {
+  "label": "Shipment Requests",
+  "messages": [
+   {
+    "kind": "email",
+    "sender": "Rahul Mehta <rahul@agrifarm.example.in>",
+    "subject": "Request for Wheat Shipment \u2013 Ref #WF-2026-07",
+    "body": "Dear Rohan,\n\nWe would like to place a new order for 25 metric tonnes of Quality A wheat under reference WF-2026-07. The total amount will be INR 3,75,000. Kindly confirm availability and arrange dispatch by 2026-06-12. Please share the pro\u2011forma invoice at your earliest convenience.\n\nThank you,\nRahul Mehta\nAgrifarm Exports",
+    "at": "2026-06-05T09:12"
+   },
+   {
+    "kind": "sms",
+    "sender": "Maya Logistics <+91-9876543210>",
+    "subject": "",
+    "body": "Hi Rohan, this is Maya. Please confirm a shipment of 12 pallets of plastic containers (ref: ML-2026-03). We need them by 2026-06-20. Let us know the total cost and payment terms. Thanks!",
+    "at": "2026-06-14T15:45"
+   },
+   {
+    "kind": "email",
+    "sender": "Sunrise Spices <sales@sunrise-spices.example.in>",
+    "subject": "New Order: Cardamom \u2013 PO 1123",
+    "body": "Dear Mr. Sharma,\n\nWe are ready to place a fresh order of 4,500 kg of green cardamom under PO 1123. The amount totals INR 4,95,000. Kindly arrange dispatch no later than 2026-06-25 and send the shipping documents for customs clearance.\n\nBest regards,\nAnita Kapoor\nSunrise Spices Ltd.",
+    "at": "2026-06-20T11:30"
+   },
+   {
+    "kind": "sms",
+    "sender": "Khan Traders <+91-9123456789>",
+    "subject": "",
+    "body": "Rohan, please note our request for 18 cartons of aluminum foil (ref KT-2026-08). Needed by 2026-07-05. Quote the price and confirm the shipment schedule. Thanks.",
+    "at": "2026-07-02T08:20"
+   },
+   {
+    "kind": "email",
+    "sender": "BlueWave Exports <export@bluewave.example.in>",
+    "subject": "Request for Steel Rods \u2013 Ref #SW-2026-08",
+    "body": "Hello Rohan,\n\nWe require 30 tonnes of high\u2011grade steel rods (diameter 12\u202fmm) under reference SW-2026-08. The total purchase value will be INR 9,60,000. Kindly schedule dispatch to our Mumbai warehouse by 2026-07-18 and forward the insurance certificate.\n\nRegards,\nVijay Singh\nBlueWave Exports",
+    "at": "2026-07-15T14:55"
+   },
+   {
+    "kind": "email",
+    "sender": "EcoBags Co <orders@ecobags.example.in>",
+    "subject": "Bulk Order for Jute Bags \u2013 PO #EB-2026-09",
+    "body": "Dear Rohan,\n\nPlease process a bulk order of 8,000 jute shopping bags (size 35\u202f\u00d7\u202f40\u202fcm) under PO #EB-2026-09. The total cost is INR 2,24,000. We need the shipment to arrive at our Delhi depot by 2026-08-30. Include a copy of the eco\u2011certification in the shipping paperwork.\n\nThank you,\nNeha Verma\nEcoBags Co.",
+    "at": "2026-08-28T10:07"
+   }
+  ]
+ },
+ "tokens": 1854,
+ "cost": 0.0012205,
+ "model": "gpt-oss-120b",
+ "date_offset": 23,
+ "key": null
+}

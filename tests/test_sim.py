@@ -15,7 +15,7 @@ def test_generated_timeline_ends_on_the_given_date(tmp_path):
     end = date(2031, 3, 15)
     n = samples.generate(tmp_path / "s", tmp_path / "labels.jsonl", end)
     labels = [json.loads(line) for line in (tmp_path / "labels.jsonl").read_text().splitlines()]
-    assert n == len(labels) == 76
+    assert n == len(labels) == 81
     assert all(sim_sample(lab["id"] + ".eml") for lab in labels)  # every id is Sim-month prefixed
     rows = [json.loads(line) for line in (tmp_path / "s" / "sms" / "sms.jsonl").read_text().splitlines()]
     last = max(datetime.fromisoformat(r["received_at"]).date() for r in rows)

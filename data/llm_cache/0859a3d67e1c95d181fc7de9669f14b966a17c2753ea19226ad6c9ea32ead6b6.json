@@ -1,11 +1,11 @@
 {
  "data": {
-  "code": "import re\nfrom datetime import datetime\n\n\ndef extract(text: str) -> dict:\n    if not isinstance(text, str):\n        raise ValueError(\"text must be a string\")\n\n    pattern = re.compile(\n        r\"Airtel\\s+Xstream\\s+bill\\s+of\\s+Rs\\s*([0-9,]+(?:\\.[0-9]+)?)\\s+for\\s+a/c\\s+\\S+\\s+is\\s+due\\s+on\\s+([0-9]{1,2}-[A-Za-z]{3}-[0-9]{4})\",\n        re.IGNORECASE,\n    )\n    match = pattern.search(text)\n    if not match:\n        raise ValueError(\"Required Airtel bill due labels not found\")\n\n    amount_str = match.group(1).replace(\",\", \"\")\n    due_date_str = match.group(2)\n\n    try:\n        amount = float(amount_str)\n    except Exception:\n        raise ValueError(\"Invalid amount format\")\n\n    try:\n        due_date = datetime.strptime(due_date_str, \"%d-%b-%Y\").strftime(\"%Y-%m-%d\")\n    except Exception:\n        raise ValueError(\"Invalid due date format\")\n\n    return {\n        \"type\": \"bill_due\",\n        \"provider\": \"Airtel\",\n        \"amount\": amount,\n        \"currency\": \"INR\",\n        \"due_date\": due_date,\n    }\n",
-  "notes": "Regex anchored on the Airtel Xstream bill wording extracts amount and due date, raising ValueError if layout changes."
+  "code": "import re\nfrom datetime import datetime\n\n\ndef extract(text: str) -> dict:\n    amount_match = re.search(r\"\\bAirtel\\s+Xstream\\s+bill\\s+of\\s+Rs\\s*([\\d,]+(?:\\.\\d+)?)\\b\", text, re.IGNORECASE)\n    if not amount_match:\n        raise ValueError(\"Missing Airtel Xstream bill amount label\")\n\n    due_match = re.search(r\"\\bis\\s+due\\s+on\\s+(\\d{1,2}-[A-Za-z]{3}-\\d{4})\\b\", text, re.IGNORECASE)\n    if not due_match:\n        raise ValueError(\"Missing due date label\")\n\n    amount = float(amount_match.group(1).replace(',', ''))\n    due_date = datetime.strptime(due_match.group(1), \"%d-%b-%Y\").strftime(\"%Y-%m-%d\")\n\n    return {\n        \"type\": \"bill_due\",\n        \"provider\": \"Airtel\",\n        \"amount\": amount,\n        \"currency\": \"INR\",\n        \"due_date\": due_date,\n    }\n",
+  "notes": "Anchored regex extraction for Airtel Xstream bill amount and due date with strict failure on layout change."
  },
- "tokens": 963,
- "cost": 0.00722,
+ "tokens": 882,
+ "cost": 0.006005,
  "model": "gpt-5.4",
- "date_offset": 14,
+ "date_offset": 23,
  "key": "compile:sms_airtel_bill_due:v1:n3:attempt0"
 }

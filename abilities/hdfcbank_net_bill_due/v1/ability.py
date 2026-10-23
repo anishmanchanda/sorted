@@ -11,26 +11,16 @@ from datetime import datetime
 
 
 def extract(text: str) -> dict:
-    due_match = re.search(r'Payment\s+Due\s+Date\s+([0-3]?\d/[01]?\d/\d{4})', text, re.IGNORECASE)
+    amt_match = re.search(r'Total\s+Amount\s+Due\s+Rs\.\s*([\d,]+(?:\.\d{2})?)', text, re.IGNORECASE)
+    if not amt_match:
+        raise ValueError('Missing Total Amount Due label')
+
+    due_match = re.search(r'Payment\s+Due\s+Date\s+([0-3]?\d/[0-1]?\d/\d{4})', text, re.IGNORECASE)
     if not due_match:
         raise ValueError('Missing Payment Due Date label')
 
-    amount_match = re.search(r'Total\s+Amount\s+Due\s+Rs\.\s*([\d,]+(?:\.\d{2})?)', text, re.IGNORECASE)
-    if not amount_match:
-        raise ValueError('Missing Total Amount Due label')
-
-    due_date_raw = due_match.group(1).strip()
-    amount_raw = amount_match.group(1).replace(',', '').strip()
-
-    try:
-        due_date = datetime.strptime(due_date_raw, '%d/%m/%Y').strftime('%Y-%m-%d')
-    except Exception:
-        raise ValueError('Invalid due date format')
-
-    try:
-        amount = float(amount_raw)
-    except Exception:
-        raise ValueError('Invalid amount format')
+    amount = float(amt_match.group(1).replace(',', ''))
+    due_date = datetime.strptime(due_match.group(1), '%d/%m/%Y').strftime('%Y-%m-%d')
 
     return {
         'type': 'bill_due',

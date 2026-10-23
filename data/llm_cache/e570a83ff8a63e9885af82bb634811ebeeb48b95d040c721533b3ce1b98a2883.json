@@ -1,0 +1,12 @@
+{
+ "data": {
+  "title": "Shipment requests",
+  "action": "remind_before_due",
+  "why": "You need to schedule shipments before the requested dates."
+ },
+ "tokens": 559,
+ "cost": 0.00028285,
+ "model": "gpt-oss-120b",
+ "date_offset": 23,
+ "key": null
+}

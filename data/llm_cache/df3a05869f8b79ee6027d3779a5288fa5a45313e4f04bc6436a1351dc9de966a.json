@@ -1,0 +1,22 @@
+{
+ "data": {
+  "type": "meeting_request",
+  "provider": "Sharma Associates",
+  "amount": null,
+  "currency": "INR",
+  "due_date": "2026-07-19",
+  "service": null,
+  "old_price": null,
+  "new_price": null,
+  "event_time": "16:00",
+  "person": "Ankit Verma",
+  "topic": "flat lease renewal",
+  "document_type": null,
+  "category": null
+ },
+ "tokens": 1275,
+ "cost": 0.0005814500000000001,
+ "model": "gpt-oss-120b",
+ "date_offset": 23,
+ "key": "extract:m3_meeting_flat"
+}

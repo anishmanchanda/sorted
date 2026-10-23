@@ -1,0 +1,22 @@
+{
+ "data": {
+  "type": "other",
+  "provider": "Global Traders Ltd.",
+  "amount": 630000.0,
+  "currency": "INR",
+  "due_date": "2026-06-22",
+  "service": null,
+  "old_price": null,
+  "new_price": null,
+  "event_time": null,
+  "person": null,
+  "topic": "steel rods amendment",
+  "document_type": null,
+  "category": "shipment_request"
+ },
+ "tokens": 1284,
+ "cost": 0.0005754,
+ "model": "gpt-oss-120b",
+ "date_offset": 23,
+ "key": null
+}
