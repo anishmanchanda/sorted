@@ -1,0 +1,11 @@
+{
+ "data": {
+  "code": "import re\nfrom decimal import Decimal\n\n\ndef extract(text: str) -> dict:\n    subject_match = re.search(r'(?mi)^Subject:\\s*(.+?)\\s*$', text)\n    if not subject_match:\n        raise ValueError('Missing Subject label')\n\n    amount_match = re.search(r'(?mi)^Total\\s+Value:\\s*Rs\\s*([0-9][0-9,]*(?:\\.\\d+)?)\\s*$', text)\n    if not amount_match:\n        raise ValueError('Missing Total Value label')\n\n    due_date_match = re.search(r'(?mi)^Requested\\s+Dispatch\\s+Date:\\s*([0-9]{4}-[0-9]{2}-[0-9]{2})\\s*$', text)\n    if not due_date_match:\n        raise ValueError('Missing Requested Dispatch Date label')\n\n    amount = float(Decimal(amount_match.group(1).replace(',', '')))\n    subject = subject_match.group(1).strip()\n    topic_match = re.match(r'(Shipment\\s+Request)\\b', subject, re.I)\n    topic = topic_match.group(1).strip() if topic_match else subject\n    if not topic:\n        raise ValueError('Empty topic')\n\n    return {\n        'type': 'other',\n        'provider': 'Acme Traders',\n        'amount': amount,\n        'currency': 'INR',\n        'due_date': due_date_match.group(1),\n        'topic': topic,\n        'category': 'shipment_request',\n    }\n",
+  "notes": "Anchored extraction for subject, INR total value, and requested dispatch date with Indian-number formatting support."
+ },
+ "tokens": 1135,
+ "cost": 0.0078125,
+ "model": "gpt-5.4",
+ "date_offset": 23,
+ "key": "compile:acmetrader_example_in_shipment_request:v1:n3:attempt0"
+}

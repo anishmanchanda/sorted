@@ -11,6 +11,11 @@ from brain.telegram_bot import OWNER_FILE, abilities_text, due_text, owner
 HELP = """<b>Sorted simulation</b>
 You are Rohan Sharma. Six months of synthetic mail arrive as you move the clock.
 
+<b>One command</b>
+/run  the whole demo on autopilot, one event every few seconds, saying yes to everything
+/fast  ·  /normal  ·  /slow  change the pace, even mid-run
+/stop  pause it (the clock stays where it is; /next etc. carry on by hand)
+
 <b>Clock</b>
 /next  next message or reminder
 /day  /week  /month  /end  jump ahead
@@ -38,7 +43,7 @@ TAG = {"compiled code": "⚡ code", "local ML": "🤖 local ML", "rule": "📏 r
 async def start(engine, token: str):
     from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
     from telegram.constants import ParseMode
-    from telegram.error import BadRequest
+    from telegram.error import BadRequest, NetworkError
     from telegram.ext import Application, CallbackQueryHandler, CommandHandler, MessageHandler, filters
 
     app = Application.builder().token(token).build()
@@ -57,19 +62,28 @@ async def start(engine, token: str):
                          f"{len(msgs) - local} by the AI\n")
         else:
             lines.append("No new messages.")
-        for e in msgs[-8:]:
-            kind, _, rest = e["title"].partition(" from ")
-            sender, _, subject = rest.partition(": ")
-            what = e.get("facts") or subject
-            tag = TAG.get(e.get("label"), e.get("label"))
-            lines.append(f"{ICON.get(kind, '•')} <b>{html.escape(sender)}</b> · {tag}\n      {html.escape(what[:90])}")
+        lines += [line(e) for e in msgs[-8:]]
         if len(msgs) > 8:
             lines.append(f"…and {len(msgs) - 8} earlier")
         return "\n".join(lines)
 
+    def line(e: dict) -> str:
+        kind, _, rest = e["title"].partition(" from ")
+        sender, _, subject = rest.partition(": ")
+        what = e.get("facts") or subject
+        tag = TAG.get(e.get("label"), e.get("label"))
+        return f"{ICON.get(kind, '•')} <b>{html.escape(sender)}</b> · {tag}\n      {html.escape(what[:90])}"
+
     async def reply(update: Update, text: str, markup=None):
-        await update.message.reply_text(text, parse_mode=ParseMode.HTML, reply_markup=markup,
-                                        disable_web_page_preview=True)
+        for attempt in range(2):  # Telegram sometimes times out; one retry
+            try:
+                await update.message.reply_text(text, parse_mode=ParseMode.HTML, reply_markup=markup,
+                                                disable_web_page_preview=True)
+                return
+            except NetworkError:
+                if attempt:
+                    raise
+                await asyncio.sleep(2)
 
     async def run(fn, *args):
         return await asyncio.to_thread(fn, *args)
@@ -81,10 +95,21 @@ async def start(engine, token: str):
         if allowed(update):
             await reply(update, HELP)
 
+    def chapter(e: dict) -> str:
+        return f"<b>{html.escape(e['title'])}</b>\n{html.escape(e.get('detail', ''))}"
+
     def stepper(to: str):
         async def handler(update: Update, context):
-            if allowed(update):
-                await reply(update, summary(await run(engine.step, to)))
+            if not allowed(update):
+                return
+            if engine.autopilot_running():  # taking the wheel: pause the autopilot first
+                await run(engine.stop_autopilot, True)
+                await reply(update, "⏸ Autopilot paused. Stepping by hand from here; /run starts over.")
+            events = await run(engine.step, to)
+            await reply(update, summary(events))
+            for e in events:  # month openings and recaps, each as its own message
+                if e["kind"] == "chapter":
+                    await reply(update, chapter(e))
         return handler
 
     async def sim_cmd(update: Update, context):
@@ -152,14 +177,80 @@ async def start(engine, token: str):
                (("meet", "🎥 Google Meet"), ("link", "📅 Add to Google Calendar")) if out.get(k)]
         return InlineKeyboardMarkup([row]) if row else None
 
+    outbox: asyncio.Queue = asyncio.Queue()
+
+    def send(text: str, markup=None, parse_mode=None) -> None:
+        """Queue a message to the owner from any thread. One sender drains the queue in order, spaced out."""
+        if owner() is not None:
+            loop.call_soon_threadsafe(outbox.put_nowait, (text, markup, parse_mode))
+
+    async def sender():
+        while True:
+            text, markup, mode = await outbox.get()
+            try:
+                await app.bot.send_message(owner(), text, reply_markup=markup, parse_mode=mode,
+                                           disable_web_page_preview=True)
+            except Exception as e:  # noqa: BLE001 - one bad message must not stop the rest
+                print(f"telegram send failed: {e}")
+            await asyncio.sleep(0.7)  # Telegram allows about one message a second per chat
+
     def to_owner(text: str, actions=None) -> None:
-        if (chat := owner()) is None:
+        if engine.autopilot_running():  # the narrator below reports everything during autopilot
             return
         buttons = [InlineKeyboardButton(label, callback_data=a) for label, a in actions or []]
         rows = [buttons] if len(buttons) <= 2 else [[b] for b in buttons]  # long choices stack vertically
-        markup = InlineKeyboardMarkup(rows) if buttons else None
-        asyncio.run_coroutine_threadsafe(app.bot.send_message(chat, text, reply_markup=markup,
-                                                              disable_web_page_preview=True), loop)
+        send(text, InlineKeyboardMarkup(rows) if buttons else None)
+
+    def narrate(e: dict) -> None:
+        """Autopilot: every feed event worth seeing, as one paced Telegram message."""
+        if not engine.autopilot_running():
+            return
+        k, title, detail, esc = e["kind"], e["title"], e.get("detail", ""), html.escape
+        if k == "chapter":
+            send(chapter(e), parse_mode=ParseMode.HTML)
+        elif k == "message":
+            send(f"<i>{e['sim_time'][5:10]}</i> {line(e)}", parse_mode=ParseMode.HTML)
+        elif k == "notify":
+            send(f"🔔 {title}")
+        elif k == "ask":
+            send(f"❓ {title}")
+        elif k == "action" and e.get("handler") in ("autopilot", "auto-approve") and not detail.startswith("mail:"):
+            send(f"🤖 <b>Auto-yes</b> · {esc(title)}", links(e), ParseMode.HTML)
+        elif k == "outbox":
+            send(f"📤 <b>Reply sent</b> (outbox, simulated)\n{esc(title)}\n\n{esc(detail)}", parse_mode=ParseMode.HTML)
+        elif k == "compile":
+            send(f"⚙️ {title.removeprefix('Compiler: ')}")
+        elif k == "you":
+            send(f"🙋 <i>You ask:</i> {esc(title)}", parse_mode=ParseMode.HTML)
+        elif k == "chat":
+            send(f"{esc(title)}\n\n<i>{esc(detail)}</i>", parse_mode=ParseMode.HTML)
+        elif k == "system" and (e.get("handler") in ("autopilot", "skills", "compiler")
+                                or title.startswith(("Generated", "Backfilling", "Skill active"))):
+            send(f"ℹ️ {title}")
+
+    engine.listeners.append(narrate)
+
+    async def run_cmd(update: Update, context):
+        if not allowed(update):
+            return
+        args = [a.lower() for a in context.args]
+        speed = next((a for a in args if a in ("fast", "normal", "slow")), engine.set_speed(""))
+        if not await run(engine.start_autopilot, speed, "nodata" not in args):
+            await reply(update, "The demo is already running. /fast or /slow change its pace; /stop pauses it.")
+
+    def pacer(speed: str):
+        async def handler(update: Update, context):
+            if allowed(update):
+                engine.set_speed(speed)
+                running = engine.autopilot_running()
+                await reply(update, f"{'⏩' if speed == 'fast' else '▶'} Pace: <b>{speed}</b> "
+                                    + ("(from the next event)." if running else "for the next /run."))
+        return handler
+
+    async def stop_cmd(update: Update, context):
+        if allowed(update):
+            engine.stop_autopilot()
+            await reply(update, "⏸ Stopping after the current event. /run starts the whole demo again.")
 
     from brain import notify
 
@@ -174,15 +265,22 @@ async def start(engine, token: str):
     app.add_handler(CommandHandler("abilities", plain(abilities_text)))
     app.add_handler(CommandHandler("reset", reset_cmd))
     app.add_handler(CommandHandler("generate", generate_cmd))
+    app.add_handler(CommandHandler("run", run_cmd))
+    app.add_handler(CommandHandler("stop", stop_cmd))
+    for speed in ("fast", "normal", "slow"):
+        app.add_handler(CommandHandler(speed, pacer(speed)))
     app.add_handler(CallbackQueryHandler(button))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, text_message))
     await app.initialize()
     await app.start()
     await app.updater.start_polling()
+    app.bot_data["sender"] = asyncio.create_task(sender())
     return app
 
 
 async def stop(app) -> None:
+    if task := app.bot_data.get("sender"):
+        task.cancel()
     await app.updater.stop()
     await app.stop()
     await app.shutdown()

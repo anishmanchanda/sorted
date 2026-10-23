@@ -62,7 +62,7 @@ timeline ends on 23 Oct 2026 (`make dataset` regenerates it to end today). It ru
   - 3 price-increase alerts (Spotify, Netflix, YouTube).
   - 4 meeting requests turned into "add it to your calendar?" prompts.
 - **Safety:** the prompt-injection email never reaches an LLM. OTP SMS are dropped before storage.
-- 59 offline tests (`make test`).
+- 60 offline tests (`make test`).
 
 ## Quickstart
 
@@ -105,6 +105,10 @@ make mcp        # Brain MCP server over stdio
 ```bash
 make sim
 ```
+
+**One command:** send `/run` to the bot, or press **▶ Run full demo**. It plays all six Sim months on autopilot,
+one event every few seconds, with a chapter and a recap per month, saying yes to every approval, new skill,
+meeting and reply (see [DEMO.md](DEMO.md)).
 
 This opens a dashboard at http://127.0.0.1:8000. If `TELEGRAM_BOT_TOKEN` is set, the same simulation also runs
 through your Telegram bot; stop `make bot` first, because one token allows only one bot connection. You play
@@ -151,6 +155,8 @@ As the clock moves:
 
 What the dashboard shows:
 
+- **Month by month:** one card per Sim month that follows the clock: its share of work done by compiled code vs
+  the AI, and what was compiled, took over, broke, or was learned that month, plus reminders, meetings and replies.
 - **Privacy panel:** the privacy score per Sim month as bars and a table (messages, local code, LLM calls,
   tokens, cost per message), plus the share of chat questions answered by code.
 - **"From AI to compiled code":** one card per ability showing its path:

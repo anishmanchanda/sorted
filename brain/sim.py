@@ -41,6 +41,18 @@ STEPS = {"day": timedelta(days=1), "week": timedelta(days=7)}
 PLAN_HINT = re.compile(r"\b(remind|track|tablet|medicine|pill|daily|every (day|morning|night|week|month))\b", re.I)
 
 
+NARRATION = {
+    1: "The AI reads every message. Reminders are scheduled from what it extracts and fire with no AI.",
+    2: "The same senders write again. Every AI answer is saved as a trace: examples for the compiler.",
+    3: "At the end of this month the compiler writes code for each sender seen 3 times, and tests it.",
+    4: "Shadow month: the new code runs next to the AI and must agree with it before it takes over.",
+    5: "Compiled code now reads the repeat senders: no AI call, nothing leaves the machine.",
+    6: "HDFC changes its email layout: watch its parser fail, fall back to the AI, and v2 get compiled.",
+}
+DEMO_DATA = "a business sending in requests for new shipments sporadically over the months"
+SPEED = {"fast": 0.8, "normal": 3.0, "slow": 5.0}  # seconds between events; changeable mid-run
+
+
 def how(handler: str, event: str = "") -> str:
     """Who answered, in words, for chat replies on Telegram and the dashboard."""
     tag = ("⚡ compiled code · 0 AI calls" if handler.startswith("ability:") else
@@ -54,6 +66,40 @@ def how(handler: str, event: str = "") -> str:
 
 ASCII = str.maketrans({"\u2010": "-", "\u2011": "-", "\u2012": "-", "\u2013": "-", "\u2014": "-", "\u00a0": " ",
                        "\u202f": " ", "\u2009": " ", "\u2018": "'", "\u2019": "'", "\u201c": '"', "\u201d": '"'})
+
+
+def recap(m: dict) -> str:
+    lines = [f"{m['messages']} messages: {m['local']} by compiled code, {m['messages'] - m['local']} by the AI · "
+             f"privacy {100 * m['privacy']:.0f}%"]
+    lines += ["", "Highlights:", *m["highlights"]] if m["highlights"] else ["", "No new skills this month."]
+    extras = [f"{m[k]} {label}" for k, label in (("reminders", "reminders"), ("meetings", "meetings booked"),
+                                                 ("replies", "replies sent"),
+                                                 ("questions_by_code", "questions answered by code")) if m[k]]
+    if extras:
+        lines += ["", " · ".join(extras)]
+    return "\n".join(lines)
+
+
+def highlights(m: dict, label) -> list[str]:
+    """One plain-language line per thing that changed this month. `label(name)` names an ability for people."""
+    def name(ref: str) -> str:
+        return label(ref.rsplit(" v", 1)[0])
+
+    def cap(s: str) -> str:
+        return s[:1].upper() + s[1:]
+
+    def learn(ref: str) -> str:
+        return "answer " + name(ref) if name(ref).endswith("questions") else "read " + name(ref)
+
+    out = [f"💥 {cap(name(c))} changed layout: the code broke and the AI took over again" for c in m["broke"]]
+    for c in m["compiled"]:
+        v = c.rsplit(" v", 1)[1]
+        out.append(f"🔧 Rewrote the code for {name(c)} to match the new layout (v{v})" if v != "1" else
+                   f"⚙️ Learned to {learn(c)}: code written and tested")
+    out += [f"✅ {cap(name(c))} now handled by code, not the AI" for c in m["took_over"]]
+    out += [f"⏳ Not yet: code for {name(c)} failed its tests; the AI keeps the job" for c in m["failed"]]
+    out += [f"🆕 Noticed a new kind of message and learned a skill for it: {s}" for s in m["skills"]]
+    return out
 
 
 class GenMessage(BaseModel):
@@ -98,6 +144,10 @@ class Engine:
         self.planner = PlannerAgent(self.llm)
         self.feed: list[dict] = []
         self.state: dict = {}
+        self.listeners: list = []  # fn(event) per feed event, e.g. the Telegram autopilot narrator
+        self._pilot: threading.Thread | None = None
+        self.delay = SPEED["normal"]
+        self._stop = threading.Event()
         notify.SINKS.append(lambda text: self.emit("notify", text))
         notify.ASK_SINKS.append(lambda text, acts: self.emit("ask", text, actions=acts))
         scheduler.now = self.now  # the whole process runs on simulated time
@@ -139,6 +189,11 @@ class Engine:
         self.feed.append(ev)
         with open(self.dir / "feed.jsonl", "a") as f:
             f.write(json.dumps(ev, default=str) + "\n")
+        for fn in self.listeners:
+            try:
+                fn(ev)
+            except Exception:  # noqa: BLE001 - a broken listener must never stop the simulation
+                pass
         return ev
 
     def reset(self) -> None:
@@ -153,7 +208,7 @@ class Engine:
             classifier.set_current(None)
             (self.dir / "feed.jsonl").unlink(missing_ok=True)
             self.feed = []
-            auto = bool(self.state.get("auto_approve"))
+            auto = bool(self.state.get("auto_approve") or self.autopilot_running())
             self.state = {"end": end.isoformat(), "offset": (end - CANON_END).days, "month": 1, "delivered": [],
                           "auto_approve": auto}
             self._extend_end()
@@ -164,6 +219,8 @@ class Engine:
             self.emit("system", "Simulation reset",
                       f"{len(self.messages())} synthetic messages over 6 simulated months ending {end:%d %b %Y}. "
                       "You are Rohan Sharma; advance the clock to let mail arrive.")
+            if not self.autopilot_running():  # autopilot opens month 1 itself, after its own banner
+                self._chapter_begin(1)
 
     # ------------------------------------------------------------------ the dataset
     def messages(self) -> list[Message]:
@@ -194,7 +251,7 @@ class Engine:
             return n
 
     def add_message(self, kind: str, sender: str, subject: str, body: str, at: datetime | None = None,
-                    label: str = "your message") -> str:
+                    label: str = "your message", quiet: bool = False) -> str:
         """A synthetic message of your own, delivered when the clock reaches `at` (default: one minute from now)."""
         at = at or self.now() + timedelta(minutes=1)
         extra = self.dir / "extra"
@@ -217,7 +274,8 @@ class Engine:
             (extra / "email" / f"{sid}.eml").write_bytes(bytes(msg))
         with open(extra / "labels.jsonl", "a") as f:
             f.write(json.dumps({"id": sid, "type": label}) + "\n")
-        self.emit("system", f"Added your message {sid}", f"{kind} from {sender}, arrives {at:%d %b %H:%M}")
+        if not quiet:
+            self.emit("system", f"Added your message {sid}", f"{kind} from {sender}, arrives {at:%d %b %H:%M}")
         return sid
 
     def generate(self, request: str) -> dict:
@@ -233,14 +291,17 @@ class Engine:
             except (BudgetExceeded, LLMUnavailable, openai.APIError) as e:
                 return {"error": f"Couldn't generate ({e}). Generating needs an API key in .env."}
             batch, ids, now = res.data, [], self.now()
-            self.emit("system", f"Generating synthetic data: {batch.label}", f"request: {request}", handler="llm")
+            self.emit("system", f"Generated {len(batch.messages[:12])} synthetic messages: {batch.label}",
+                      f"request: {request}; dated "
+                      + ", ".join(m.at[:10] for m in batch.messages[:12]), handler="llm")
             for m in batch.messages[:12]:
                 m.subject, m.body = m.subject.translate(ASCII), m.body.translate(ASCII)
                 try:
                     at = datetime.fromisoformat(m.at).replace(tzinfo=None)
                 except ValueError:
                     at = now + timedelta(days=len(ids) + 1)
-                ids.append(self.add_message(m.kind, m.sender, m.subject, m.body, max(at, first), label=batch.label))
+                ids.append(self.add_message(m.kind, m.sender, m.subject, m.body, max(at, first), label=batch.label,
+                                            quiet=True))
             self._extend_end()
             self._save()
             past = [i for i in ids if (m := self.message(i)) and m["time"] <= now.isoformat(timespec="minutes")]
@@ -316,6 +377,178 @@ class Engine:
             self._report_compile(r)
         self.emit("system", f"End of Sim month {n}",
                   f"local classifier retrained on {clf.n_examples} LLM-labelled messages")
+        m = self.months()[n - 1]
+        self.emit("chapter", f"📊 Sim month {n} recap", recap(m), handler="recap", month=n)
+
+    def _close_month(self) -> None:
+        n = self.state["month"]
+        self._month_tasks(n)
+        self.state["month"] = n + 1
+        self._chapter_begin(n + 1)
+
+    def _chapter_begin(self, n: int) -> None:
+        start, end = self.month_range(n)
+        self.emit("chapter", f"📅 Sim month {n} begins · {start.day} {start:%b} – {end.day} {end:%b}",
+                  NARRATION[n], handler="chapter", month=n)
+
+    def month_range(self, n: int) -> tuple[date, date]:
+        return date(2026, n + 3, 1) + timedelta(days=self.state["offset"]), self.month_end(n).date()
+
+    def months(self) -> list[dict]:
+        """Per Sim month: AI vs compiled code, and what was compiled, took over, learned, booked and sent."""
+        with db.Session() as s:
+            stats = {m["month"]: m for m in score.monthly(s)}
+            names = self.ability_labels(s)
+        current = self.month_of(self.now())
+        out = []
+        for n in range(1, 7):
+            evs = [e for e in self.feed if e.get("sim_month") == n]
+            st = stats.get(f"Sim month {n}", {})
+            start, end = self.month_range(n)
+            took = [f"{a} v{v}" for e in evs for a, v in re.findall(r"ability:(\w+)@v(\d+) shadow match \S+ -> active",
+                                                                     e.get("detail", ""))]
+            took += [f"{a} v{v}" for e in evs if e["kind"] == "chat"
+                     for a, v in re.findall(r"(\w+) v(\d+) agreed with the AI", e.get("detail", ""))]
+            out.append({
+                "n": n, "label": f"Sim month {n}", "start": start.isoformat(), "end": end.isoformat(),
+                "narration": NARRATION[n],
+                "status": "done" if n < current or self.state.get("final_tasks_done") else
+                          "now" if n == current else "upcoming",
+                "messages": st.get("tasks", 0), "local": st.get("local", 0), "llm_calls": st.get("llm_calls", 0),
+                "privacy": st.get("privacy", 0.0),
+                "compiled": [re.sub(r"^Compiler: | -> tested$", "", e["title"]) for e in evs
+                             if e["kind"] == "compile" and e["title"].endswith("-> tested")],
+                "failed": [re.sub(r"^Compiler: | -> \w+$", "", e["title"]) for e in evs
+                           if e["kind"] == "compile" and not e["title"].endswith("-> tested")],
+                "took_over": took,
+                "broke": [f"{a} v{v}" for e in evs for a, v in re.findall(r"ability:(\w+)@v(\d+) failed",
+                                                                         e.get("detail", ""))],
+                "skills": [names.get(f"skill_{e['detail'].split(':')[1]}", e["detail"].split(":")[1]) for e in evs
+                           if e["kind"] == "action" and e["detail"].startswith("skill:") and
+                           e["detail"].endswith(":yes")],
+                "meetings": sum(e["kind"] == "action" and e["title"].startswith("✅ Booked") for e in evs),
+                "replies": sum(e["kind"] == "outbox" for e in evs),
+                "reminders": sum(e["kind"] == "notify" for e in evs),
+                "questions_by_code": sum(e["kind"] == "chat" and e.get("handler", "").startswith("ability:")
+                                         for e in evs),
+            })
+            out[-1]["highlights"] = highlights(out[-1], lambda name: names.get(name, name.replace("_", " ")))
+        return out
+
+    @staticmethod
+    def ability_labels(s) -> dict[str, str]:
+        """Ability name -> what it is about, for people: "HDFC Bank bill emails", "appointment questions"."""
+        out = {}
+        for ab in registry.listing(s):
+            t = ab.trigger_json
+            if ab.kind == "query":
+                out[ab.name] = f"{t.get('intent', '').replace('_', ' ')} questions".replace("appointments q",
+                                                                                         "appointment q")
+            elif ab.kind == "skill":
+                p = t.get("plan", {})
+                out[ab.name] = f"{p.get('title', t.get('category', ''))} ({skills.ACTIONS.get(p.get('action'), '')})"
+            else:
+                items = detector.items_for(s, ab)
+                who = (items[-1][0].output_json.get("provider") if items else None) or t.get("sender_key", "")
+                what = t.get("type", "").replace("_", " ").replace("bill due", "bill").replace(" receipt", "")
+                out[ab.name] = f"{who} {what} {'SMS' if t.get('kind') == 'sms' else 'emails'}"
+        return out
+
+    def learned(self) -> list[dict]:
+        """Every ability, with the Sim month it was written in and the month it took over from the AI."""
+        months = self.months()
+        with db.Session() as s:
+            names = self.ability_labels(s)
+            abilities = [(ab.name, ab.version, ab.kind, ab.status) for ab in registry.listing(s)]
+
+        def first(key, ref):
+            return next((m["n"] for m in months if ref in m[key]), None)
+
+        return [{"name": n, "version": v, "kind": k, "status": st, "label": names.get(n, n),
+                 "written": first("compiled", f"{n} v{v}") if k != "skill" else
+                 next((m["n"] for m in months if names.get(n) in m["skills"]), None),
+                 "took_over": first("took_over", f"{n} v{v}")} for n, v, k, st in abilities]
+
+    # ------------------------------------------------------------------ autopilot: the whole demo, one command
+    def autopilot_running(self) -> bool:
+        return self._pilot is not None and self._pilot.is_alive()
+
+    def start_autopilot(self, speed: str = "normal", generate: bool = True) -> bool:
+        if self.autopilot_running():
+            return False
+        self.delay = SPEED.get(speed, SPEED["normal"])
+        self._stop.clear()
+        self._pilot = threading.Thread(target=self._autopilot, args=(generate,), daemon=True)
+        self._pilot.start()
+        return True
+
+    def set_speed(self, speed: str) -> str:
+        """Takes effect at the next event, also in the middle of a run."""
+        self.delay = SPEED.get(speed, self.delay)
+        return next((k for k, v in SPEED.items() if v == self.delay), "normal")
+
+    def stop_autopilot(self, wait: bool = False) -> None:
+        self._stop.set()
+        if wait and self._pilot is not None:
+            self._pilot.join(timeout=60)
+
+    def _questions(self) -> dict[int, list[str]]:
+        """Scripted chat, so the demo also shows a question type being compiled and a date-range digest."""
+        a, b = self.month_range(4)[0], self.month_range(5)[1]
+        return {2: ["Do I have any doctor appointments this month?"],
+                3: ["Any appointments coming up?", "When is my next doctor appointment?"],
+                4: ["Any doctor appointments this month?"], 5: ["Do I have a doctor appointment next month?"],
+                6: [f"Give me all my dues and updates between {a.day} {a:%B} and {b.day} {b:%B}"]}
+
+    def _auto_answer(self, pause: float) -> None:
+        """Say yes to everything waiting: meetings (the proposed slot), replies (send), skills, approvals."""
+        for _ in range(20):
+            pending = self.status()["pending_actions"]
+            if not pending or self._stop.is_set():
+                return
+            acts = [a for _, a in pending[0]["actions"]]
+            choice = next((a for a in acts if a.endswith((":yes", ":send")) or a.startswith("approve:")), acts[0])
+            self.act(choice, by="autopilot")
+            self._stop.wait(pause)
+
+    def _autopilot(self, generate: bool) -> None:
+        try:
+            self.reset()
+            self.set_auto_approve(True)
+            self.emit("chapter", "▶ Full demo on autopilot",
+                      "Six simulated months, one event at a time. Every approval, new skill, meeting and reply is "
+                      "answered yes automatically. Send /stop (or press Stop) to pause.", handler="chapter")
+            if generate:
+                self.emit("system", "Adding synthetic data the AI has never seen: shipment requests from a business",
+                          "one live AI call; Sorted should notice them and learn a new skill", handler="autopilot")
+                out = self.generate(DEMO_DATA)
+                if out.get("error"):
+                    self.emit("system", "Skipped the generated data", out["error"], handler="autopilot")
+            self._chapter_begin(1)
+            asked: set[str] = set()
+            script = self._questions()
+            while not self._stop.is_set() and self.now() < self.end():
+                before = len(self.feed)
+                self.step("next")
+                self._auto_answer(self.delay / 2)
+                for q in script.get(self.month_of(self.now()), []):
+                    if q not in asked and not self._stop.is_set():
+                        asked.add(q)
+                        self._stop.wait(self.delay)
+                        self.ask(q)
+                        break
+                chapter = any(e["kind"] == "chapter" for e in self.feed[before:])
+                self._stop.wait(self.delay * (3 if chapter else 1))  # read the recap before the next month starts
+            if not self._stop.is_set():
+                self._auto_answer(self.delay / 2)
+                st = self.stats()
+                self.emit("chapter", "🏁 Demo complete",
+                          f"{st['messages']} messages; {st['local']} handled by local code; {st['llm_calls']} AI calls "
+                          f"in total; privacy score {100 * st['privacy']:.0f}% overall. Abilities: "
+                          f"{sum(a['status'] == 'active' for a in self.abilities())} active.", handler="chapter")
+        finally:
+            self.emit("system", "Autopilot stopped" if self._stop.is_set() else "Autopilot finished",
+                      "the clock stays where it is; /run starts the demo again from the beginning", handler="autopilot")
 
     def _report_compile(self, r: dict) -> None:
         self.emit("compile", f"Compiler: {r['ability']} v{r['version']} -> {r['status']}",
@@ -352,8 +585,7 @@ class Engine:
                 if t > until:
                     break
                 while self.state["month"] < 6 and t > self.month_end(self.state["month"]):
-                    self._month_tasks(self.state["month"])
-                    self.state["month"] += 1
+                    self._close_month()
                 self.state["clock"] = max(self.now(), t).isoformat()
                 self._env()
                 if job is not None and (t_msg is None or t_job <= t_msg):
@@ -364,8 +596,7 @@ class Engine:
                     self.state["delivered"].append(sim_sample(m.raw_path)[0])
                 self._save()
             while self.state["month"] < 6 and until > self.month_end(self.state["month"]):
-                self._month_tasks(self.state["month"])
-                self.state["month"] += 1
+                self._close_month()
             self.state["clock"] = max(self.now(), until).isoformat()
             self._env()
             if until >= self.end() and not self.state.get("final_tasks_done"):  # the last month's compile/repair
@@ -473,7 +704,8 @@ class Engine:
         return {"clock": self.state["clock"], "month": self.month_of(self.now()), "end": self.state["end"],
                 "delivered": len(self.state["delivered"]), "total": len(self.messages()),
                 "auto_approve": bool(self.state.get("auto_approve")),
-                "awaiting_time": self.state.get("awaiting_time"), "pending_actions": pending}
+                "awaiting_time": self.state.get("awaiting_time"), "pending_actions": pending,
+                "autopilot": self.autopilot_running(), "feed_len": len(self.feed), "speed": self.set_speed("")}
 
     def outbox(self) -> list[dict]:
         with db.Session() as s:

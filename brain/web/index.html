@@ -44,7 +44,15 @@ details pre{max-height:260px;overflow:auto;background:var(--bg);padding:8px;bord
 textarea{width:100%;min-height:90px}#gen{min-height:64px}.links{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
 .links a{text-decoration:none}.mail{border:1px solid var(--line);border-radius:8px;padding:8px;margin-top:8px;font-size:12px;white-space:pre-wrap}
 .answer{white-space:pre-wrap;word-break:break-word;margin-top:4px}button:disabled{opacity:.5;cursor:default}
-.ev.outbox .body{border-left:3px solid var(--code);padding-left:8px}.ab.skill{border-color:var(--ml)}tr.click{cursor:pointer}tr.click:hover{background:var(--bg)}
+.ev.outbox .body{border-left:3px solid var(--code);padding-left:8px}
+.ev.chapter{background:var(--bg);border-radius:8px;padding:8px;margin:6px 0;border-bottom:0}.ev.chapter .body{font-weight:600}
+.months{display:flex;gap:10px;overflow-x:auto;padding:4px 2px 10px;scroll-snap-type:x proximity}
+.mon{flex:0 0 285px;scroll-snap-align:center;border:1px solid var(--line);border-radius:10px;padding:10px;font-size:12px;opacity:.55;transition:opacity .3s,outline-color .3s}
+.mon.done{opacity:1}.mon.now{opacity:1;outline:2px solid var(--accent);outline-offset:1px}
+.mon h3{margin:0;font-size:13px;display:flex;justify-content:space-between;align-items:center}.mon .big{font-size:24px;font-weight:700}
+.split{display:flex;height:10px;border-radius:5px;overflow:hidden;background:var(--line);margin:6px 0 3px}.split .c{background:var(--code)}.split .a{background:var(--llm)}
+.mon ul{margin:6px 0 0;padding-left:16px}.mon li{margin:2px 0}.pilot{background:var(--code-bg);color:var(--code)}
+.bar.now b{color:var(--accent)!important}.hl{margin-top:8px;display:flex;flex-direction:column;gap:4px}.hl div{background:var(--bg);border-radius:6px;padding:4px 6px}.bar.upcoming{opacity:.4}.ab.skill{border-color:var(--ml)}tr.click{cursor:pointer}tr.click:hover{background:var(--bg)}
 </style>
 </head>
 <body>
@@ -59,11 +67,25 @@ textarea{width:100%;min-height:90px}#gen{min-height:64px}.links{display:flex;gap
   <label class="muted"><input type="checkbox" id="auto"> auto-play</label>
   <label class="muted" title="Approve every ability that passes its tests (for demos). Off: you approve each one."><input type="checkbox" id="autoapprove" onchange="api('/api/settings',{auto_approve:this.checked})"> auto-approve (demo)</label>
   <button onclick="resetSim()">Reset</button>
+  <span style="border-left:1px solid var(--line);height:24px"></span>
+  <label class="muted" title="Autopilot pace. Changing it during a run takes effect from the next event.">pace <select id="speed" onchange="api('/api/speed',{speed:this.value})"><option value="fast">⏩ fast</option><option value="normal" selected>normal</option><option value="slow">slow</option></select></label>
+  <button class="primary" id="runbtn" onclick="runDemo()" title="Reset, then play the whole demo one event at a time, saying yes to every approval, skill, meeting and reply">▶ Run full demo</button>
+  <button id="fastbtn" class="hidden" onclick="api('/api/speed',{speed:'fast'}).then(refresh)" title="Speed up the running demo">⏩ Faster</button>
+  <button id="stopbtn" class="hidden" onclick="api('/api/stop',{})">■ Stop</button>
 </header>
 <main>
 <section>
   <div class="tabs"><button class="on" data-tab="overview">Privacy &amp; offloading</button><button data-tab="inbox">Synthetic inbox</button></div>
   <div id="overview">
+    <div class="card">
+      <h2>Month by month: what happened, and how the work moved from the AI to compiled code</h2>
+      <div class="months" id="monthcards"></div>
+    </div>
+    <div class="card">
+      <h2>Skills learned so far</h2>
+      <p class="muted" style="margin-top:0">Everything Sorted taught itself: when the code was written, and when it took the job over from the AI.</p>
+      <table id="learned"><tr><td class="muted">Nothing yet. Skills appear from the end of Sim month 2 or 3.</td></tr></table>
+    </div>
     <div class="card">
       <h2>Privacy score: how much of the work runs as local code</h2>
       <div class="tiles" id="tiles"></div>
@@ -116,6 +138,7 @@ const api=(p,b)=>fetch(p,b?{method:'POST',headers:{'Content-Type':'application/j
 function badge(h,label){const x=label||h||'';const c=/ability|compiled/.test(x)?'code':/ml:|local ML/.test(x)?'ml':/rule|dropped|you|compiler/.test(x)?'rule':'llm';
   const t=label||(/ability:/.test(h)?'compiled code':/ml:/.test(h)?'local ML':/rule/.test(h)?'rule':h==='llm'?'LLM':h);return t?`<span class="pill ${c}">${esc(t)}</span>`:''}
 async function refresh(){const {status,stats}=await api('/api/state');
+  if(status.feed_len<lastFeed){lastFeed=0;$('feed').innerHTML='';$('abilities').innerHTML=''}
   $('clock').textContent=new Date(status.clock).toLocaleString('en-IN',{weekday:'short',day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
   $('month').textContent=`Sim month ${status.month}/6`;$('progress').textContent=`${status.delivered}/${status.total} messages arrived`;$('autoapprove').checked=status.auto_approve;
   const q=stats.questions;$('tiles').innerHTML=[['Privacy score',`${Math.round(stats.privacy*100)}%`,`${stats.local} of ${stats.messages} messages by local code`],
@@ -123,8 +146,12 @@ async function refresh(){const {status,stats}=await api('/api/state');
    ['Questions by code',`${q.local}/${q.local+q.llm}`,'chat questions answered with 0 LLM calls'],
    ['Cost / message',stats.messages?`$${(stats.cost/stats.messages).toFixed(5)}`:'–','includes compiling (est.)']]
    .map(([a,b,c])=>`<div class="tile"><span class="muted">${a}</span><b>${b}</b><span class="muted" style="font-size:12px">${c}</span></div>`).join('');
-  $('bars').innerHTML=stats.months.map(m=>{const llm=m.tasks-m.local;return `<div class="bar"><b style="color:var(--ink)">${Math.round(m.privacy*100)}%</b>
-    <div class="stack" style="height:${Math.max(12,m.tasks*8)}px"><div class="code" style="height:${m.local/m.tasks*100}%;background:var(--code)"></div><div style="height:${llm/m.tasks*100}%;background:var(--llm)"></div></div>${esc(m.month)}</div>`}).join('')||'<span class="muted">No messages yet. Press Next event.</span>';
+  const months=await api('/api/months');renderMonths(months,status.month);renderLearned(await api('/api/learned'));
+  if(document.activeElement!==$('speed'))$('speed').value=status.speed;$('fastbtn').classList.toggle('hidden',!status.autopilot||status.speed==='fast');
+  $('bars').innerHTML=months.map(m=>{const ai=m.messages-m.local,tot=Math.max(1,m.messages);return `<div class="bar ${m.status}"><b style="color:var(--ink)">${m.messages?Math.round(m.privacy*100)+'%':'–'}</b>
+    <div class="stack" style="height:${Math.max(12,m.messages*8)}px"><div style="height:${m.local/tot*100}%;background:var(--code)"></div><div style="height:${ai/tot*100}%;background:var(--llm)"></div></div>${esc(m.label)}<span style="font-size:11px">${m.local} code · ${ai} AI</span></div>`}).join('');
+  $('runbtn').classList.toggle('hidden',status.autopilot);$('stopbtn').classList.toggle('hidden',!status.autopilot);
+  $('month').textContent=`Sim month ${status.month}/6`+(status.autopilot?' · autopilot':'');$('month').className='pill '+(status.autopilot?'pilot':'rule');
   $('months').innerHTML='<tr><th>Period</th><th class="num">Messages</th><th class="num">Local code</th><th class="num">LLM calls</th><th class="num">Tokens</th><th class="num">Privacy</th><th class="num">Cost/msg</th></tr>'+
    stats.months.map(m=>`<tr><td>${esc(m.month)}</td><td class="num">${m.tasks}</td><td class="num">${m.local}</td><td class="num">${m.llm_calls}</td><td class="num">${m.tokens.toLocaleString()}</td><td class="num">${Math.round(m.privacy*100)}%</td><td class="num">$${m.cost_per_message.toFixed(5)}</td></tr>`).join('');
   $('pending').innerHTML=(status.awaiting_time?'<div class="ev ask"><div class="body">🕐 Type the time that suits you in "Ask Sorted", e.g. "Friday 5pm".</div></div>':'')+(status.pending_actions.length?status.pending_actions.map(e=>`<div class="ev ask"><div class="body">${esc(e.title)}</div><div class="row" style="margin-top:6px">${e.actions.map(([l,a])=>`<button onclick="act('${a}',this)">${esc(l)}</button>`).join('')}</div></div>`).join(''):status.awaiting_time?'':'Nothing.');
@@ -132,7 +159,25 @@ async function refresh(){const {status,stats}=await api('/api/state');
   const evs=await api('/api/feed?after='+lastFeed);if(evs.length){lastFeed=evs[evs.length-1].id;
    $('feed').insertAdjacentHTML('afterbegin',evs.reverse().map(e=>`<div class="ev ${e.kind}"><div class="t">${esc(e.sim_time.replace('T',' '))} · ${KIND[e.kind]||e.kind} ${e.kind==='message'?badge(e.handler,e.label):''}</div><div class="body">${esc(e.title)}${e.detail&&e.kind!=='action'?`<div class="muted" style="font-size:12px">${esc(e.detail)}</div>`:''}${linkRow(e)}</div></div>`).join(''));
    loadAbilities()}}
-const KIND={message:'📨 message',notify:'🔔 to you',ask:'❓ question for you',chat:'💬 answer',you:'you',action:'✔ done',compile:'⚙️ compiler',system:'ℹ️',outbox:'📤 sent'};
+let shownMonth=0;
+function renderMonths(ms,cur){
+  $('monthcards').innerHTML=ms.map(m=>{const ai=m.messages-m.local,tot=Math.max(1,m.messages);
+   const extras=[[m.reminders,'reminders'],[m.meetings,'meetings booked'],[m.replies,'replies sent'],[m.questions_by_code,'questions answered by code']].filter(x=>x[0]).map(x=>`${x[0]} ${x[1]}`).join(' · ');
+   return `<div class="mon ${m.status}" id="mon${m.n}"><h3>${m.label}<span class="pill ${m.status==='now'?'pilot':m.status==='done'?'code':'rule'}">${m.status==='now'?'now':m.status==='done'?'done':'upcoming'}</span></h3>
+    <div class="muted">${new Date(m.start).toLocaleDateString('en-IN',{day:'numeric',month:'short'})} – ${new Date(m.end).toLocaleDateString('en-IN',{day:'numeric',month:'short'})}</div>
+    <div style="margin-top:6px"><span class="big">${m.messages?Math.round(m.privacy*100)+'%':'–'}</span> <span class="muted">local code</span></div>
+    <div class="split"><div class="c" style="width:${m.local/tot*100}%"></div><div class="a" style="width:${ai/tot*100}%"></div></div>
+    <div class="muted">${m.messages} messages: <b style="color:var(--code)">${m.local} code</b> · <b style="color:var(--llm)">${ai} AI</b> · ${m.llm_calls} AI calls</div>
+    <div style="margin-top:6px">${esc(m.narration)}</div>
+    ${m.highlights.length?`<div class="hl">${m.highlights.map(h=>`<div>${esc(h)}</div>`).join('')}</div>`:m.status==='upcoming'?'':'<div class="muted" style="margin-top:6px">No new skills this month.</div>'}
+    ${extras?`<div class="muted" style="margin-top:6px">${extras}</div>`:''}</div>`}).join('');
+  if(cur!==shownMonth){shownMonth=cur;$('mon'+cur)?.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'})}}
+function renderLearned(rows){if(!rows.length)return;const kind={parser:'reads messages',query:'answers questions',skill:'new skill'};
+  const st=r=>r.status==='active'?'<span class="pill code">doing the work</span>':r.status==='shadow'?'<span class="pill ml">shadowing the AI</span>':r.status==='degraded'?'<span class="pill llm">broke, replaced</span>':r.status==='retired'?'<span class="pill rule">declined</span>':r.status==='tested'?'<span class="pill rule">awaiting approval</span>':`<span class="pill rule">${esc(r.status)}</span>`;
+  $('learned').innerHTML='<tr><th>What</th><th>Kind</th><th>Code written</th><th>Took over</th><th>Now</th></tr>'+rows.map(r=>`<tr><td>${esc(r.label)}${r.version>1?` <span class="muted">v${r.version}</span>`:''}</td><td class="muted">${kind[r.kind]||r.kind}</td><td>${r.written?'Sim month '+r.written:'–'}</td><td>${r.took_over?'Sim month '+r.took_over:'–'}</td><td>${st(r)}</td></tr>`).join('')}
+async function runDemo(){if(!confirm('Reset and play the whole demo on autopilot? It says yes to every approval, new skill, meeting and reply. Telegram gets the same narration.'))return;
+  lastFeed=0;$('feed').innerHTML='';$('abilities').innerHTML='';await api('/api/run',{speed:$('speed').value});refresh()}
+const KIND={chapter:'📖 chapter',autopilot:'🤖',message:'📨 message',notify:'🔔 to you',ask:'❓ question for you',chat:'💬 answer',you:'you',action:'✔ done',compile:'⚙️ compiler',system:'ℹ️',outbox:'📤 sent'};
 function linkRow(r){const l=[];if(r.meet)l.push(`<a href="${esc(r.meet)}" target="_blank"><button>🎥 Google Meet</button></a>`);if(r.link)l.push(`<a href="${esc(r.link)}" target="_blank"><button>📅 Add to Google Calendar</button></a>`);if(r.ics_url)l.push(`<a href="${r.ics_url}"><button>Download .ics</button></a>`);return l.length?`<div class="links">${l.join('')}</div>`:''}
 const STEPS=['LLM solves','compiled + tested','approved','shadow','active'];
 function stage(a){return {candidate:0,generated:1,tested:1,shadow:3,active:4,degraded:4,retired:-1}[a.status]}

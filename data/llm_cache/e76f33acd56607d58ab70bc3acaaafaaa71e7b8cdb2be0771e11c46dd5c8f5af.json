@@ -1,0 +1,14 @@
+{
+ "data": {
+  "intent": "digest",
+  "period": "range",
+  "provider": null,
+  "start": "24 July",
+  "end": "23 September"
+ },
+ "tokens": 687,
+ "cost": 0.00034085,
+ "model": "gpt-oss-120b",
+ "date_offset": 23,
+ "key": null
+}

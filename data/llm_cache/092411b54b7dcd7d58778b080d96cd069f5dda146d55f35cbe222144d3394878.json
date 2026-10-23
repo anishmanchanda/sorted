@@ -1,0 +1,22 @@
+{
+ "data": {
+  "type": "other",
+  "provider": "Acme Traders",
+  "amount": 496000.0,
+  "currency": "INR",
+  "due_date": "2026-05-20",
+  "service": null,
+  "old_price": null,
+  "new_price": null,
+  "event_time": null,
+  "person": null,
+  "topic": "Shipment Request",
+  "document_type": null,
+  "category": "shipment_request"
+ },
+ "tokens": 1274,
+ "cost": 0.0005779,
+ "model": "gpt-oss-120b",
+ "date_offset": 23,
+ "key": null
+}

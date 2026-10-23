@@ -1,0 +1,54 @@
+{
+ "data": {
+  "label": "Shipment requests",
+  "messages": [
+   {
+    "kind": "email",
+    "sender": "Acme Traders <orders@acmetrader.example.in>",
+    "subject": "Shipment Request - Ref: SR-20260425-01",
+    "body": "Order Ref: SR-20260425-01\nItems: Steel rods\nQuantity: 1500 pcs\nTotal Value: Rs 7,20,000\nRequested Dispatch Date: 2026-05-02\nNote: Please confirm availability and provide ETA. We need the goods to arrive before the end of the month for our upcoming project.\nThank you.",
+    "at": "2026-04-25T09:30"
+   },
+   {
+    "kind": "email",
+    "sender": "Acme Traders <orders@acmetrader.example.in>",
+    "subject": "Shipment Request - Ref: SR-20260512-02",
+    "body": "Order Ref: SR-20260512-02\nItems: Aluminum sheets\nQuantity: 800 pcs\nTotal Value: Rs 4,96,000\nRequested Dispatch Date: 2026-05-20\nNote: Kindly prioritize this order as we have a tight production schedule. Let us know if any documents are needed for clearance.\nRegards,\nAcme Procurement Team.",
+    "at": "2026-05-12T14:45"
+   },
+   {
+    "kind": "email",
+    "sender": "Acme Traders <orders@acmetrader.example.in>",
+    "subject": "Shipment Request - Ref: SR-20260620-03",
+    "body": "Order Ref: SR-20260620-03\nItems: Copper wires\nQuantity: 2500 meters\nTotal Value: Rs 9,75,000\nRequested Dispatch Date: 2026-06-28\nNote: Please attach the latest product certification with the shipping documents. We require the consignment to be delivered to our warehouse in Delhi.\nThanks.",
+    "at": "2026-06-20T11:10"
+   },
+   {
+    "kind": "email",
+    "sender": "Acme Traders <orders@acmetrader.example.in>",
+    "subject": "Shipment Request - Ref: SR-20260708-04",
+    "body": "Order Ref: SR-20260708-04\nItems: Plastic granules\nQuantity: 5000 kg\nTotal Value: Rs 6,50,000\nRequested Dispatch Date: 2026-07-15\nNote: Urgent processing requested. Confirm the shipping charges and any applicable discounts for bulk ordering.\nBest,\nAcme Procurement.",
+    "at": "2026-07-08T16:20"
+   },
+   {
+    "kind": "email",
+    "sender": "Acme Traders <orders@acmetrader.example.in>",
+    "subject": "Shipment Request - Ref: SR-20260830-05",
+    "body": "Order Ref: SR-20260830-05\nItems: Glass panels\nQuantity: 120 pcs\nTotal Value: Rs 3,84,000\nRequested Dispatch Date: 2026-09-05\nNote: Please ensure the panels are packed with anti\u2011shock material. Notify us once the dispatch is scheduled so we can arrange receiving.\nThank you.",
+    "at": "2026-08-30T10:05"
+   },
+   {
+    "kind": "email",
+    "sender": "Acme Traders <orders@acmetrader.example.in>",
+    "subject": "Shipment Request - Ref: SR-20261001-06",
+    "body": "Order Ref: SR-20261001-06\nItems: Zinc sheets\nQuantity: 2000 pcs\nTotal Value: Rs 8,40,000\nRequested Dispatch Date: 2026-10-10\nNote: This is a repeat order from earlier this year. Kindly apply the standard corporate discount and confirm the expected delivery date.\nRegards,\nAcme Trading.",
+    "at": "2026-10-01T13:55"
+   }
+  ]
+ },
+ "tokens": 1867,
+ "cost": 0.00116625,
+ "model": "gpt-oss-120b",
+ "date_offset": 23,
+ "key": null
+}

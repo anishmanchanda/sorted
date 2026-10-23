@@ -1,0 +1,14 @@
+{
+ "data": {
+  "intent": "appointments",
+  "period": "upcoming",
+  "provider": null,
+  "start": null,
+  "end": null
+ },
+ "tokens": 521,
+ "cost": 0.00021954999999999997,
+ "model": "gpt-oss-120b",
+ "date_offset": 23,
+ "key": null
+}

@@ -1,0 +1,12 @@
+{
+ "data": {
+  "title": "Shipment requests",
+  "action": "remind_before_due",
+  "why": "These messages ask you to confirm availability or provide an ETA by the listed dates."
+ },
+ "tokens": 489,
+ "cost": 0.00022794999999999998,
+ "model": "gpt-oss-120b",
+ "date_offset": 23,
+ "key": null
+}

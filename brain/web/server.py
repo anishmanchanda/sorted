@@ -29,6 +29,15 @@ class Act(BaseModel):
     action: str
 
 
+class Run(BaseModel):
+    speed: str = "normal"  # fast / normal / slow
+    generate: bool = True
+
+
+class Speed(BaseModel):
+    speed: str
+
+
 class Generate(BaseModel):
     request: str
 
@@ -76,6 +85,27 @@ def create_app(engine, lifespan=None) -> FastAPI:
         at = datetime.fromisoformat(m.at) if m.at else None
         return {"id": engine.add_message(m.kind, m.sender, m.subject, m.body, at)}
 
+    @app.get("/api/months")
+    def months():
+        return engine.months()
+
+    @app.post("/api/run")
+    def run(r: Run):
+        return {"started": engine.start_autopilot(r.speed, r.generate)}
+
+    @app.post("/api/speed")
+    def speed(sp: Speed):
+        return {"speed": engine.set_speed(sp.speed)}
+
+    @app.get("/api/learned")
+    def learned():
+        return engine.learned()
+
+    @app.post("/api/stop")
+    def stop():
+        engine.stop_autopilot()
+        return {"stopping": True}
+
     @app.post("/api/generate")
     def generate(g: Generate):
         if not g.request.strip():
@@ -94,6 +124,8 @@ def create_app(engine, lifespan=None) -> FastAPI:
     def step(s: Step):
         if s.to not in ("next", "day", "week", "month", "end"):
             raise HTTPException(400, "to must be next, day, week, month or end")
+        if engine.autopilot_running():  # stepping by hand pauses the autopilot
+            engine.stop_autopilot(wait=True)
         return {"events": engine.step(s.to)}
 
     @app.post("/api/settings")

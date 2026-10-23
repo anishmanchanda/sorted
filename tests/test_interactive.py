@@ -235,3 +235,52 @@ def test_generated_data_new_kind_of_message_becomes_a_skill(tmp_path, make_llm, 
     assert any(a["kind"] == "skill" and a["status"] == "active" for a in engine.abilities())
     scheduler.get().remove_all_jobs()
     assert threading.active_count() >= 1
+
+
+def test_autopilot_runs_the_whole_demo_saying_yes(tmp_path, make_llm, monkeypatch):
+    """/run: six months unattended, month chapters and recaps, meetings booked and replies sent automatically."""
+    from brain.llm import LLMUnavailable
+    from brain.sim import Engine
+
+    for var in ("BRAIN_TODAY", "BRAIN_DATE_OFFSET"):
+        monkeypatch.setenv(var, "0")
+    monkeypatch.setattr(scheduler, "now", scheduler.now)
+    monkeypatch.setattr(notify, "SINKS", [])
+    monkeypatch.setattr(notify, "ASK_SINKS", [])
+    labels = {(r := json.loads(line))["id"]: r for line in config.LABELS_PATH.read_text().splitlines()}
+    current = {}
+
+    def answer(user, schema):
+        if schema.__name__ == "Extraction":
+            return {k: v for k, v in labels[current["sid"]].items() if k in Extraction.model_fields}
+        if schema.__name__ == "QuerySpec":
+            return planner(user)
+        raise LLMUnavailable("offline test: no compiler")  # compiles stay candidates; the AI keeps the work
+
+    llm = make_llm(answer)
+    plain = llm.json
+
+    def json_with_key(route, system, user, schema, run_id="", cache_key=None):
+        current["sid"] = (cache_key or "").removeprefix("extract:")
+        return plain(route, system, user, schema, run_id, cache_key)
+
+    llm.json = json_with_key
+    engine = Engine(llm=llm, data_dir=tmp_path)
+    seen = []
+    engine.listeners.append(seen.append)
+    engine.delay = 0
+    engine._autopilot(generate=False)
+    titles = [e["title"] for e in seen if e["kind"] == "chapter"]
+    assert [f"Sim month {n} begins" in " ".join(titles) for n in range(1, 7)] == [True] * 6
+    assert sum(t.endswith("recap") for t in titles) == 6 and titles[-1] == "🏁 Demo complete"
+    assert engine.now() >= engine.end() and engine.status()["pending_actions"] == []
+    months = engine.months()
+    assert [m["status"] for m in months] == ["done"] * 6 and sum(m["messages"] for m in months) > 70
+    assert sum(m["meetings"] for m in months) >= 1 and sum(m["replies"] for m in months) >= 1
+    recaps = [e["detail"] for e in seen if e["kind"] == "chapter" and e["title"].endswith("recap")]
+    assert any("Highlights:" in r for r in recaps)  # offline the compiler is down: "Not yet: code for … failed"
+    assert any("⏳ Not yet: code for HDFC Bank bill emails" in h for m in months for h in m["highlights"])
+    assert engine.set_speed("fast") == "fast" and engine.delay < 1 and engine.set_speed("bogus") == "fast"
+    meets = [e for e in seen if e["kind"] == "action" and e["detail"].startswith("meet:")]
+    assert meets and all(e.get("handler") == "autopilot" for e in meets)
+    scheduler.get().remove_all_jobs()

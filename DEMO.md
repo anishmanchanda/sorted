@@ -38,7 +38,35 @@ Prints the whole six months and writes [`reports/demo_run.md`](reports/demo_run.
 [`reports/eval.md`](reports/eval.md). It auto-approves compiled abilities so you can watch the share of local code
 grow.
 
-## 2. The interactive version (dashboard + Telegram)
+## 2. One command: the whole demo on autopilot
+
+With `make sim` running, send **`/run`** to the bot (or press **▶ Run full demo** on the dashboard). It resets the
+simulation and plays all six Sim months one event at a time, a few seconds apart:
+
+- each month opens with a chapter saying what to watch ("Shadow month: the new code runs next to the AI…") and
+  closes with a recap: messages handled by code vs the AI, what was compiled, what took over, what broke, skills
+  learned, reminders, meetings booked and replies sent;
+- it says **yes** to everything: abilities, the new shipment-request skill, every meeting (the proposed slot, with
+  Google Meet and Google Calendar link buttons) and every reply (shown as sent to the outbox);
+- it adds synthetic shipment requests at the start (one live AI call) so Sorted can notice a new kind of
+  message, and asks a few scripted questions so you also see a question type get compiled and a date-range digest.
+
+Telegram messages are queued and sent in order, about one a second, never in a burst. Send **`/fast`** at any
+point (or press **⏩ Faster** / change *pace* on the dashboard) to speed up the run already in progress; `/normal`
+and `/slow` slow it down again. `/run nodata` skips the generated data, and `/stop` pauses. A full run takes about
+7 minutes at normal pace, about 3 fast (Telegram's one-message-a-second limit sets the floor).
+
+Each month's recap lists its **highlights** in plain words, for example "⚙️ Learned to read HDFC Bank bill
+emails: code written and tested", "✅ Appointment questions now handled by code, not the AI", "💥 HDFC Bank bill
+emails changed layout: the code broke and the AI took over again", "🆕 Noticed a new kind of message and learned a
+skill for it: Shipment requests". On the dashboard, the **Month by month** strip shows the same highlights and
+follows the clock, and **Skills learned so far** lists every skill with the month its code was written and the
+month it took over from the AI.
+
+You can still drive it by hand: `/next`, `/day`, `/week`, `/month` and `/end` work as before, and now also post each
+month's opening and recap. Using one of them during a run pauses the autopilot first.
+
+## 3. The interactive version, by hand (dashboard + Telegram)
 
 If your Telegram bot is running (`make bot`), stop it first: one bot token allows only one connection. Then:
 
@@ -99,13 +127,15 @@ A good walkthrough (about 5 minutes):
 The privacy panel shows, per Sim month: messages, how many were handled by local code, LLM calls, tokens, cost per
 message (estimate) and the privacy score. A tile counts chat questions answered by code.
 
-## 3. Doing the same from Telegram
+## 4. Doing the same from Telegram
 
 With `make sim` running and `TELEGRAM_BOT_TOKEN` in `.env`, open your bot in Telegram (ours is **@sorted_admin_bot**)
 and send `/start`. The first chat that does this becomes the owner; every other chat is ignored.
 
 | Send | What happens |
 |---|---|
+| `/run` (`fast`, `slow`, `nodata`) · `/stop` | The whole demo on autopilot, saying yes to everything · pause it |
+| `/fast` · `/normal` · `/slow` | Change the autopilot's pace, also in the middle of a run |
 | `/next` | The next message or reminder arrives |
 | `/day`, `/week`, `/month`, `/end` | Move the clock 1 day, 1 week, to the end of this Sim month, or to the end of the dataset |
 | `/sim` | Where the clock is |
@@ -124,7 +154,7 @@ Reminders, price-rise alerts, approval requests ("🧪 New ability … passed it
 meeting requests (with *Another time*: just reply with the time) and reply drafts arrive in the chat on their own as the clock moves, with buttons where you need to decide something. The dashboard
 and Telegram drive the same simulation, so you can use both at once.
 
-## 4. Real use (not the simulation)
+## 5. Real use (not the simulation)
 
 `make bot` runs the bot on your own data instead (`data/brain.db`). Reminders fire at real times, it compiles
 nightly, and you approve with `/approve <name>`. Send it PDFs, ask questions, or set up IMAP in `.env`. `/score`

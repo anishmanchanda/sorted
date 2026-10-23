@@ -20,7 +20,7 @@ Channels: a Telegram bot and an MCP server for Claude Desktop and Cursor.
 
 ```bash
 make setup        # uv sync, .env from .env.example, init data/brain.db
-make test         # 59 offline tests (LLM/TinyFish/HTTP mocked) — keep them offline
+make test         # 60 offline tests (LLM/TinyFish/HTTP mocked) — keep them offline
 make lint         # ruff (line length 120)
 make demo         # synthetic 6-month simulation -> reports/demo_run.md, data/demo.db; replays data/llm_cache (no key)
 make demo-live    # same, every LLM call live (does NOT record to the cache)
@@ -66,6 +66,13 @@ uv run pytest abilities   # the 37 tests the compiler generated for its own pars
 - `Engine.generate` (dashboard "Add synthetic data", Telegram `/generate`): one LLM call writes templated ASCII
   messages into `data/demo/extra/` (+ `labels.jsonl`); past-dated ones are backfilled at once. Only committed
   samples (`data/samples/`) use replay cache keys; added messages are always live.
+- Autopilot (`/run`, `/stop`, dashboard ▶ Run full demo): `Engine._autopilot` resets, generates shipment data,
+  steps "next" with a delay, `_auto_answer` says yes to every pending ask, asks scripted questions per month.
+  `_close_month` emits month chapters/recaps; `Engine.months()` feeds the dashboard's Month by month strip.
+  Telegram output during autopilot comes from the `narrate` listener (engine.listeners) through one paced queue.
+  Pace lives in `Engine.delay` (`set_speed`, `/fast` `/normal` `/slow`, POST /api/speed) and is read every event.
+  Month highlights are plain-language lines from `highlights()` using `Engine.ability_labels`; `Engine.learned()`
+  feeds "Skills learned so far". Manual /next…/end pause the autopilot and post chapter events as messages.
 - Query periods include `range` (start/end phrases resolved by `query.resolve`, compared normalised) and the
   `digest` intent ("all dues and updates between X and Y").
 - `brain/telegram_bot.py`, `brain/mcp_server.py`: the channels. Bot logic lives in pure functions so it can be
