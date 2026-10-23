@@ -10,13 +10,14 @@ from brain.sources.pdf import from_pdf
 
 
 def _rel(p: Path) -> str:
-    return str(p.relative_to(config.ROOT)) if p.is_relative_to(config.ROOT) else str(p)
+    # as_posix: the same id on every OS ("data/samples/…"), never "data\samples\…" on Windows.
+    return p.relative_to(config.ROOT).as_posix() if p.is_relative_to(config.ROOT) else p.as_posix()
 
 
 def load_fixtures(root: Path = config.SAMPLES_DIR) -> list[Message]:
     msgs = [from_eml(p.read_bytes(), _rel(p)) for p in sorted((root / "email").glob("*.eml"))]
     sms_file = root / "sms" / "sms.jsonl"
-    for line in sms_file.read_text().splitlines():
+    for line in sms_file.read_text(encoding="utf-8").splitlines():
         r = json.loads(line)
         msgs.append(Message("sms", r["sender"], "", r["body"], to_ist_naive(datetime.fromisoformat(r["received_at"])),
                             f"{_rel(sms_file)}#{r['id']}"))
