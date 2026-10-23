@@ -1,0 +1,17 @@
+From: Acme Traders <orders@acmetrader.example.in>
+To: rohan.sharma.demo@example.in
+Subject: Shipment Request - Ref: SR-20260512-02
+Date: Tue, 12 May 2026 14:45:00 +0530
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+
+Order Ref: SR-20260512-02
+Items: Aluminum sheets
+Quantity: 800 pcs
+Total Value: Rs 4,96,000
+Requested Dispatch Date: 2026-05-20
+Note: Kindly prioritize this order as we have a tight production schedule. Le=
+t us know if any documents are needed for clearance.
+Regards,
+Acme Procurement Team.

@@ -1,0 +1,17 @@
+From: Acme Traders <orders@acmetrader.example.in>
+To: rohan.sharma.demo@example.in
+Subject: Shipment Request - Ref: SR-20260708-04
+Date: Wed, 08 Jul 2026 16:20:00 +0530
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+
+Order Ref: SR-20260708-04
+Items: Plastic granules
+Quantity: 5000 kg
+Total Value: Rs 6,50,000
+Requested Dispatch Date: 2026-07-15
+Note: Urgent processing requested. Confirm the shipping charges and any appli=
+cable discounts for bulk ordering.
+Best,
+Acme Procurement.

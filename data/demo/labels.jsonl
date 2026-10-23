@@ -1,0 +1,81 @@
+{"id": "m1_airtel", "kind": "email", "sender": "Airtel Xstream Fiber <ebill@airtel.com>", "type": "bill_due", "provider": "Airtel", "amount": 1178.82, "due_date": "2026-05-13"}
+{"id": "m1_apollo_appt", "kind": "email", "sender": "Apollo Clinic <appointments@apolloclinic.com>", "type": "meeting", "provider": "Apollo Clinic", "amount": null, "due_date": "2026-05-08", "event_time": "10:30", "person": "Sunita Sharma"}
+{"id": "m1_bses", "kind": "email", "sender": "BSES Rajdhani Power Ltd <ebill@bsesdelhi.com>", "type": "bill_due", "provider": "BSES Rajdhani", "amount": 959.0, "due_date": "2026-05-13"}
+{"id": "m1_hdfc_cc", "kind": "email", "sender": "HDFC Bank Credit Cards <emailstatements.cards@hdfcbank.net>", "type": "bill_due", "provider": "HDFC Bank", "amount": 25264.52, "due_date": "2026-05-25", "minimum_due": 1263.0, "layout": "v1"}
+{"id": "m1_lic", "kind": "email", "sender": "LIC of India <noreply@licindia.in>", "type": "premium_due", "provider": "LIC", "amount": 4215.0, "due_date": "2026-05-21"}
+{"id": "m1_myntra_promo", "kind": "email", "sender": "Myntra <offers@myntra.com>", "type": "ignore", "provider": null, "amount": null, "due_date": null}
+{"id": "m1_netflix_receipt", "kind": "email", "sender": "Netflix <info@account.netflix.com>", "type": "subscription_receipt", "provider": "Netflix", "amount": 499.0, "due_date": "2026-06-10", "service": "Netflix"}
+{"id": "m1_spotify_receipt", "kind": "email", "sender": "Spotify <no-reply@spotify.com>", "type": "subscription_receipt", "provider": "Spotify", "amount": 119.0, "due_date": "2026-05-28", "service": "Spotify"}
+{"id": "m2_airtel", "kind": "email", "sender": "Airtel Xstream Fiber <ebill@airtel.com>", "type": "bill_due", "provider": "Airtel", "amount": 1178.82, "due_date": "2026-06-12"}
+{"id": "m2_apollo_appt", "kind": "email", "sender": "Apollo Clinic <appointments@apolloclinic.com>", "type": "meeting", "provider": "Apollo Clinic", "amount": null, "due_date": "2026-06-08", "event_time": "10:30", "person": "Sunita Sharma"}
+{"id": "m2_bses", "kind": "email", "sender": "BSES Rajdhani Power Ltd <ebill@bsesdelhi.com>", "type": "bill_due", "provider": "BSES Rajdhani", "amount": 2051.0, "due_date": "2026-06-12"}
+{"id": "m2_hdfc_cc", "kind": "email", "sender": "HDFC Bank Credit Cards <emailstatements.cards@hdfcbank.net>", "type": "bill_due", "provider": "HDFC Bank", "amount": 15425.79, "due_date": "2026-06-24", "minimum_due": 771.0, "layout": "v1"}
+{"id": "m2_lic", "kind": "email", "sender": "LIC of India <noreply@licindia.in>", "type": "premium_due", "provider": "LIC", "amount": 4215.0, "due_date": "2026-06-20"}
+{"id": "m2_netflix_receipt", "kind": "email", "sender": "Netflix <info@account.netflix.com>", "type": "subscription_receipt", "provider": "Netflix", "amount": 499.0, "due_date": "2026-07-11", "service": "Netflix"}
+{"id": "m2_puc_certificate", "kind": "pdf", "sender": "upload", "type": "document_expiry", "provider": "Delhi Transport Department", "amount": null, "due_date": "2026-12-03", "document_type": "puc"}
+{"id": "m2_spotify_receipt", "kind": "email", "sender": "Spotify <no-reply@spotify.com>", "type": "subscription_receipt", "provider": "Spotify", "amount": 119.0, "due_date": "2026-06-28", "service": "Spotify"}
+{"id": "m2_swiggy_promo", "kind": "email", "sender": "Swiggy <noreply@swiggy.in>", "type": "ignore", "provider": null, "amount": null, "due_date": null}
+{"id": "m3_airtel", "kind": "email", "sender": "Airtel Xstream Fiber <ebill@airtel.com>", "type": "bill_due", "provider": "Airtel", "amount": 1178.82, "due_date": "2026-07-13"}
+{"id": "m3_apollo_appt", "kind": "email", "sender": "Apollo Clinic <appointments@apolloclinic.com>", "type": "meeting", "provider": "Apollo Clinic", "amount": null, "due_date": "2026-07-10", "event_time": "10:30", "person": "Sunita Sharma"}
+{"id": "m3_bses", "kind": "email", "sender": "BSES Rajdhani Power Ltd <ebill@bsesdelhi.com>", "type": "bill_due", "provider": "BSES Rajdhani", "amount": 3559.0, "due_date": "2026-07-13"}
+{"id": "m3_hdfc_cc", "kind": "email", "sender": "HDFC Bank Credit Cards <emailstatements.cards@hdfcbank.net>", "type": "bill_due", "provider": "HDFC Bank", "amount": 27884.72, "due_date": "2026-07-25", "minimum_due": 1394.0, "layout": "v1"}
+{"id": "m3_icici_car", "kind": "email", "sender": "ICICI Lombard <renewals@icicilombard.com>", "type": "insurance_renewal", "provider": "ICICI Lombard", "amount": 14860.0, "due_date": "2026-11-12", "policy": "car", "vehicle": "DL 3C AB 1234"}
+{"id": "m3_icici_car_policy", "kind": "pdf", "sender": "upload", "type": "insurance_renewal", "provider": "ICICI Lombard", "amount": 15342.0, "due_date": "2026-11-12", "document_type": "insurance_policy"}
+{"id": "m3_injection", "kind": "email", "sender": "Accounts Desk <billing@secure-payments-update.co>", "type": "ignore", "provider": null, "amount": null, "due_date": null, "injection": true}
+{"id": "m3_lic", "kind": "email", "sender": "LIC of India <noreply@licindia.in>", "type": "premium_due", "provider": "LIC", "amount": 4215.0, "due_date": "2026-07-21"}
+{"id": "m3_meeting_flat", "kind": "email", "sender": "Ankit Verma <ankit.verma@sharmaassociates.in>", "type": "meeting_request", "provider": "Sharma Associates", "amount": null, "due_date": "2026-07-19", "event_time": "16:00", "person": "Ankit Verma", "topic": "flat lease renewal"}
+{"id": "m3_netflix_receipt", "kind": "email", "sender": "Netflix <info@account.netflix.com>", "type": "subscription_receipt", "provider": "Netflix", "amount": 499.0, "due_date": "2026-08-10", "service": "Netflix"}
+{"id": "m3_spotify_price", "kind": "email", "sender": "Spotify <no-reply@spotify.com>", "type": "subscription_price_change", "provider": "Spotify", "amount": 139.0, "due_date": "2026-07-28", "service": "Spotify", "old_price": 119.0, "new_price": 139.0}
+{"id": "m3_spotify_receipt", "kind": "email", "sender": "Spotify <no-reply@spotify.com>", "type": "subscription_receipt", "provider": "Spotify", "amount": 119.0, "due_date": "2026-07-28", "service": "Spotify"}
+{"id": "m4_airtel", "kind": "email", "sender": "Airtel Xstream Fiber <ebill@airtel.com>", "type": "bill_due", "provider": "Airtel", "amount": 1414.82, "due_date": "2026-08-12"}
+{"id": "m4_amazon_promo", "kind": "email", "sender": "Amazon.in <store-news@amazon.in>", "type": "ignore", "provider": null, "amount": null, "due_date": null}
+{"id": "m4_apollo_appt", "kind": "email", "sender": "Apollo Clinic <appointments@apolloclinic.com>", "type": "meeting", "provider": "Apollo Clinic", "amount": null, "due_date": "2026-08-07", "event_time": "10:30", "person": "Sunita Sharma"}
+{"id": "m4_bses", "kind": "email", "sender": "BSES Rajdhani Power Ltd <ebill@bsesdelhi.com>", "type": "bill_due", "provider": "BSES Rajdhani", "amount": 1596.0, "due_date": "2026-08-12"}
+{"id": "m4_hdfc_cc", "kind": "email", "sender": "HDFC Bank Credit Cards <emailstatements.cards@hdfcbank.net>", "type": "bill_due", "provider": "HDFC Bank", "amount": 32088.85, "due_date": "2026-08-24", "minimum_due": 1604.0, "layout": "v1"}
+{"id": "m4_icici_car", "kind": "email", "sender": "ICICI Lombard <renewals@icicilombard.com>", "type": "insurance_renewal", "provider": "ICICI Lombard", "amount": 14860.0, "due_date": "2026-11-12", "policy": "car", "vehicle": "DL 3C AB 1234"}
+{"id": "m4_lic", "kind": "email", "sender": "LIC of India <noreply@licindia.in>", "type": "premium_due", "provider": "LIC", "amount": 4215.0, "due_date": "2026-08-20"}
+{"id": "m4_netflix_price", "kind": "email", "sender": "Netflix <info@account.netflix.com>", "type": "subscription_price_change", "provider": "Netflix", "amount": 649.0, "due_date": "2026-09-10", "service": "Netflix", "old_price": 499.0, "new_price": 649.0}
+{"id": "m4_netflix_receipt", "kind": "email", "sender": "Netflix <info@account.netflix.com>", "type": "subscription_receipt", "provider": "Netflix", "amount": 499.0, "due_date": "2026-09-10", "service": "Netflix"}
+{"id": "m4_spotify_receipt", "kind": "email", "sender": "Spotify <no-reply@spotify.com>", "type": "subscription_receipt", "provider": "Spotify", "amount": 139.0, "due_date": "2026-08-28", "service": "Spotify"}
+{"id": "m5_airtel", "kind": "email", "sender": "Airtel Xstream Fiber <ebill@airtel.com>", "type": "bill_due", "provider": "Airtel", "amount": 1178.82, "due_date": "2026-09-12"}
+{"id": "m5_apollo_appt", "kind": "email", "sender": "Apollo Clinic <appointments@apolloclinic.com>", "type": "meeting", "provider": "Apollo Clinic", "amount": null, "due_date": "2026-09-08", "event_time": "10:30", "person": "Sunita Sharma"}
+{"id": "m5_bank_newsletter", "kind": "email", "sender": "HDFC Bank <news@hdfcbank.net>", "type": "ignore", "provider": null, "amount": null, "due_date": null}
+{"id": "m5_bses", "kind": "email", "sender": "BSES Rajdhani Power Ltd <ebill@bsesdelhi.com>", "type": "bill_due", "provider": "BSES Rajdhani", "amount": 965.5, "due_date": "2026-09-12"}
+{"id": "m5_hdfc_cc", "kind": "email", "sender": "HDFC Bank Credit Cards <emailstatements.cards@hdfcbank.net>", "type": "bill_due", "provider": "HDFC Bank", "amount": 19391.89, "due_date": "2026-09-24", "minimum_due": 970.0, "layout": "v1"}
+{"id": "m5_icici_car", "kind": "email", "sender": "ICICI Lombard <renewals@icicilombard.com>", "type": "insurance_renewal", "provider": "ICICI Lombard", "amount": 14860.0, "due_date": "2026-11-12", "policy": "car", "vehicle": "DL 3C AB 1234"}
+{"id": "m5_lic", "kind": "email", "sender": "LIC of India <noreply@licindia.in>", "type": "premium_due", "provider": "LIC", "amount": 4215.0, "due_date": "2026-09-20"}
+{"id": "m5_meeting_parent-teacher", "kind": "email", "sender": "Delhi Public School <ptm@dpsrkpuram.edu.in>", "type": "meeting_request", "provider": "Delhi Public School", "amount": null, "due_date": "2026-08-31", "event_time": "10:00", "person": "Mrs. Kavita Rao", "topic": "parent-teacher meeting"}
+{"id": "m5_netflix_receipt", "kind": "email", "sender": "Netflix <info@account.netflix.com>", "type": "subscription_receipt", "provider": "Netflix", "amount": 649.0, "due_date": "2026-10-11", "service": "Netflix"}
+{"id": "m5_spotify_receipt", "kind": "email", "sender": "Spotify <no-reply@spotify.com>", "type": "subscription_receipt", "provider": "Spotify", "amount": 139.0, "due_date": "2026-09-28", "service": "Spotify"}
+{"id": "m6_airtel", "kind": "email", "sender": "Airtel Xstream Fiber <ebill@airtel.com>", "type": "bill_due", "provider": "Airtel", "amount": 1178.82, "due_date": "2026-10-13"}
+{"id": "m6_apollo_appt", "kind": "email", "sender": "Apollo Clinic <appointments@apolloclinic.com>", "type": "meeting", "provider": "Apollo Clinic", "amount": null, "due_date": "2026-10-10", "event_time": "10:30", "person": "Sunita Sharma"}
+{"id": "m6_bses", "kind": "email", "sender": "BSES Rajdhani Power Ltd <ebill@bsesdelhi.com>", "type": "bill_due", "provider": "BSES Rajdhani", "amount": 1758.5, "due_date": "2026-10-13"}
+{"id": "m6_bses_bill", "kind": "pdf", "sender": "upload", "type": "bill_due", "provider": "BSES Rajdhani", "amount": 1758.5, "due_date": "2026-10-13"}
+{"id": "m6_clove_appt", "kind": "email", "sender": "Clove Dental <appointments@clovedental.in>", "type": "meeting", "provider": "Clove Dental", "amount": null, "due_date": "2026-10-26", "event_time": "11:00", "person": "Rohan Sharma"}
+{"id": "m6_hdfc_cc", "kind": "email", "sender": "HDFC Bank Credit Cards <emailstatements.cards@hdfcbank.net>", "type": "bill_due", "provider": "HDFC Bank", "amount": 13903.23, "due_date": "2026-10-25", "minimum_due": 695.0, "layout": "v2"}
+{"id": "m6_icici_car", "kind": "email", "sender": "ICICI Lombard <renewals@icicilombard.com>", "type": "insurance_renewal", "provider": "ICICI Lombard", "amount": 14860.0, "due_date": "2026-11-12", "policy": "car", "vehicle": "DL 3C AB 1234"}
+{"id": "m6_lic", "kind": "email", "sender": "LIC of India <noreply@licindia.in>", "type": "premium_due", "provider": "LIC", "amount": 4215.0, "due_date": "2026-10-21"}
+{"id": "m6_meeting_advance", "kind": "email", "sender": "Neha Gupta <neha@guptaca.in>", "type": "meeting_request", "provider": "Gupta & Co. Chartered Accountants", "amount": null, "due_date": "2026-10-02", "event_time": "18:30", "person": "Neha Gupta", "topic": "advance tax review"}
+{"id": "m6_meeting_kitchen", "kind": "email", "sender": "Ravi Kumar <ravi.kumar@acmeinfra.in>", "type": "meeting_request", "provider": "Acme Infra", "amount": null, "due_date": "2026-10-29", "event_time": "11:00", "person": "Ravi Kumar", "topic": "kitchen renovation site visit"}
+{"id": "m6_netflix_receipt", "kind": "email", "sender": "Netflix <info@account.netflix.com>", "type": "subscription_receipt", "provider": "Netflix", "amount": 649.0, "due_date": "2026-11-10", "service": "Netflix"}
+{"id": "m6_spotify_receipt", "kind": "email", "sender": "Spotify <no-reply@spotify.com>", "type": "subscription_receipt", "provider": "Spotify", "amount": 139.0, "due_date": "2026-10-28", "service": "Spotify"}
+{"id": "m6_youtube_price", "kind": "email", "sender": "YouTube <noreply-purchases@youtube.com>", "type": "subscription_price_change", "provider": "YouTube", "amount": 149.0, "due_date": "2026-11-04", "service": "YouTube Premium", "old_price": 129.0, "new_price": 149.0}
+{"id": "sms_m1_airtel", "kind": "sms", "sender": "AX-AIRTEL", "type": "bill_due", "provider": "Airtel", "amount": 1178.82, "due_date": "2026-05-13"}
+{"id": "sms_m1_hdfc", "kind": "sms", "sender": "VM-HDFCBK", "type": "bill_due", "provider": "HDFC Bank", "amount": 25264.52, "due_date": "2026-05-25"}
+{"id": "sms_m1_otp0", "kind": "sms", "sender": "VM-HDFCBK", "type": "ignore", "provider": null, "amount": null, "due_date": null, "otp": true}
+{"id": "sms_m2_airtel", "kind": "sms", "sender": "AX-AIRTEL", "type": "bill_due", "provider": "Airtel", "amount": 1178.82, "due_date": "2026-06-12"}
+{"id": "sms_m2_hdfc", "kind": "sms", "sender": "VM-HDFCBK", "type": "bill_due", "provider": "HDFC Bank", "amount": 15425.79, "due_date": "2026-06-24"}
+{"id": "sms_m2_otp1", "kind": "sms", "sender": "AD-AMAZON", "type": "ignore", "provider": null, "amount": null, "due_date": null, "otp": true}
+{"id": "sms_m2_promo0", "kind": "sms", "sender": "BZ-JIOMRT", "type": "ignore", "provider": null, "amount": null, "due_date": null}
+{"id": "sms_m3_airtel", "kind": "sms", "sender": "AX-AIRTEL", "type": "bill_due", "provider": "Airtel", "amount": 1178.82, "due_date": "2026-07-13"}
+{"id": "sms_m3_hdfc", "kind": "sms", "sender": "VM-HDFCBK", "type": "bill_due", "provider": "HDFC Bank", "amount": 27884.72, "due_date": "2026-07-25"}
+{"id": "sms_m3_promo1", "kind": "sms", "sender": "AD-AIRTEL", "type": "ignore", "provider": null, "amount": null, "due_date": null}
+{"id": "sms_m4_airtel", "kind": "sms", "sender": "AX-AIRTEL", "type": "bill_due", "provider": "Airtel", "amount": 1414.82, "due_date": "2026-08-12"}
+{"id": "sms_m4_hdfc", "kind": "sms", "sender": "VM-HDFCBK", "type": "bill_due", "provider": "HDFC Bank", "amount": 32088.85, "due_date": "2026-08-24"}
+{"id": "sms_m4_otp2", "kind": "sms", "sender": "VK-SBIINB", "type": "ignore", "provider": null, "amount": null, "due_date": null, "otp": true}
+{"id": "sms_m5_airtel", "kind": "sms", "sender": "AX-AIRTEL", "type": "bill_due", "provider": "Airtel", "amount": 1178.82, "due_date": "2026-09-12"}
+{"id": "sms_m5_hdfc", "kind": "sms", "sender": "VM-HDFCBK", "type": "bill_due", "provider": "HDFC Bank", "amount": 19391.89, "due_date": "2026-09-24"}
+{"id": "sms_m5_promo2", "kind": "sms", "sender": "VM-ICICIP", "type": "ignore", "provider": null, "amount": null, "due_date": null}
+{"id": "sms_m6_airtel", "kind": "sms", "sender": "AX-AIRTEL", "type": "bill_due", "provider": "Airtel", "amount": 1178.82, "due_date": "2026-10-13"}
+{"id": "sms_m6_hdfc", "kind": "sms", "sender": "VM-HDFCBK", "type": "bill_due", "provider": "HDFC Bank", "amount": 13903.23, "due_date": "2026-10-25"}
+{"id": "sms_m6_otp3", "kind": "sms", "sender": "JD-AIRTEL", "type": "ignore", "provider": null, "amount": null, "due_date": null, "otp": true}

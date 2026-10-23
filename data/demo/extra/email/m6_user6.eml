@@ -1,0 +1,17 @@
+From: Acme Traders <orders@acmetrader.example.in>
+To: rohan.sharma.demo@example.in
+Subject: Shipment Request - Ref: SR-20261001-06
+Date: Thu, 01 Oct 2026 13:55:00 +0530
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+
+Order Ref: SR-20261001-06
+Items: Zinc sheets
+Quantity: 2000 pcs
+Total Value: Rs 8,40,000
+Requested Dispatch Date: 2026-10-10
+Note: This is a repeat order from earlier this year. Kindly apply the standar=
+d corporate discount and confirm the expected delivery date.
+Regards,
+Acme Trading.

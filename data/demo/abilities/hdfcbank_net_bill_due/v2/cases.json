@@ -1,0 +1,57 @@
+[
+ {
+  "input": "From: HDFC Bank Credit Cards <emailstatements.cards@hdfcbank.net>\nSubject: Your HDFC Bank Credit Card Statement for May 2026\nDate: 2026-05-05 07:40\n\nDear Rohan Sharma,\n\nYour HDFC Bank MoneyBack+ Credit Card statement for the period 05-Apr-2026 to\n05-May-2026 has been generated. Please find the summary below.\n\nCard Number XXXX XXXX XXXX 4821\n\nStatement Date 05/05/2026\n\nPayment Due Date 25/05/2026\n\nTotal Amount Due Rs. 25,264.52\n\nMinimum Amount Due Rs. 1,263.00\n\nTo avoid late payment charges, please pay at least the Minimum Amount Due by the Payment Due Date.\n\nFor queries call 1800-000-0000 (toll free, demo). Warm regards,\nHDFC Bank Credit Cards\n",
+  "expected": {
+   "type": "bill_due",
+   "provider": "HDFC Bank",
+   "amount": 25264.52,
+   "currency": "INR",
+   "due_date": "2026-05-25"
+  },
+  "held_out": true
+ },
+ {
+  "input": "From: HDFC Bank Credit Cards <emailstatements.cards@hdfcbank.net>\nSubject: Your HDFC Bank Credit Card Statement for June 2026\nDate: 2026-06-04 07:40\n\nDear Rohan Sharma,\n\nYour HDFC Bank MoneyBack+ Credit Card statement for the period 05-May-2026 to\n04-Jun-2026 has been generated. Please find the summary below.\n\nCard Number XXXX XXXX XXXX 4821\n\nStatement Date 04/06/2026\n\nPayment Due Date 24/06/2026\n\nTotal Amount Due Rs. 15,425.79\n\nMinimum Amount Due Rs. 771.00\n\nTo avoid late payment charges, please pay at least the Minimum Amount Due by the Payment Due Date.\n\nFor queries call 1800-000-0000 (toll free, demo). Warm regards,\nHDFC Bank Credit Cards\n",
+  "expected": {
+   "type": "bill_due",
+   "provider": "HDFC Bank",
+   "amount": 15425.79,
+   "currency": "INR",
+   "due_date": "2026-06-24"
+  },
+  "held_out": false
+ },
+ {
+  "input": "From: HDFC Bank Credit Cards <emailstatements.cards@hdfcbank.net>\nSubject: Your HDFC Bank Credit Card Statement for July 2026\nDate: 2026-07-05 07:40\n\nDear Rohan Sharma,\n\nYour HDFC Bank MoneyBack+ Credit Card statement for the period 05-Jun-2026 to\n05-Jul-2026 has been generated. Please find the summary below.\n\nCard Number XXXX XXXX XXXX 4821\n\nStatement Date 05/07/2026\n\nPayment Due Date 25/07/2026\n\nTotal Amount Due Rs. 27,884.72\n\nMinimum Amount Due Rs. 1,394.00\n\nTo avoid late payment charges, please pay at least the Minimum Amount Due by the Payment Due Date.\n\nFor queries call 1800-000-0000 (toll free, demo). Warm regards,\nHDFC Bank Credit Cards\n",
+  "expected": {
+   "type": "bill_due",
+   "provider": "HDFC Bank",
+   "amount": 27884.72,
+   "currency": "INR",
+   "due_date": "2026-07-25"
+  },
+  "held_out": false
+ },
+ {
+  "input": "From: HDFC Bank Credit Cards <emailstatements.cards@hdfcbank.net>\nSubject: Your HDFC Bank Credit Card Statement for August 2026\nDate: 2026-08-04 07:40\n\nDear Rohan Sharma,\n\nYour HDFC Bank MoneyBack+ Credit Card statement for the period 05-Jul-2026 to\n04-Aug-2026 has been generated. Please find the summary below.\n\nCard Number XXXX XXXX XXXX 4821\n\nStatement Date 04/08/2026\n\nPayment Due Date 24/08/2026\n\nTotal Amount Due Rs. 32,088.85\n\nMinimum Amount Due Rs. 1,604.00\n\nTo avoid late payment charges, please pay at least the Minimum Amount Due by the Payment Due Date.\n\nFor queries call 1800-000-0000 (toll free, demo). Warm regards,\nHDFC Bank Credit Cards\n",
+  "expected": {
+   "type": "bill_due",
+   "provider": "HDFC Bank",
+   "amount": 32088.85,
+   "currency": "INR",
+   "due_date": "2026-08-24"
+  },
+  "held_out": true
+ },
+ {
+  "input": "From: HDFC Bank Credit Cards <emailstatements.cards@hdfcbank.net>\nSubject: HDFC Bank Credit Card e-Statement | Oct 2026 | Card ending 4821\nDate: 2026-10-05 07:40\n\nHi Rohan, your statement is ready\n\nAmount payable INR 13,903.23\n\nPay by 25 Oct 2026\n\nMin. payable INR 695.00\n\nBilling cycle 05 Sep - 05 Oct 2026. Card ending 4821.\nPay via NetBanking, UPI or the HDFC Bank MobileBanking app.\n",
+  "expected": {
+   "type": "bill_due",
+   "provider": "HDFC Bank",
+   "amount": 13903.23,
+   "currency": "INR",
+   "due_date": "2026-10-25"
+  },
+  "held_out": false
+ }
+]

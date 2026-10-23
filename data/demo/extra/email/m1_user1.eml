@@ -1,0 +1,16 @@
+From: Acme Traders <orders@acmetrader.example.in>
+To: rohan.sharma.demo@example.in
+Subject: Shipment Request - Ref: SR-20260425-01
+Date: Sat, 25 Apr 2026 09:30:00 +0530
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+
+Order Ref: SR-20260425-01
+Items: Steel rods
+Quantity: 1500 pcs
+Total Value: Rs 7,20,000
+Requested Dispatch Date: 2026-05-02
+Note: Please confirm availability and provide ETA. We need the goods to arriv=
+e before the end of the month for our upcoming project.
+Thank you.

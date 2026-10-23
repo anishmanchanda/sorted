@@ -1,0 +1,41 @@
+[
+ {
+  "input": "From: Acme Traders <orders@acmetrader.example.in>\nSubject: Shipment Request - Ref: SR-20260425-01\nDate: 2026-04-25 09:30\n\nOrder Ref: SR-20260425-01\nItems: Steel rods\nQuantity: 1500 pcs\nTotal Value: Rs 7,20,000\nRequested Dispatch Date: 2026-05-02\nNote: Please confirm availability and provide ETA. We need the goods to arrive before the end of the month for our upcoming project.\nThank you.\n",
+  "expected": {
+   "type": "other",
+   "provider": "Acme Traders",
+   "amount": 720000.0,
+   "currency": "INR",
+   "due_date": "2026-05-02",
+   "topic": "confirm availability and provide ETA",
+   "category": "shipment_request"
+  },
+  "held_out": true
+ },
+ {
+  "input": "From: Acme Traders <orders@acmetrader.example.in>\nSubject: Shipment Request - Ref: SR-20260512-02\nDate: 2026-05-12 14:45\n\nOrder Ref: SR-20260512-02\nItems: Aluminum sheets\nQuantity: 800 pcs\nTotal Value: Rs 4,96,000\nRequested Dispatch Date: 2026-05-20\nNote: Kindly prioritize this order as we have a tight production schedule. Let us know if any documents are needed for clearance.\nRegards,\nAcme Procurement Team.\n",
+  "expected": {
+   "type": "other",
+   "provider": "Acme Traders",
+   "amount": 496000.0,
+   "currency": "INR",
+   "due_date": "2026-05-20",
+   "topic": "Shipment Request",
+   "category": "shipment_request"
+  },
+  "held_out": false
+ },
+ {
+  "input": "From: Acme Traders <orders@acmetrader.example.in>\nSubject: Shipment Request - Ref: SR-20260620-03\nDate: 2026-06-20 11:10\n\nOrder Ref: SR-20260620-03\nItems: Copper wires\nQuantity: 2500 meters\nTotal Value: Rs 9,75,000\nRequested Dispatch Date: 2026-06-28\nNote: Please attach the latest product certification with the shipping documents. We require the consignment to be delivered to our warehouse in Delhi.\nThanks.\n",
+  "expected": {
+   "type": "other",
+   "provider": "Acme Traders",
+   "amount": 975000.0,
+   "currency": "INR",
+   "due_date": "2026-06-28",
+   "topic": "Shipment Request",
+   "category": "shipment_request"
+  },
+  "held_out": false
+ }
+]

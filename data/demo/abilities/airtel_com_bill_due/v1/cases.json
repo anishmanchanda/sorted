@@ -1,0 +1,35 @@
+[
+ {
+  "input": "From: Airtel Xstream Fiber <ebill@airtel.com>\nSubject: Your Airtel Xstream Fiber bill for April 2026 is ready\nDate: 2026-04-24 10:05\n\nHi Rohan,\n\nYour Airtel Xstream Fiber bill for account XXXXXX3456 is ready.\n\nAmount due: ₹1,178.82\nDue date: 13-May-2026\nBill period: 24 Apr - 23 May 2026\n\nPlan: Xstream Fiber Standard 100 Mbps (Rs 999 + GST). Pay using Airtel Thanks app to earn rewards.\n",
+  "expected": {
+   "type": "bill_due",
+   "provider": "Airtel",
+   "amount": 1178.82,
+   "currency": "INR",
+   "due_date": "2026-05-13"
+  },
+  "held_out": false
+ },
+ {
+  "input": "From: Airtel Xstream Fiber <ebill@airtel.com>\nSubject: Your Airtel Xstream Fiber bill for May 2026 is ready\nDate: 2026-05-24 10:05\n\nHi Rohan,\n\nYour Airtel Xstream Fiber bill for account XXXXXX3456 is ready.\n\nAmount due: ₹1,178.82\nDue date: 12-Jun-2026\nBill period: 24 May - 22 Jun 2026\n\nPlan: Xstream Fiber Standard 100 Mbps (Rs 999 + GST). Pay using Airtel Thanks app to earn rewards.\n",
+  "expected": {
+   "type": "bill_due",
+   "provider": "Airtel Xstream Fiber",
+   "amount": 1178.82,
+   "currency": "INR",
+   "due_date": "2026-06-12"
+  },
+  "held_out": true
+ },
+ {
+  "input": "From: Airtel Xstream Fiber <ebill@airtel.com>\nSubject: Your Airtel Xstream Fiber bill for June 2026 is ready\nDate: 2026-06-24 10:05\n\nHi Rohan,\n\nYour Airtel Xstream Fiber bill for account XXXXXX3456 is ready.\n\nAmount due: ₹1,178.82\nDue date: 13-Jul-2026\nBill period: 24 Jun - 23 Jul 2026\n\nPlan: Xstream Fiber Standard 100 Mbps (Rs 999 + GST). Pay using Airtel Thanks app to earn rewards.\n",
+  "expected": {
+   "type": "bill_due",
+   "provider": "Airtel Xstream Fiber",
+   "amount": 1178.82,
+   "currency": "INR",
+   "due_date": "2026-07-13"
+  },
+  "held_out": false
+ }
+]

@@ -1,0 +1,16 @@
+From: Acme Traders <orders@acmetrader.example.in>
+To: rohan.sharma.demo@example.in
+Subject: Shipment Request - Ref: SR-20260830-05
+Date: Sun, 30 Aug 2026 10:05:00 +0530
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+
+Order Ref: SR-20260830-05
+Items: Glass panels
+Quantity: 120 pcs
+Total Value: Rs 3,84,000
+Requested Dispatch Date: 2026-09-05
+Note: Please ensure the panels are packed with anti-shock material. Notify us=
+ once the dispatch is scheduled so we can arrange receiving.
+Thank you.

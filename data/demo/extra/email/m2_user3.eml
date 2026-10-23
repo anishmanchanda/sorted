@@ -1,0 +1,16 @@
+From: Acme Traders <orders@acmetrader.example.in>
+To: rohan.sharma.demo@example.in
+Subject: Shipment Request - Ref: SR-20260620-03
+Date: Sat, 20 Jun 2026 11:10:00 +0530
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+
+Order Ref: SR-20260620-03
+Items: Copper wires
+Quantity: 2500 meters
+Total Value: Rs 9,75,000
+Requested Dispatch Date: 2026-06-28
+Note: Please attach the latest product certification with the shipping docume=
+nts. We require the consignment to be delivered to our warehouse in Delhi.
+Thanks.

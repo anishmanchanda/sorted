@@ -1,0 +1,35 @@
+[
+ {
+  "input": "From: LIC of India <noreply@licindia.in>\nSubject: Premium Due Notice - Policy No. XXXXX5678 - May 2026\nDate: 2026-05-03 06:15\n\nDear Rohan Sharma,\n\nPREMIUM DUE NOTICE\n\nPolicy No      : XXXXX5678\nPlan           : Jeevan Anand (Table 915)\nMode           : Monthly (ECS)\nPremium Amount : Rs. 4,215.00\nDue Date       : 21/05/2026\n\nKindly ensure sufficient balance in your bank account for ECS debit on or before the due date.\nYou can also pay online at licindia.in or through the LIC Pay Direct app.\n\nThis is a system generated notice. Life Insurance Corporation of India.\n",
+  "expected": {
+   "type": "premium_due",
+   "provider": "LIC",
+   "amount": 4215.0,
+   "currency": "INR",
+   "due_date": "2026-05-21"
+  },
+  "held_out": false
+ },
+ {
+  "input": "From: LIC of India <noreply@licindia.in>\nSubject: Premium Due Notice - Policy No. XXXXX5678 - Jun 2026\nDate: 2026-06-02 06:15\n\nDear Rohan Sharma,\n\nPREMIUM DUE NOTICE\n\nPolicy No      : XXXXX5678\nPlan           : Jeevan Anand (Table 915)\nMode           : Monthly (ECS)\nPremium Amount : Rs. 4,215.00\nDue Date       : 20/06/2026\n\nKindly ensure sufficient balance in your bank account for ECS debit on or before the due date.\nYou can also pay online at licindia.in or through the LIC Pay Direct app.\n\nThis is a system generated notice. Life Insurance Corporation of India.\n",
+  "expected": {
+   "type": "premium_due",
+   "provider": "LIC",
+   "amount": 4215.0,
+   "currency": "INR",
+   "due_date": "2026-06-20"
+  },
+  "held_out": false
+ },
+ {
+  "input": "From: LIC of India <noreply@licindia.in>\nSubject: Premium Due Notice - Policy No. XXXXX5678 - Jul 2026\nDate: 2026-07-03 06:15\n\nDear Rohan Sharma,\n\nPREMIUM DUE NOTICE\n\nPolicy No      : XXXXX5678\nPlan           : Jeevan Anand (Table 915)\nMode           : Monthly (ECS)\nPremium Amount : Rs. 4,215.00\nDue Date       : 21/07/2026\n\nKindly ensure sufficient balance in your bank account for ECS debit on or before the due date.\nYou can also pay online at licindia.in or through the LIC Pay Direct app.\n\nThis is a system generated notice. Life Insurance Corporation of India.\n",
+  "expected": {
+   "type": "premium_due",
+   "provider": "LIC",
+   "amount": 4215.0,
+   "currency": "INR",
+   "due_date": "2026-07-21"
+  },
+  "held_out": true
+ }
+]

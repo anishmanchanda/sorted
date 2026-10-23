@@ -2,11 +2,6 @@
 .env
 *.db
 *.db-journal
-data/raw/
-data/models/
-data/demo/
-data/abilities/
-data/telegram_owner
 .claude/settings.local.json
 
 # python

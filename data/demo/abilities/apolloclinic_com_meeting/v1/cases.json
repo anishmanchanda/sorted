@@ -1,0 +1,62 @@
+[
+ {
+  "input": "From: Apollo Clinic <appointments@apolloclinic.com>\nSubject: Appointment confirmed: Dr. Anjali Mehta, 08 May 2026 10:30 AM\nDate: 2026-05-03 16:15\n\nDear Rohan Sharma,\n\nAppointment confirmed for Sunita Sharma with Dr. Anjali Mehta (Endocrinology).\n\nDate: Friday, 08 May 2026\nTime: 10:30 AM\nLocation: Apollo Clinic, Sector 18, Noida\n\nConsultation fee: Rs 800 payable at the clinic. Please carry previous reports.\nA calendar invite is attached.\n\n[attachment invite.ics]\nBEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Apollo Clinic//Appointments//EN\nMETHOD:REQUEST\nBEGIN:VEVENT\nUID:[email]\nDTSTAMP:20260503T090000Z\nDTSTART;TZID=Asia/Kolkata:20260508T103000\nDTEND;TZID=Asia/Kolkata:20260508T110000\nSUMMARY:Thyroid follow-up - Dr. Anjali Mehta (Sunita Sharma)\nLOCATION:Apollo Clinic\\, Sector 18\\, Noida\nEND:VEVENT\nEND:VCALENDAR\n",
+  "expected": {
+   "type": "meeting",
+   "provider": "Apollo Clinic",
+   "currency": "INR",
+   "due_date": "2026-05-08",
+   "event_time": "10:30",
+   "person": "Sunita Sharma"
+  },
+  "held_out": false
+ },
+ {
+  "input": "From: Apollo Clinic <appointments@apolloclinic.com>\nSubject: Appointment confirmed: Dr. Anjali Mehta, 08 Jun 2026 10:30 AM\nDate: 2026-06-03 16:15\n\nDear Rohan Sharma,\n\nAppointment confirmed for Sunita Sharma with Dr. Anjali Mehta (Endocrinology).\n\nDate: Monday, 08 June 2026\nTime: 10:30 AM\nLocation: Apollo Clinic, Sector 18, Noida\n\nConsultation fee: Rs 800 payable at the clinic. Please carry previous reports.\nA calendar invite is attached.\n\n[attachment invite.ics]\nBEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Apollo Clinic//Appointments//EN\nMETHOD:REQUEST\nBEGIN:VEVENT\nUID:[email]\nDTSTAMP:20260603T090000Z\nDTSTART;TZID=Asia/Kolkata:20260608T103000\nDTEND;TZID=Asia/Kolkata:20260608T110000\nSUMMARY:Thyroid follow-up - Dr. Anjali Mehta (Sunita Sharma)\nLOCATION:Apollo Clinic\\, Sector 18\\, Noida\nEND:VEVENT\nEND:VCALENDAR\n",
+  "expected": {
+   "type": "meeting",
+   "provider": "Apollo Clinic",
+   "currency": "INR",
+   "due_date": "2026-06-08",
+   "event_time": "10:30",
+   "person": "Sunita Sharma"
+  },
+  "held_out": true
+ },
+ {
+  "input": "From: Apollo Clinic <appointments@apolloclinic.com>\nSubject: Appointment confirmed: Dr. Anjali Mehta, 10 Jul 2026 10:30 AM\nDate: 2026-07-05 16:15\n\nDear Rohan Sharma,\n\nAppointment confirmed for Sunita Sharma with Dr. Anjali Mehta (Endocrinology).\n\nDate: Friday, 10 July 2026\nTime: 10:30 AM\nLocation: Apollo Clinic, Sector 18, Noida\n\nConsultation fee: Rs 800 payable at the clinic. Please carry previous reports.\nA calendar invite is attached.\n\n[attachment invite.ics]\nBEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Apollo Clinic//Appointments//EN\nMETHOD:REQUEST\nBEGIN:VEVENT\nUID:[email]\nDTSTAMP:20260705T090000Z\nDTSTART;TZID=Asia/Kolkata:20260710T103000\nDTEND;TZID=Asia/Kolkata:20260710T110000\nSUMMARY:Thyroid follow-up - Dr. Anjali Mehta (Sunita Sharma)\nLOCATION:Apollo Clinic\\, Sector 18\\, Noida\nEND:VEVENT\nEND:VCALENDAR\n",
+  "expected": {
+   "type": "meeting",
+   "provider": "Apollo Clinic",
+   "currency": "INR",
+   "due_date": "2026-07-10",
+   "event_time": "10:30",
+   "person": "Sunita Sharma"
+  },
+  "held_out": false
+ },
+ {
+  "input": "From: Apollo Clinic <appointments@apolloclinic.com>\nSubject: Appointment confirmed: Dr. Anjali Mehta, 07 Aug 2026 10:30 AM\nDate: 2026-08-02 16:15\n\nDear Rohan Sharma,\n\nAppointment confirmed for Sunita Sharma with Dr. Anjali Mehta (Endocrinology).\n\nDate: Friday, 07 August 2026\nTime: 10:30 AM\nLocation: Apollo Clinic, Sector 18, Noida\n\nConsultation fee: Rs 800 payable at the clinic. Please carry previous reports.\nA calendar invite is attached.\n\n[attachment invite.ics]\nBEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Apollo Clinic//Appointments//EN\nMETHOD:REQUEST\nBEGIN:VEVENT\nUID:[email]\nDTSTAMP:20260802T090000Z\nDTSTART;TZID=Asia/Kolkata:20260807T103000\nDTEND;TZID=Asia/Kolkata:20260807T110000\nSUMMARY:Thyroid follow-up - Dr. Anjali Mehta (Sunita Sharma)\nLOCATION:Apollo Clinic\\, Sector 18\\, Noida\nEND:VEVENT\nEND:VCALENDAR\n",
+  "expected": {
+   "type": "meeting",
+   "provider": "Apollo Clinic",
+   "currency": "INR",
+   "due_date": "2026-08-07",
+   "event_time": "10:30",
+   "person": "Sunita Sharma"
+  },
+  "held_out": false
+ },
+ {
+  "input": "From: Apollo Clinic <appointments@apolloclinic.com>\nSubject: Appointment confirmed: Dr. Anjali Mehta, 08 Sep 2026 10:30 AM\nDate: 2026-09-03 16:15\n\nDear Rohan Sharma,\n\nAppointment confirmed for Sunita Sharma with Dr. Anjali Mehta (Endocrinology).\n\nDate: Tuesday, 08 September 2026\nTime: 10:30 AM\nLocation: Apollo Clinic, Sector 18, Noida\n\nConsultation fee: Rs 800 payable at the clinic. Please carry previous reports.\nA calendar invite is attached.\n\n[attachment invite.ics]\nBEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Apollo Clinic//Appointments//EN\nMETHOD:REQUEST\nBEGIN:VEVENT\nUID:[email]\nDTSTAMP:20260903T090000Z\nDTSTART;TZID=Asia/Kolkata:20260908T103000\nDTEND;TZID=Asia/Kolkata:20260908T110000\nSUMMARY:Thyroid follow-up - Dr. Anjali Mehta (Sunita Sharma)\nLOCATION:Apollo Clinic\\, Sector 18\\, Noida\nEND:VEVENT\nEND:VCALENDAR\n",
+  "expected": {
+   "type": "meeting",
+   "provider": "Apollo Clinic",
+   "currency": "INR",
+   "due_date": "2026-09-08",
+   "event_time": "10:30",
+   "person": "Sunita Sharma"
+  },
+  "held_out": true
+ }
+]

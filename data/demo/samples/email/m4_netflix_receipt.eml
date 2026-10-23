@@ -1,0 +1,23 @@
+From: Netflix <info@account.netflix.com>
+To: rohan.sharma.demo@example.in
+Subject: Your Netflix payment receipt
+Date: Mon, 10 Aug 2026 04:12:00 +0530
+Message-ID: <m4_netflix_receipt@samples.sorted.local>
+Content-Type: text/html; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+
+<html><body style=3D"font-family:Netflix Sans,Arial">
+<h2>Your payment was successful</h2>
+<p>Hi Rohan,</p>
+<p>Thanks for staying with Netflix. Here are your payment details.</p>
+<table><tr><td style=3D"padding:4px 12px;color:#555">Plan</td><td style=3D"pa=
+dding:4px 12px"><b>Standard</b></td></tr><tr><td style=3D"padding:4px 12px;co=
+lor:#555">Amount</td><td style=3D"padding:4px 12px"><b>&#8377;499.00</b></td>=
+</tr><tr><td style=3D"padding:4px 12px;color:#555">Payment method</td><td sty=
+le=3D"padding:4px 12px"><b>UPI AutoPay</b></td></tr>
+<tr><td style=3D"padding:4px 12px;color:#555">Date</td><td style=3D"padding:4=
+px 12px"><b>10 August 2026</b></td></tr><tr><td style=3D"padding:4px 12px;col=
+or:#555">Next billing date</td><td style=3D"padding:4px 12px"><b>10 September=
+ 2026</b></td></tr></table>
+<p>Questions? Visit the Help Centre. - The Netflix team</p></body></html>

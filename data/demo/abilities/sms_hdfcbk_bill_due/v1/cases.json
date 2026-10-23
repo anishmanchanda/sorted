@@ -1,0 +1,35 @@
+[
+ {
+  "input": "From: VM-HDFCBK\nSubject: \nDate: 2026-05-05 08:02\n\nHDFC Bank Credit Card XX4821 statement generated. Total due: Rs.25264.52, Min due: Rs.1263.00, Due date: 25-May-26. Pay on time to avoid charges.\n",
+  "expected": {
+   "type": "bill_due",
+   "provider": "HDFC Bank",
+   "amount": 25264.52,
+   "currency": "INR",
+   "due_date": "2026-05-25"
+  },
+  "held_out": false
+ },
+ {
+  "input": "From: VM-HDFCBK\nSubject: \nDate: 2026-06-04 08:02\n\nHDFC Bank Credit Card XX4821 statement generated. Total due: Rs.15425.79, Min due: Rs.771.00, Due date: 24-Jun-26. Pay on time to avoid charges.\n",
+  "expected": {
+   "type": "bill_due",
+   "provider": "HDFC Bank",
+   "amount": 15425.79,
+   "currency": "INR",
+   "due_date": "2026-06-24"
+  },
+  "held_out": false
+ },
+ {
+  "input": "From: VM-HDFCBK\nSubject: \nDate: 2026-07-05 08:02\n\nHDFC Bank Credit Card XX4821 statement generated. Total due: Rs.27884.72, Min due: Rs.1394.00, Due date: 25-Jul-26. Pay on time to avoid charges.\n",
+  "expected": {
+   "type": "bill_due",
+   "provider": "HDFC Bank",
+   "amount": 27884.72,
+   "currency": "INR",
+   "due_date": "2026-07-25"
+  },
+  "held_out": true
+ }
+]
