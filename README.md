@@ -67,6 +67,8 @@ timeline ends on 23 Oct 2026 (`make dataset` regenerates it to end today). It ru
 ## Quickstart
 
 **Step-by-step demo guide (dashboard + Telegram): [DEMO.md](DEMO.md).**
+**Every built feature: [docs/FEATURES.md](docs/FEATURES.md). What we proposed to HackIIITD vs. what we built,
+item by item: [docs/PROPOSAL_VS_BUILT.md](docs/PROPOSAL_VS_BUILT.md).**
 
 Python 3.12 and [uv](https://docs.astral.sh/uv/) required.
 

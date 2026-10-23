@@ -2,7 +2,10 @@
 
 Context for future Claude Code sessions on **Sorted** (AzinHack 2026, Team Not Found: Anish Manchanda, Aryan Thakur,
 Keshav Goel). Repo: https://github.com/anishmanchanda/sorted. Online submission closed 18 Oct 2026; the in-person
-round is 21–22 Oct 2026. `README.md` is the judge-facing doc; `docs/design.pdf` is the full 12-week design.
+round is 21–22 Oct 2026. `README.md` is the judge-facing doc; `docs/design.pdf` is the full 12-week design. `docs/FEATURES.md` lists every
+built feature and `docs/PROPOSAL_VS_BUILT.md` maps the submitted deck + design doc to the code; keep both in step
+with the code. `docs/rebuild/` is a from-scratch build spec; `docs/rebuild/03_PROMPTS.md` is generated from the
+prompt constants, so regenerate it with `uv run python scripts/dump_prompts.py` whenever a prompt changes.
 
 ## What it is
 
